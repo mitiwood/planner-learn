@@ -136,64 +136,66 @@
 <body>
 <div class="app">
   <header class="hdr">
-    <div class="hlogo"><div class="lorb">🧠</div><div class="lname">Planner<span>AI</span></div></div>
+    <div class="hlogo"><div class="lorb">&#x1F9E0;</div><div class="lname">Planner<span>AI</span></div></div>
     <div class="hact">
-      <button class="ib" id="dtb" onclick="toggleDark()">🌙</button>
-      <button class="ib" onclick="showSc('settings')">⚙️</button>
+      <button class="ib" id="dtb" onclick="toggleDark()">&#x1F319;</button>
+      <button class="ib" onclick="showSc('settings')">&#x2699;&#xFE0F;</button>
     </div>
   </header>
   <div class="ca">
     <div id="sc-home" class="sc active">
       <div class="hhero">
-        <div class="greet">안녕하세요 👋</div>
-        <div class="htit">오늘은 어떤 프롬프트를<br>배워볼까요?</div>
-        <div class="hsub" id="pct">로딩중...</div>
+        <div class="greet">&#xC548;&#xB155;&#xD558;&#xC138;&#xC694; &#x1F44B;</div>
+        <div class="htit">&#xC624;&#xB298;&#xC740; &#xC5B4;&#xB5A4; &#xD504;&#xB86C;&#xD504;&#xD2B8;&#xB97C;<br>&#xBC30;&#xC6CC;&#xBCFC;&#xAE4C;&#xC694;?</div>
+        <div class="hsub" id="pct">&#xB85C;&#xB529;&#xC911;...</div>
       </div>
-      <div class="sbw"><div class="sbar"><span>🔍</span><input type="text" placeholder="프롬프트 검색..." id="hs" oninput="onHS()" autocomplete="off"></div></div>
-      <div class="sh"><div class="stit">회사별 보기</div></div>
+      <div class="sbw"><div class="sbar"><span>&#x1F50D;</span><input type="text" placeholder="&#xD504;&#xB86C;&#xD504;&#xD2B8; &#xAC80;&#xC0C9;..." id="hs" oninput="onHS()" autocomplete="off"></div></div>
+      <div class="sh"><div class="stit">&#xD68C;&#xC0AC;&#xBCC4; &#xBCF4;&#xAE30;</div></div>
       <div class="csc" id="cchips"></div>
-      <div class="sh"><div class="stit" id="hlt">전체 프롬프트</div><div class="sa" onclick="clearF()">전체보기</div></div>
+      <div class="sh"><div class="stit" id="hlt">&#xC804;&#xCCB4; &#xD504;&#xB86C;&#xD504;&#xD2B8;</div><div class="sa" onclick="clearF()">&#xC804;&#xCCB4;&#xBCF4;&#xAE30;</div></div>
       <div class="cs" id="hcards"></div>
     </div>
     <div id="sc-search" class="sc">
-      <div class="ssrch"><input class="sil" type="text" placeholder="프롬프트, 회사, 카테고리 검색..." id="sri2" oninput="renderSearch()" autocomplete="off"></div>
+      <div class="ssrch"><input class="sil" type="text" placeholder="&#xD504;&#xB86C;&#xD504;&#xD2B8;, &#xD68C;&#xC0AC;, &#xCE74;&#xD14C;&#xACE0;&#xB9AC; &#xAC80;&#xC0C9;..." id="sri2" oninput="renderSearch()" autocomplete="off"></div>
       <div class="fr" id="fpills"></div>
       <div class="sr" id="sres"></div>
     </div>
     <div id="sc-saved" class="sc">
-      <div class="svhdr"><div class="svtit">저장된 프롬프트</div><div class="svsub" id="svct">0개 저장됨</div></div>
+      <div class="svhdr"><div class="svtit">&#xC800;&#xC7A5;&#xB41C; &#xD504;&#xB86C;&#xD504;&#xD2B8;</div><div class="svsub" id="svct">0&#xAC1C; &#xC800;&#xC7A5;&#xB428;</div></div>
       <div class="svc" id="svcards"></div>
     </div>
     <div id="sc-settings" class="sc">
-      <div class="sethdr"><div class="settit">설정</div></div>
-      <div class="synci"><div class="sdot"></div><div class="syt"><strong>localStorage 동기화 활성화</strong><br>admin.html에서 변경 시 재접속으로 반영</div></div>
+      <div class="sethdr"><div class="settit">&#xC124;&#xC815;</div></div>
+      <div class="synci"><div class="sdot"></div><div class="syt"><strong>localStorage &#xB3D9;&#xAE30;&#xD654; &#xD65C;&#xC131;&#xD654;</strong><br>admin.html&#xC5D0;&#xC11C; &#xBCC0;&#xACBD; &#xC2DC; &#xC7AC;&#xC811;&#xC18D;&#xC73C;&#xB85C; &#xBC18;&#xC601;</div></div>
       <div class="setlist">
-        <div class="setg"><div class="setgt">화면 설정</div>
-          <div class="setc"><div class="setr"><div class="sri">🌙</div><div class="srin"><div class="srl">다크 모드</div><div class="srs">어두운 화면으로 전환</div></div><button class="tgl" id="dtgl" onclick="toggleDark()"></button></div></div>
+        <div class="setg"><div class="setgt">&#xD654;&#xBA74; &#xC124;&#xC815;</div>
+          <div class="setc"><div class="setr"><div class="sri">&#x1F319;</div><div class="srin"><div class="srl">&#xB2E4;&#xD06C; &#xBAA8;&#xB4DC;</div><div class="srs">&#xC5B4;&#xB450;&#xC6B4; &#xD654;&#xBA74;&#xC73C;&#xB85C; &#xC804;&#xD658;</div></div><button class="tgl" id="dtgl" onclick="toggleDark()"></button></div></div>
         </div>
-        <div class="setg"><div class="setgt">데이터</div>
+        <div class="setg"><div class="setgt">&#xB370;&#xC774;&#xD130;</div>
           <div class="setc">
-            <div class="setr"><div class="sri">📊</div><div class="srin"><div class="srl">저장된 프롬프트 수</div><div class="srs" id="spc">-</div></div></div>
-            <div class="setr"><div class="sri">🔄</div><div class="srin"><div class="srl">콘텐츠 새로고침</div><div class="srs">admin.html의 최신 데이터 로드</div></div><button class="ib" onclick="refreshData()">↻</button></div>
-            <div class="setr"><div class="sri">🗑️</div><div class="srin"><div class="srl">저장 목록 초기화</div><div class="srs">북마크한 프롬프트 전체 삭제</div></div><button class="ib" onclick="clearSaved()">✕</button></div>
+            <div class="setr"><div class="sri">&#x1F4CA;</div><div class="srin"><div class="srl">&#xC800;&#xC7A5;&#xB41C; &#xD504;&#xB86C;&#xD504;&#xD2B8; &#xC218;</div><div class="srs" id="spc">-</div></div></div>
+            <div class="setr"><div class="sri">&#x1F3E2;</div><div class="srin"><div class="srl">&#xB4F1;&#xB85D; &#xD68C;&#xC0AC; &#xC218;</div><div class="srs" id="scct">-</div></div></div>
+            <div class="setr"><div class="sri">&#x1F504;</div><div class="srin"><div class="srl">&#xCF58;&#xD150;&#xCE20; &#xC0C8;&#xB85C;&#xACE0;&#xCE68;</div><div class="srs">admin.html&#xC758; &#xCD5C;&#xC2E0; &#xB370;&#xC774;&#xD130; &#xB85C;&#xB4DC;</div></div><button class="ib" onclick="refreshData()">&#x21BB;</button></div>
+            <div class="setr"><div class="sri">&#x1F5D1;&#xFE0F;</div><div class="srin"><div class="srl">&#xC800;&#xC7A5; &#xBAA9;&#xB85D; &#xCD08;&#xAE30;&#xD654;</div><div class="srs">&#xBD81;&#xB9C8;&#xD06C;&#xD55C; &#xD504;&#xB86C;&#xD504;&#xD2B8; &#xC804;&#xCCB4; &#xC0AD;&#xC81C;</div></div><button class="ib" onclick="clearSaved()">&#x2715;</button></div>
           </div>
         </div>
-        <div class="setg"><div class="setgt">정보</div>
-          <div class="setc"><div class="setr"><div class="sri">📱</div><div class="srin"><div class="srl">PlannerAI</div><div class="srs">v1.0 — PM을 위한 AI 프롬프트 앱</div></div></div></div>
+        <div class="setg"><div class="setgt">&#xC815;&#xBCF4;</div>
+          <div class="setc"><div class="setr"><div class="sri">&#x1F4F1;</div><div class="srin"><div class="srl">PlannerAI</div><div class="srs">v1.1 &mdash; PM&#xC744; &#xC704;&#xD55C; AI &#xD504;&#xB86C;&#xD504;&#xD2B8; &#xC571;</div></div></div></div>
         </div>
       </div>
     </div>
   </div>
   <nav class="tab-bar">
-    <div class="tab active" id="tab-home" onclick="showSc('home')"><div class="tbi">🏠</div><div class="tbl">홈</div></div>
-    <div class="tab" id="tab-search" onclick="showSc('search')"><div class="tbi">🔍</div><div class="tbl">탐색</div></div>
-    <div class="tab" id="tab-saved" onclick="showSc('saved')"><div class="tbi">🔖</div><div class="tbl">저장</div><div class="tdot"></div></div>
-    <div class="tab" id="tab-settings" onclick="showSc('settings')"><div class="tbi">⚙️</div><div class="tbl">설정</div></div>
+    <div class="tab active" id="tab-home" onclick="showSc('home')"><div class="tbi">&#x1F3E0;</div><div class="tbl">&#xD648;</div></div>
+    <div class="tab" id="tab-search" onclick="showSc('search')"><div class="tbi">&#x1F50D;</div><div class="tbl">&#xD0D0;&#xC0C9;</div></div>
+    <div class="tab" id="tab-saved" onclick="showSc('saved')"><div class="tbi">&#x1F516;</div><div class="tbl">&#xC800;&#xC7A5;</div><div class="tdot"></div></div>
+    <div class="tab" id="tab-settings" onclick="showSc('settings')"><div class="tbi">&#x2699;&#xFE0F;</div><div class="tbl">&#xC124;&#xC815;</div></div>
   </nav>
   <div class="tw" id="tw"></div>
 </div>
 <script>
-const SK='plannerai_prompts',SVK='plannerai_saved',DK='plannerai_dark';
+const SK='plannerai_prompts',CK='plannerai_companies',SVK='plannerai_saved',DK='plannerai_dark';
+const DEFAULT_CE={'카카오':'💛','네이버':'🟢','토스':'💙','쿠팡':'🟠','라인':'💚','크래프톤':'🎮','삼성 MX':'📱','현대':'🚗','공통':'⭐'};
 const DP=[
   {id:'d1',title:'PRD 초안 작성기',company:'카카오',category:'PRD 작성',level:'중급',tags:'PM,기획',prompt:'다음 기능에 대한 PRD 초안을 작성해줘.\n\n기능명: [기능명]\n타겟 사용자: [사용자]\n핵심 문제: [문제]\n\n포함 항목:\n1. 배경 및 목적\n2. 성공 지표 (KPI)\n3. 기능 요구사항\n4. 비기능 요구사항\n5. 제외 범위',tip:'기능명, 타겟 사용자, 핵심 문제를 구체적으로 작성할수록 퀄리티가 높아집니다.',example:'입력: 기능명=다크모드, 타겟=야간 사용자\n출력: 배경-야간 사용 증가... (구조화된 PRD)',createdAt:new Date().toISOString()},
   {id:'d2',title:'유저 스토리 생성기',company:'토스',category:'유저 스토리',level:'초급',tags:'Agile,스프린트',prompt:'다음 기능에 대한 유저 스토리를 작성해줘.\n\n기능: [기능 설명]\n\n형식: 나는 [역할]로서, [목표]를 위해 [기능]을 원한다.\n\n각 스토리마다:\n- 수용 조건 3개 이상\n- 스토리 포인트 예상치\n- 의존성 여부',tip:'As-Is/To-Be를 먼저 정리한 후 실행하면 더 정확합니다.',example:'',createdAt:new Date().toISOString()},
@@ -201,35 +203,115 @@ const DP=[
   {id:'d4',title:'회의록 요약 & 액션 아이템',company:'공통',category:'회의 정리',level:'초급',tags:'회의,생산성',prompt:'다음 회의 내용을 정리해줘.\n\n[회의록 붙여넣기]\n\n1. 📋 회의 목적\n2. 🗝️ 핵심 결정 사항\n3. ✅ 액션 아이템 (담당자, 마감일)\n4. 🔄 다음 회의 확인 사항\n5. ❓ 미결 이슈',tip:'날것으로 붙여넣어도 AI가 구조화해줍니다.',example:'',createdAt:new Date().toISOString()},
   {id:'d5',title:'OKR 설정 도우미',company:'쿠팡',category:'OKR 설정',level:'중급',tags:'OKR,목표관리',prompt:'다음 분기 OKR을 설계해줘.\n\n팀: [팀명]\n분기: [Q? 20??]\n목표: [상위 목표]\n\nObjective: (도전적 정성 목표)\nKR1: (수치 목표)\nKR2: ...\nKR3: ...\n\n각 KR에 측정 방법과 Baseline 제안',tip:'Objective는 도전적으로, KR은 수치로.',example:'',createdAt:new Date().toISOString()}
 ];
-const CE={'카카오':'💛','네이버':'🟢','토스':'💙','쿠팡':'🟠','라인':'💚','크래프톤':'🎮','삼성 MX':'📱','현대':'🚗','공통':'⭐'};
-let AP=[],SI=new Set(),AC='',SQ='',SF='',dark=false;
-function init(){dark=localStorage.getItem(DK)==='true';applyDark();lp();try{SI=new Set(JSON.parse(localStorage.getItem(SVK)||'[]'))}catch(e){}rh();rsf();usb()}
-function lp(){try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);if(Array.isArray(d)&&d.length>0){AP=d;return}}}catch(e){}AP=[...DP]}
-function toggleDark(){dark=!dark;localStorage.setItem(DK,dark);applyDark()}
-function applyDark(){document.documentElement.setAttribute('data-theme',dark?'dark':'');const b=document.getElementById('dtb');const t=document.getElementById('dtgl');if(b)b.textContent=dark?'☀️':'🌙';if(t){if(dark)t.classList.add('on');else t.classList.remove('on')}}
-function showSc(n){document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('sc-'+n).classList.add('active');document.getElementById('tab-'+n)?.classList.add('active');if(n==='saved')rsv();if(n==='settings'){document.getElementById('spc').textContent=AP.length+'개 (localStorage)';const t=document.getElementById('dtgl');if(t){if(dark)t.classList.add('on');else t.classList.remove('on')}}if(n==='search')setTimeout(()=>document.getElementById('sri2')?.focus(),100)}
-function rh(){document.getElementById('pct').textContent=AP.length+'개의 프롬프트 준비됨';rchips();rcards()}
-function rchips(){const cos=[...new Set(AP.map(p=>p.company).filter(Boolean))].sort();document.getElementById('cchips').innerHTML=cos.map(co=>`<div class="chip ${AC===co?'active':''}" onclick="fc('${co}')"><div class="ce">${CE[co]||'🏢'}</div><div class="cn">${co}</div></div>`).join('')}
-function fc(co){AC=(AC===co)?'':co;document.getElementById('hs').value='';SQ='';rchips();rcards();document.getElementById('hlt').textContent=AC?AC+' 프롬프트':'전체 프롬프트'}
-function clearF(){AC='';SQ='';document.getElementById('hs').value='';rchips();rcards();document.getElementById('hlt').textContent='전체 프롬프트'}
-function onHS(){SQ=document.getElementById('hs').value.toLowerCase();AC='';rchips();rcards();document.getElementById('hlt').textContent=SQ?'"'+SQ+'" 검색 결과':'전체 프롬프트'}
-function rcards(){let f=AP;if(AC)f=f.filter(p=>p.company===AC);if(SQ)f=f.filter(p=>(p.title||'').toLowerCase().includes(SQ)||(p.prompt||'').toLowerCase().includes(SQ)||(p.tags||'').toLowerCase().includes(SQ)||(p.category||'').toLowerCase().includes(SQ));const c=document.getElementById('hcards');c.innerHTML=f.length===0?emph('🔎','결과가 없습니다','다른 키워드나 회사로 검색해보세요'):f.map(rc).join('')}
-function rsf(){const cats=[...new Set(AP.map(p=>p.category).filter(Boolean))].sort();document.getElementById('fpills').innerHTML=`<div class="fp ${!SF?'active':''}" onclick="ssf('')">전체</div>`+cats.map(c=>`<div class="fp ${SF===c?'active':''}" onclick="ssf('${c}')">${c}</div>`).join('')}
-function ssf(f){SF=f;rsf();renderSearch()}
-function renderSearch(){const q=(document.getElementById('sri2').value||'').toLowerCase();let f=AP;if(q)f=f.filter(p=>(p.title||'').toLowerCase().includes(q)||(p.prompt||'').toLowerCase().includes(q)||(p.company||'').toLowerCase().includes(q)||(p.category||'').toLowerCase().includes(q)||(p.tags||'').toLowerCase().includes(q));if(SF)f=f.filter(p=>p.category===SF);const c=document.getElementById('sres');c.innerHTML=f.length===0?emph('🔍','검색 결과 없음','다른 검색어를 입력해보세요'):f.map(rc).join('')}
-function rsv(){const sv=AP.filter(p=>SI.has(p.id));document.getElementById('svct').textContent=sv.length+'개 저장됨';const c=document.getElementById('svcards');c.innerHTML=sv.length===0?emph('🔖','저장된 프롬프트가 없습니다','🔖 버튼을 눌러 저장하세요'):sv.map(rc).join('')}
-function usb(){const t=document.getElementById('tab-saved');if(SI.size>0)t.setAttribute('data-badge','true');else t.removeAttribute('data-badge')}
-function clearSaved(){if(!confirm('저장 목록을 모두 삭제하시겠습니까?'))return;SI.clear();localStorage.setItem(SVK,'[]');usb();rsv();toast('저장 목록이 초기화되었습니다')}
-function refreshData(){lp();rh();rsf();toast('✅ 최신 데이터로 업데이트되었습니다');document.getElementById('spc').textContent=AP.length+'개 (localStorage)'}
-function rc(p){const sv=SI.has(p.id);return `<div class="pc" id="c-${p.id}" onclick="tc('${p.id}')"><div class="ct"><div class="ci">${CE[p.company]||'📝'}</div><div class="cm"><div class="ctit">${esc(p.title)}</div><div class="ctags">${p.company?`<span class="ctag ctco">${esc(p.company)}</span>`:''}${p.category?`<span class="ctag ctcat">${esc(p.category)}</span>`:''}${p.level?`<span class="ctag ctlv-${p.level}">${esc(p.level)}</span>`:''}</div></div><div class="cchev">▾</div></div><div class="cb"><div class="pt">${esc(p.prompt)}</div>${p.tip?`<div class="ib2 ib-tip"><div class="il">💡 팁</div>${esc(p.tip)}</div>`:''}${p.example?`<div class="ib2 ib-ex"><div class="il">📎 예시</div>${esc(p.example)}</div>`:''}<div class="cas"><button class="ab ab-cp" id="cb-${p.id}" onclick="cpP(event,'${p.id}')">📋 복사하기</button><button class="ab ab-sv" onclick="svP(event,'${p.id}')" id="sb-${p.id}">${sv?'🔖 저장됨':'🔖 저장'}</button></div></div></div>`}
-function tc(id){document.getElementById('c-'+id)?.classList.toggle('open')}
-function cpP(e,id){e.stopPropagation();const p=AP.find(x=>x.id===id);if(!p)return;const done=()=>{const b=document.getElementById('cb-'+id);if(b){b.textContent='✅ 복사됨!';b.classList.add('copied');setTimeout(()=>{b.textContent='📋 복사하기';b.classList.remove('copied')},1800)}toast('프롬프트가 복사되었습니다!')};if(navigator.clipboard)navigator.clipboard.writeText(p.prompt).then(done).catch(()=>{fb(p.prompt);done()});else{fb(p.prompt);done()}}
-function fb(t){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0;top:0;left:0;';document.body.appendChild(a);a.focus();a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a)}
-function svP(e,id){e.stopPropagation();if(SI.has(id)){SI.delete(id);toast('저장이 해제되었습니다')}else{SI.add(id);toast('🔖 저장되었습니다!')}localStorage.setItem(SVK,JSON.stringify([...SI]));usb();const b=document.getElementById('sb-'+id);if(b)b.textContent=SI.has(id)?'🔖 저장됨':'🔖 저장'}
-function toast(msg){const w=document.getElementById('tw');const t=document.createElement('div');t.className='mts';t.textContent=msg;w.appendChild(t);setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300)},2000)}
-function emph(icon,title,desc){return `<div class="emp"><div class="ei">${icon}</div><div class="et">${title}</div><div class="ed">${desc}</div></div>`}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-window.addEventListener('storage',e=>{if(e.key===SK){lp();rh();rsf();toast('🔄 새 프롬프트가 반영되었습니다')}});
+let AP=[],CE={},SI=new Set(),AC='',SQ='',SF='',dark=false;
+
+function loadCompanyEmojis(){
+  CE={...DEFAULT_CE};
+  try{const r=localStorage.getItem(CK);if(r){const list=JSON.parse(r);if(Array.isArray(list)){list.forEach(c=>{if(c.name&&c.emoji)CE[c.name]=c.emoji;});}}}catch(e){}
+}
+function lp(){
+  try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);if(Array.isArray(d)&&d.length>0){AP=d;return;}}}catch(e){}
+  AP=[...DP];
+}
+function init(){
+  dark=localStorage.getItem(DK)==='true';applyDark();
+  loadCompanyEmojis();lp();
+  try{SI=new Set(JSON.parse(localStorage.getItem(SVK)||'[]'));}catch(e){}
+  rh();rsf();usb();
+}
+function toggleDark(){dark=!dark;localStorage.setItem(DK,dark);applyDark();}
+function applyDark(){
+  document.documentElement.setAttribute('data-theme',dark?'dark':'');
+  const b=document.getElementById('dtb');const t=document.getElementById('dtgl');
+  if(b)b.textContent=dark?'☀️':'🌙';
+  if(t){if(dark)t.classList.add('on');else t.classList.remove('on');}
+}
+function showSc(n){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sc-'+n).classList.add('active');
+  document.getElementById('tab-'+n)?.classList.add('active');
+  if(n==='saved')rsv();
+  if(n==='settings'){
+    document.getElementById('spc').textContent=AP.length+'개 (localStorage)';
+    const cos=[...new Set(AP.map(p=>p.company).filter(Boolean))];
+    document.getElementById('scct').textContent=cos.length+'개 회사';
+    const t=document.getElementById('dtgl');
+    if(t){if(dark)t.classList.add('on');else t.classList.remove('on');}
+  }
+  if(n==='search')setTimeout(()=>document.getElementById('sri2')?.focus(),100);
+}
+function rh(){document.getElementById('pct').textContent=AP.length+'개의 프롬프트 준비됨';rchips();rcards();}
+function rchips(){
+  const cos=[...new Set(AP.map(p=>p.company).filter(Boolean))].sort();
+  document.getElementById('cchips').innerHTML=cos.map(co=>`<div class="chip ${AC===co?'active':''}" onclick="fc('${co}')"><div class="ce">${CE[co]||'🏢'}</div><div class="cn">${co}</div></div>`).join('');
+}
+function fc(co){AC=(AC===co)?'':co;document.getElementById('hs').value='';SQ='';rchips();rcards();document.getElementById('hlt').textContent=AC?AC+' 프롬프트':'전체 프롬프트';}
+function clearF(){AC='';SQ='';document.getElementById('hs').value='';rchips();rcards();document.getElementById('hlt').textContent='전체 프롬프트';}
+function onHS(){SQ=document.getElementById('hs').value.toLowerCase();AC='';rchips();rcards();document.getElementById('hlt').textContent=SQ?'"'+SQ+'" 검색 결과':'전체 프롬프트';}
+function rcards(){
+  let f=AP;
+  if(AC)f=f.filter(p=>p.company===AC);
+  if(SQ)f=f.filter(p=>(p.title||'').toLowerCase().includes(SQ)||(p.prompt||'').toLowerCase().includes(SQ)||(p.tags||'').toLowerCase().includes(SQ)||(p.category||'').toLowerCase().includes(SQ));
+  const c=document.getElementById('hcards');
+  c.innerHTML=f.length===0?emph('🔎','결과가 없습니다','다른 키워드나 회사로 검색해보세요'):f.map(rc).join('');
+}
+function rsf(){
+  const cats=[...new Set(AP.map(p=>p.category).filter(Boolean))].sort();
+  document.getElementById('fpills').innerHTML=`<div class="fp ${!SF?'active':''}" onclick="ssf('')">전체</div>`+cats.map(c=>`<div class="fp ${SF===c?'active':''}" onclick="ssf('${c}')">${c}</div>`).join('');
+}
+function ssf(f){SF=f;rsf();renderSearch();}
+function renderSearch(){
+  const q=(document.getElementById('sri2').value||'').toLowerCase();
+  let f=AP;
+  if(q)f=f.filter(p=>(p.title||'').toLowerCase().includes(q)||(p.prompt||'').toLowerCase().includes(q)||(p.company||'').toLowerCase().includes(q)||(p.category||'').toLowerCase().includes(q)||(p.tags||'').toLowerCase().includes(q));
+  if(SF)f=f.filter(p=>p.category===SF);
+  const c=document.getElementById('sres');
+  c.innerHTML=f.length===0?emph('🔍','검색 결과 없음','다른 검색어를 입력해보세요'):f.map(rc).join('');
+}
+function rsv(){
+  const sv=AP.filter(p=>SI.has(p.id));
+  document.getElementById('svct').textContent=sv.length+'개 저장됨';
+  const c=document.getElementById('svcards');
+  c.innerHTML=sv.length===0?emph('🔖','저장된 프롬프트가 없습니다','🔖 버튼을 눌러 저장하세요'):sv.map(rc).join('');
+}
+function usb(){const t=document.getElementById('tab-saved');if(SI.size>0)t.setAttribute('data-badge','true');else t.removeAttribute('data-badge');}
+function clearSaved(){if(!confirm('저장 목록을 모두 삭제하시겠습니까?'))return;SI.clear();localStorage.setItem(SVK,'[]');usb();rsv();toast('저장 목록이 초기화되었습니다');}
+function refreshData(){
+  loadCompanyEmojis();lp();rh();rsf();
+  toast('✅ 최신 데이터로 업데이트되었습니다');
+  document.getElementById('spc').textContent=AP.length+'개 (localStorage)';
+  const cos=[...new Set(AP.map(p=>p.company).filter(Boolean))];
+  document.getElementById('scct').textContent=cos.length+'개 회사';
+}
+function rc(p){
+  const sv=SI.has(p.id);
+  return `<div class="pc" id="c-${p.id}" onclick="tc('${p.id}')"><div class="ct"><div class="ci">${CE[p.company]||'📝'}</div><div class="cm"><div class="ctit">${esc(p.title)}</div><div class="ctags">${p.company?`<span class="ctag ctco">${esc(p.company)}</span>`:''}${p.category?`<span class="ctag ctcat">${esc(p.category)}</span>`:''}${p.level?`<span class="ctag ctlv-${p.level}">${esc(p.level)}</span>`:''}</div></div><div class="cchev">▾</div></div><div class="cb"><div class="pt">${esc(p.prompt)}</div>${p.tip?`<div class="ib2 ib-tip"><div class="il">💡 팁</div>${esc(p.tip)}</div>`:''}${p.example?`<div class="ib2 ib-ex"><div class="il">📎 예시</div>${esc(p.example)}</div>`:''}<div class="cas"><button class="ab ab-cp" id="cb-${p.id}" onclick="cpP(event,'${p.id}')">📋 복사하기</button><button class="ab ab-sv" onclick="svP(event,'${p.id}')" id="sb-${p.id}">${sv?'🔖 저장됨':'🔖 저장'}</button></div></div></div>`;
+}
+function tc(id){document.getElementById('c-'+id)?.classList.toggle('open');}
+function cpP(e,id){
+  e.stopPropagation();const p=AP.find(x=>x.id===id);if(!p)return;
+  const done=()=>{const b=document.getElementById('cb-'+id);if(b){b.textContent='✅ 복사됨!';b.classList.add('copied');setTimeout(()=>{b.textContent='📋 복사하기';b.classList.remove('copied')},1800);}toast('프롬프트가 복사되었습니다!');};
+  if(navigator.clipboard)navigator.clipboard.writeText(p.prompt).then(done).catch(()=>{fb(p.prompt);done();});
+  else{fb(p.prompt);done();}
+}
+function fb(t){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0;top:0;left:0;';document.body.appendChild(a);a.focus();a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a);}
+function svP(e,id){
+  e.stopPropagation();
+  if(SI.has(id)){SI.delete(id);toast('저장이 해제되었습니다');}else{SI.add(id);toast('🔖 저장되었습니다!');}
+  localStorage.setItem(SVK,JSON.stringify([...SI]));usb();
+  const b=document.getElementById('sb-'+id);if(b)b.textContent=SI.has(id)?'🔖 저장됨':'🔖 저장';
+}
+function toast(msg){
+  const w=document.getElementById('tw');const t=document.createElement('div');t.className='mts';t.textContent=msg;w.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300)},2000);
+}
+function emph(icon,title,desc){return `<div class="emp"><div class="ei">${icon}</div><div class="et">${title}</div><div class="ed">${desc}</div></div>`;}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+window.addEventListener('storage',e=>{
+  if(e.key===SK){lp();rh();rsf();toast('🔄 새 프롬프트가 반영되었습니다');}
+  if(e.key===CK){loadCompanyEmojis();rchips();}
+});
 init();
 </script>
 </body>
