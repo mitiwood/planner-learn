@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlannerAI · 관리자</title>
+<link href="https://fonts.googleapis.com/css2?family=Gmarket+Sans:wght@300;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F6FA;
+  --bg2: #ECEEF5;
+  --sidebar: #12141F;
+  --sidebar2: #1C1F30;
+  --card: #FFFFFF;
+  --border: #E4E6F0;
+  --text: #1A1C2E;
+  --text2: #6B6F87;
+  --text3: #A0A4BC;
+  --accent: #4F6FFF;
+  --accent-l: #EEF2FF;
+  --red: #FF4D6A;
+  --red-l: #FFF0F3;
+  --green: #00C48C;
+  --green-l: #E6FAF4;
+  --yellow: #FFB800;
+  --yellow-l: #FFF8E6;
+  --purple: #8B5CF6;
+  --purple-l: #F5F0FF;
+  --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+  --r: 14px;
+  --r-sm: 8px;
+  --sidebar-w: 240px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Gmarket Sans',sans-serif; background:var(--bg); color:var(--text); display:flex; height:100vh; overflow:hidden; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--sidebar);
+  display: flex; flex-direction: column;
+  flex-shrink: 0; overflow-y: auto;
+}
+.sidebar::-webkit-scrollbar { display:none; }
+
+.sidebar-logo {
+  padding: 24px 20px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.logo-text {
+  font-family:'DM Mono',monospace; font-size:17px; color:#fff;
+}
+.logo-text span { color: var(--accent); }
+.logo-admin-badge {
+  display:inline-block; margin-top:6px;
+  background: rgba(79,111,255,0.2); color:var(--accent);
+  font-size:10px; font-weight:500; padding:2px 8px;
+  border-radius:4px; letter-spacing:1px;
+}
+
+.sidebar-section { padding:16px 12px 4px; }
+.sidebar-label {
+  font-size:10px; letter-spacing:2px; color:rgba(255,255,255,0.25);
+  text-transform:uppercase; padding:0 8px; margin-bottom:6px; font-weight:300;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-radius:10px;
+  cursor:pointer; transition:all 0.18s;
+  font-size:13px; color:rgba(255,255,255,0.45);
+  font-weight:300; position:relative;
+}
+.nav-item:hover { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.8); }
+.nav-item.active { background:rgba(79,111,255,0.18); color:#fff; }
+.nav-item.active::before {
+  content:''; position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:3px; height:60%; background:var(--accent); border-radius:0 3px 3px 0;
+}
+.nav-ico { font-size:15px; width:20px; text-align:center; }
+.nav-badge-sm {
+  margin-left:auto; background:var(--red); color:white;
+  font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px;
+}
+
+.sidebar-footer {
+  margin-top:auto; padding:16px 12px;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+.user-info {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 12px; border-radius:10px;
+  background:rgba(255,255,255,0.05);
+}
+.user-ava {
+  width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px;
+}
+.user-meta { flex:1; }
+.user-name { font-size:12px; color:#fff; font-weight:500; }
+.user-role { font-size:10px; color:rgba(255,255,255,0.35); font-weight:300; }
+.logout-lnk { font-size:11px; color:rgba(255,255,255,0.25); cursor:pointer; }
+.logout-lnk:hover { color:var(--red); }
+
+/* ─── MAIN ─── */
+.main { flex:1; overflow-y:auto; display:flex; flex-direction:column; }
+.main::-webkit-scrollbar { width:4px; }
+.main::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+.topbar {
+  position:sticky; top:0; z-index:10;
+  background:rgba(245,246,250,0.92); backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:14px 28px;
+  display:flex; align-items:center; gap:16px;
+}
+.topbar-title { font-size:20px; font-weight:700; flex:1; }
+.topbar-right { display:flex; align-items:center; gap:10px; }
+.search-wrap {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:10px; display:flex; align-items:center; gap:8px;
+  padding:8px 14px; transition:border-color 0.2s;
+}
+.search-wrap:focus-within { border-color:var(--accent); }
+.search-wrap input {
+  border:none; outline:none; background:transparent;
+  font-size:13px; width:180px; font-family:'Gmarket Sans',sans-serif; color:var(--text);
+}
+.search-wrap input::placeholder { color:var(--text3); }
+.icon-btn {
+  width:36px; height:36px; border-radius:10px;
+  background:var(--card); border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:15px; transition:all 0.2s;
+}
+.icon-btn:hover { border-color:var(--accent); background:var(--accent-l); }
+.notif-dot { position:relative; }
+.notif-dot::after {
+  content:''; position:absolute; top:6px; right:6px;
+  width:7px; height:7px; background:var(--red); border-radius:50%;
+  border:2px solid var(--card);
+}
+
+/* ─── CONTENT AREA ─── */
+.content { padding:24px 28px; flex:1; }
+
+/* ─── STATS ─── */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.stat-card {
+  background:var(--card); border-radius:var(--r);
+  padding:20px; border:1px solid var(--border);
+  box-shadow:var(--shadow); transition:all 0.2s;
+  position:relative; overflow:hidden;
+}
+.stat-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+.stat-card-corner {
+  position:absolute; top:0; right:0;
+  width:56px; height:56px; border-radius:0 var(--r) 0 100%;
+  opacity:0.12;
+}
+.stat-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.stat-icon-wrap {
+  width:38px; height:38px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center; font-size:17px;
+}
+.stat-trend { font-size:11px; font-weight:500; padding:2px 7px; border-radius:6px; }
+.trend-up { background:var(--green-l); color:var(--green); }
+.trend-down { background:var(--red-l); color:var(--red); }
+.stat-value { font-size:28px; font-weight:700; font-family:'DM Mono',monospace; margin-bottom:3px; }
+.stat-label { font-size:12px; color:var(--text2); font-weight:300; }
+
+/* ─── TWO-COL ─── */
+.two-col { display:grid; grid-template-columns:1fr 340px; gap:16px; margin-bottom:24px; }
+
+/* ─── TABLE ─── */
+.table-card {
+  background:var(--card); border-radius:var(--r);
+  border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden;
+}
+.table-header {
+  padding:18px 20px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.table-title { font-size:15px; font-weight:700; }
+.table-actions { display:flex; gap:8px; }
+.btn-sm {
+  padding:6px 14px; border-radius:8px; font-size:12px; font-weight:500;
+  cursor:pointer; border:1.5px solid var(--border);
+  font-family:'Gmarket Sans',sans-serif; transition:all 0.18s; color:var(--text2);
+  background:transparent;
+}
+.btn-sm:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-l); }
+.btn-sm.primary { background:var(--accent); color:white; border-color:var(--accent); }
+.btn-sm.primary:hover { opacity:0.88; }
+.btn-sm.danger { background:var(--red); color:white; border-color:var(--red); }
+
+table { width:100%; border-collapse:collapse; }
+th {
+  text-align:left; padding:11px 20px;
+  font-size:11px; font-weight:500; letter-spacing:0.5px;
+  color:var(--text3); text-transform:uppercase;
+  background:var(--bg); border-bottom:1px solid var(--border);
+}
+td { padding:13px 20px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:var(--bg); }
+
+.co-badge { padding:3px 9px; border-radius:6px; font-size:10px; font-weight:700; }
+.cat-badge { padding:2px 8px; border-radius:5px; font-size:10px; background:var(--bg2); color:var(--text2); }
+.diff-badge { padding:2px 8px; border-radius:5px; font-size:10px; font-weight:500; }
+.diff-basic { background:var(--green-l); color:var(--green); }
+.diff-mid   { background:var(--yellow-l); color:var(--yellow); }
+.diff-adv   { background:var(--red-l); color:var(--red); }
+
+.status-dot { width:7px; height:7px; border-radius:50%; display:inline-block; margin-right:6px; }
+.row-actions { display:flex; gap:6px; }
+.act-btn {
+  width:28px; height:28px; border-radius:7px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  font-size:12px; transition:all 0.15s; background:transparent;
+}
+.act-btn:hover { border-color:var(--accent); background:var(--accent-l); }
+.act-btn.del:hover { border-color:var(--red); background:var(--red-l); }
+
+/* Pagination */
+.pagination {
+  display:flex; align-items:center; gap:6px;
+  padding:14px 20px; border-top:1px solid var(--border);
+  justify-content:flex-end;
+}
+.pg-btn {
+  width:30px; height:30px; border-radius:7px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:12px; transition:all 0.15s;
+  font-family:'DM Mono',monospace; color:var(--text2);
+}
+.pg-btn:hover, .pg-btn.active { background:var(--accent); color:white; border-color:var(--accent); }
+
+/* ─── RIGHT PANEL ─── */
+.panel-card {
+  background:var(--card); border-radius:var(--r);
+  border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden;
+}
+.panel-header { padding:16px 18px; border-bottom:1px solid var(--border); font-size:14px; font-weight:700; }
+.panel-body { padding:16px 18px; }
+
+/* Mini bar chart */
+.mini-chart { display:flex; flex-direction:column; gap:10px; }
+.mini-bar-row { display:flex; align-items:center; gap:10px; }
+.mini-bar-label { font-size:12px; color:var(--text2); width:60px; flex-shrink:0; font-weight:300; }
+.mini-bar-track { flex:1; height:7px; background:var(--bg2); border-radius:4px; overflow:hidden; }
+.mini-bar-fill { height:7px; border-radius:4px; transition:width 0.8s cubic-bezier(0.22,1,0.36,1); }
+.mini-bar-val { font-size:11px; color:var(--text3); font-family:'DM Mono',monospace; width:28px; text-align:right; }
+
+/* Activity feed */
+.activity-list { display:flex; flex-direction:column; }
+.activity-item {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:12px 0; border-bottom:1px solid var(--border);
+}
+.activity-item:last-child { border-bottom:none; }
+.act-ico { font-size:16px; flex-shrink:0; }
+.act-text { font-size:12px; color:var(--text2); line-height:1.5; flex:1; font-weight:300; }
+.act-text strong { color:var(--text); font-weight:500; }
+.act-time { font-size:10px; color:var(--text3); flex-shrink:0; font-family:'DM Mono',monospace; }
+
+/* ─── USER TABLE ─── */
+.user-row-info { display:flex; align-items:center; gap:10px; }
+.user-ava-sm {
+  width:30px; height:30px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px;
+}
+.user-col-name { font-size:13px; font-weight:500; }
+.user-col-email { font-size:11px; color:var(--text3); }
+.plan-badge { padding:2px 8px; border-radius:5px; font-size:10px; font-weight:500; }
+.plan-free { background:var(--bg2); color:var(--text2); }
+.plan-pro  { background:var(--accent-l); color:var(--accent); }
+
+/* ─── MODAL ─── */
+.modal-backdrop {
+  position:fixed; inset:0; background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(4px); z-index:100;
+  display:none; align-items:center; justify-content:center;
+}
+.modal-backdrop.open { display:flex; }
+.modal {
+  background:var(--card); border-radius:20px; width:580px;
+  max-height:85vh; overflow-y:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,0.15);
+  animation:modalIn 0.28s cubic-bezier(0.22,1,0.36,1);
+}
+.modal::-webkit-scrollbar { display:none; }
+@keyframes modalIn { from { opacity:0; transform:scale(0.95) translateY(10px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
+.modal-head {
+  padding:24px 28px 0;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.modal-head-title { font-size:18px; font-weight:700; }
+.modal-close {
+  width:32px; height:32px; border-radius:8px; border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:14px; color:var(--text2); transition:all 0.15s;
+  background:transparent;
+}
+.modal-close:hover { border-color:var(--red); color:var(--red); background:var(--red-l); }
+
+.modal-body { padding:20px 28px 28px; }
+.form-group { margin-bottom:16px; }
+.form-label { font-size:12px; font-weight:500; color:var(--text2); margin-bottom:6px; display:block; }
+.form-input, .form-select, .form-textarea {
+  width:100%; padding:10px 14px; border-radius:10px;
+  border:1.5px solid var(--border); font-size:13px;
+  font-family:'Gmarket Sans',sans-serif; color:var(--text);
+  background:var(--bg); outline:none; transition:border-color 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color:var(--accent); background:#fff; }
+.form-textarea { min-height:100px; resize:vertical; line-height:1.6; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.form-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:20px; padding-top:16px; border-top:1px solid var(--border); }
+.btn-lg {
+  padding:10px 22px; border-radius:10px; font-size:14px; font-weight:500;
+  cursor:pointer; font-family:'Gmarket Sans',sans-serif; transition:all 0.18s;
+}
+.btn-lg.cancel { background:transparent; border:1.5px solid var(--border); color:var(--text2); }
+.btn-lg.cancel:hover { border-color:var(--text3); }
+.btn-lg.save { background:var(--accent); color:white; border:1.5px solid var(--accent); }
+.btn-lg.save:hover { opacity:0.88; }
+
+/* ─── TOAST ─── */
+.toast {
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background:var(--sidebar); color:white;
+  padding:12px 20px; border-radius:12px; font-size:13px; font-weight:500;
+  box-shadow:0 8px 24px rgba(0,0,0,0.2);
+  opacity:0; transform:translateY(8px);
+  transition:all 0.25s; pointer-events:none;
+}
+.toast.show { opacity:1; transform:translateY(0); }
+
+/* ─── VIEW TOGGLE ─── */
+.view-content { display:none; }
+.view-content.active { display:block; }
+
+/* ─── ANALYTICS ─── */
+.analytics-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:20px; }
+.a-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--r); padding:20px; box-shadow:var(--shadow);
+}
+.a-card-title { font-size:12px; color:var(--text2); font-weight:300; margin-bottom:8px; }
+.a-card-val { font-size:26px; font-weight:700; font-family:'DM Mono',monospace; }
+.a-card-sub { font-size:11px; color:var(--text3); margin-top:4px; }
+
+/* Funnel */
+.funnel { display:flex; flex-direction:column; gap:8px; }
+.funnel-row { display:flex; align-items:center; gap:12px; }
+.funnel-label { font-size:12px; color:var(--text2); width:80px; flex-shrink:0; font-weight:300; }
+.funnel-bar { height:24px; border-radius:6px; display:flex; align-items:center; padding-left:10px; min-width:30px; }
+.funnel-bar-val { font-size:11px; color:white; font-weight:500; font-family:'DM Mono',monospace; }
+.funnel-pct { font-size:11px; color:var(--text3); width:40px; text-align:right; }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.stat-card { animation: fadeUp 0.4s ease both; }
+.stat-card:nth-child(2) { animation-delay:0.06s; }
+.stat-card:nth-child(3) { animation-delay:0.12s; }
+.stat-card:nth-child(4) { animation-delay:0.18s; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">Planner<span>AI</span></div>
+    <div class="logo-admin-badge">ADMIN</div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">메인</div>
+    <div class="nav-item active" onclick="switchView('dashboard',this)">
+      <span class="nav-ico">📊</span> 대시보드
+    </div>
+    <div class="nav-item" onclick="switchView('prompts',this)">
+      <span class="nav-ico">📝</span> 프롬프트 관리
+    </div>
+    <div class="nav-item" onclick="switchView('users',this)">
+      <span class="nav-ico">👥</span> 사용자 관리
+    </div>
+    <div class="nav-item" onclick="switchView('analytics',this)">
+      <span class="nav-ico">📈</span> 분석
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">설정</div>
+    <div class="nav-item" onclick="switchView('login_config',this)">
+      <span class="nav-ico">🔐</span> 로그인 설정
+    </div>
+    <div class="nav-item" onclick="showToast('🚧 준비 중입니다')">
+      <span class="nav-ico">🔔</span> 알림 관리
+      <span class="nav-badge-sm">3</span>
+    </div>
+    <div class="nav-item" onclick="showToast('🚧 준비 중입니다')">
+      <span class="nav-ico">⚙️</span> 시스템 설정
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-ava" id="sidebarAva" style="background:#4F6FFF">👤</div>
+      <div class="user-meta">
+        <div class="user-name" id="sidebarName">관리자</div>
+        <div class="user-role">Super Admin</div>
+      </div>
+      <span class="logout-lnk" onclick="window.location.href='login.html'">↩</span>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">대시보드</div>
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <span style="color:var(--text3)">🔍</span>
+        <input type="text" placeholder="검색..." oninput="globalSearch(this.value)">
+      </div>
+      <div class="icon-btn notif-dot" onclick="showToast('알림이 없습니다')">🔔</div>
+      <div class="icon-btn" onclick="window.location.href='login.html'">🚪</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="view-content active" id="view-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-corner" style="background:var(--accent)"></div>
+          <div class="stat-top">
+            <div class="stat-icon-wrap" style="background:var(--accent-l)">📝</div>
+            <span class="stat-trend trend-up">+12%</span>
+          </div>
+          <div class="stat-value" style="color:var(--accent)">247</div>
+          <div class="stat-label">총 프롬프트 수</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-corner" style="background:var(--green)"></div>
+          <div class="stat-top">
+            <div class="stat-icon-wrap" style="background:var(--green-l)">👥</div>
+            <span class="stat-trend trend-up">+8.3%</span>
+          </div>
+          <div class="stat-value" style="color:var(--green)">1,842</div>
+          <div class="stat-label">가입 사용자</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-corner" style="background:var(--yellow)"></div>
+          <div class="stat-top">
+            <div class="stat-icon-wrap" style="background:var(--yellow-l)">🔥</div>
+            <span class="stat-trend trend-up">+21%</span>
+          </div>
+          <div class="stat-value" style="color:var(--yellow)">4,291</div>
+          <div class="stat-label">오늘 학습 세션</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-corner" style="background:var(--purple)"></div>
+          <div class="stat-top">
+            <div class="stat-icon-wrap" style="background:var(--purple-l)">📋</div>
+            <span class="stat-trend trend-down">-2.1%</span>
+          </div>
+          <div class="stat-value" style="color:var(--purple)">18,420</div>
+          <div class="stat-label">프롬프트 복사 수</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <!-- 최근 프롬프트 -->
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-title">최근 등록 프롬프트</div>
+            <div class="table-actions">
+              <button class="btn-sm primary" onclick="openPromptModal()">+ 새 프롬프트</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr>
+              <th>제목</th><th>기업</th><th>카테고리</th><th>상태</th><th>액션</th>
+            </tr></thead>
+            <tbody id="dashRecentTbody"></tbody>
+          </table>
+          <div class="pagination">
+            <div class="pg-btn active">1</div>
+            <div class="pg-btn">2</div>
+            <div class="pg-btn">3</div>
+            <div class="pg-btn">›</div>
+          </div>
+        </div>
+
+        <!-- Right panels -->
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <!-- 기업별 현황 -->
+          <div class="panel-card">
+            <div class="panel-header">🏢 기업별 프롬프트 현황</div>
+            <div class="panel-body">
+              <div class="mini-chart" id="companyChart"></div>
+            </div>
+          </div>
+
+          <!-- 최근 활동 -->
+          <div class="panel-card">
+            <div class="panel-header">⚡ 최근 활동</div>
+            <div class="panel-body" style="padding-top:0">
+              <div class="activity-list" id="activityList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PROMPT MANAGEMENT ── -->
+    <div class="view-content" id="view-prompts">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">프롬프트 관리 <span style="font-size:12px;color:var(--text3);font-weight:300;margin-left:8px">총 247개</span></div>
+          <div class="table-actions">
+            <select class="btn-sm" id="filterCo" onchange="renderPromptTable()" style="padding:6px 10px">
+              <option value="all">전체 기업</option>
+              <option value="kakao">카카오</option>
+              <option value="naver">네이버</option>
+              <option value="toss">토스</option>
+              <option value="coupang">쿠팡</option>
+              <option value="line">라인</option>
+              <option value="krafton">크래프톤</option>
+              <option value="samsung">삼성 MX</option>
+              <option value="hyundai">현대차</option>
+            </select>
+            <select class="btn-sm" id="filterCat" onchange="renderPromptTable()" style="padding:6px 10px">
+              <option value="all">전체 카테고리</option>
+              <option value="prd">PRD 작성</option>
+              <option value="ux">UX 리서치</option>
+              <option value="data">데이터 분석</option>
+              <option value="roadmap">로드맵</option>
+              <option value="meeting">회의·소통</option>
+              <option value="ab">A/B 테스트</option>
+            </select>
+            <button class="btn-sm primary" onclick="openPromptModal()">+ 추가</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>ID</th><th>제목</th><th>기업</th><th>카테고리</th><th>난이도</th><th>복사수</th><th>상태</th><th>액션</th>
+          </tr></thead>
+          <tbody id="promptTbody"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pg-btn active">1</div>
+          <div class="pg-btn">2</div>
+          <div class="pg-btn">3</div>
+          <div class="pg-btn">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── USER MANAGEMENT ── -->
+    <div class="view-content" id="view-users">
+      <div class="table-card">
+        <div class="table-header">
+          <div class="table-title">사용자 관리 <span style="font-size:12px;color:var(--text3);font-weight:300;margin-left:8px">총 1,842명</span></div>
+          <div class="table-actions">
+            <select class="btn-sm" style="padding:6px 10px" onchange="renderUserTable(this.value)">
+              <option value="all">전체 가입 경로</option>
+              <option value="google">Google</option>
+              <option value="kakao">Kakao</option>
+              <option value="naver">Naver</option>
+            </select>
+            <button class="btn-sm" onclick="exportUsers()">📥 내보내기</button>
+          </div>
+        </div>
+        <table>
+          <thead><tr>
+            <th>사용자</th><th>가입 경로</th><th>플랜</th><th>학습 수</th><th>최근 접속</th><th>상태</th><th>액션</th>
+          </tr></thead>
+          <tbody id="userTbody"></tbody>
+        </table>
+        <div class="pagination">
+          <div class="pg-btn active">1</div>
+          <div class="pg-btn">2</div>
+          <div class="pg-btn">3</div>
+          <div class="pg-btn">›</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ANALYTICS ── -->
+    <div class="view-content" id="view-analytics">
+      <div class="analytics-grid">
+        <div class="a-card">
+          <div class="a-card-title">월 활성 사용자 (MAU)</div>
+          <div class="a-card-val" style="color:var(--accent)">1,284</div>
+          <div class="a-card-sub">↑ 전월 대비 +14.2%</div>
+        </div>
+        <div class="a-card">
+          <div class="a-card-title">평균 세션 시간</div>
+          <div class="a-card-val" style="color:var(--green)">18:32</div>
+          <div class="a-card-sub">↑ 전월 대비 +3분 21초</div>
+        </div>
+        <div class="a-card">
+          <div class="a-card-title">7일 리텐션</div>
+          <div class="a-card-val" style="color:var(--purple)">64.8%</div>
+          <div class="a-card-sub">업계 평균 대비 +12.3%</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <!-- Funnel -->
+        <div class="panel-card">
+          <div class="panel-header">🔻 전환 퍼널</div>
+          <div class="panel-body">
+            <div class="funnel">
+              <div class="funnel-row">
+                <div class="funnel-label">방문자</div>
+                <div class="funnel-bar" style="width:100%;background:var(--accent)"><div class="funnel-bar-val">8,420</div></div>
+                <div class="funnel-pct">100%</div>
+              </div>
+              <div class="funnel-row">
+                <div class="funnel-label">가입 시작</div>
+                <div class="funnel-bar" style="width:72%;background:var(--green)"><div class="funnel-bar-val">6,062</div></div>
+                <div class="funnel-pct">72%</div>
+              </div>
+              <div class="funnel-row">
+                <div class="funnel-label">가입 완료</div>
+                <div class="funnel-bar" style="width:55%;background:var(--yellow)"><div class="funnel-bar-val">4,631</div></div>
+                <div class="funnel-pct">55%</div>
+              </div>
+              <div class="funnel-row">
+                <div class="funnel-label">첫 학습</div>
+                <div class="funnel-bar" style="width:38%;background:var(--purple)"><div class="funnel-bar-val">3,200</div></div>
+                <div class="funnel-pct">38%</div>
+              </div>
+              <div class="funnel-row">
+                <div class="funnel-label">7일 복귀</div>
+                <div class="funnel-bar" style="width:22%;background:var(--red)"><div class="funnel-bar-val">1,852</div></div>
+                <div class="funnel-pct">22%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social login stats -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div class="panel-card">
+            <div class="panel-header">🔐 소셜 로그인 비율</div>
+            <div class="panel-body">
+              <div class="mini-chart">
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label">Google</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:58%;background:#4285F4"></div></div>
+                  <div class="mini-bar-val">58%</div>
+                </div>
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label">Kakao</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:27%;background:#FEE500"></div></div>
+                  <div class="mini-bar-val">27%</div>
+                </div>
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label">Naver</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:15%;background:#03C75A"></div></div>
+                  <div class="mini-bar-val">15%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-header">🏆 인기 프롬프트 TOP 5</div>
+            <div class="panel-body" style="padding-top:4px">
+              <div class="mini-chart">
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label" style="width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">PRD 초안 작성</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:92%;background:var(--accent)"></div></div>
+                  <div class="mini-bar-val">2,140</div>
+                </div>
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label" style="width:120px">인터뷰 질문지</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:74%;background:var(--green)"></div></div>
+                  <div class="mini-bar-val">1,720</div>
+                </div>
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label" style="width:120px">데이터 분석</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:60%;background:var(--yellow)"></div></div>
+                  <div class="mini-bar-val">1,390</div>
+                </div>
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label" style="width:120px">A/B 테스트</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:44%;background:var(--purple)"></div></div>
+                  <div class="mini-bar-val">1,020</div>
+                </div>
+                <div class="mini-bar-row">
+                  <div class="mini-bar-label" style="width:120px">회의록 정리</div>
+                  <div class="mini-bar-track"><div class="mini-bar-fill" style="width:30%;background:var(--red)"></div></div>
+                  <div class="mini-bar-val">698</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LOGIN CONFIG ── -->
+    <div class="view-content" id="view-login_config">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px">
+        <!-- Google -->
+        <div class="panel-card">
+          <div class="panel-header" style="display:flex;align-items:center;gap:8px">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+            Google OAuth
+            <span style="margin-left:auto;font-size:10px;background:var(--green-l);color:var(--green);padding:2px 8px;border-radius:5px;font-weight:500">활성</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Client ID</label>
+              <input class="form-input" value="1234567890-abc...apps.googleusercontent.com" type="text">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Client Secret</label>
+              <input class="form-input" value="••••••••••••••••" type="password">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Redirect URI</label>
+              <input class="form-input" value="https://plannerai.kr/auth/google/callback" type="text">
+            </div>
+            <button class="btn-sm primary" onclick="saveOAuthConfig('Google')">저장</button>
+          </div>
+        </div>
+
+        <!-- Kakao -->
+        <div class="panel-card">
+          <div class="panel-header" style="display:flex;align-items:center;gap:8px">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#FFB800" d="M12 3C6.477 3 2 6.477 2 10.5c0 2.611 1.572 4.906 3.938 6.278-.174.633-.632 2.29-.723 2.646-.112.44.161.433.34.315.14-.093 2.226-1.51 3.127-2.12.42.062.849.096 1.318.096 5.523 0 10-3.477 10-7.5S17.523 3 12 3z"/></svg>
+            Kakao OAuth
+            <span style="margin-left:auto;font-size:10px;background:var(--green-l);color:var(--green);padding:2px 8px;border-radius:5px;font-weight:500">활성</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">REST API 키</label>
+              <input class="form-input" value="abcd1234efgh5678" type="text">
+            </div>
+            <div class="form-group">
+              <label class="form-label">JavaScript 키</label>
+              <input class="form-input" value="••••••••••••••••" type="password">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Redirect URI</label>
+              <input class="form-input" value="https://plannerai.kr/auth/kakao/callback" type="text">
+            </div>
+            <button class="btn-sm primary" onclick="saveOAuthConfig('Kakao')">저장</button>
+          </div>
+        </div>
+
+        <!-- Naver -->
+        <div class="panel-card">
+          <div class="panel-header" style="display:flex;align-items:center;gap:8px">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#03C75A" d="M16.273 12.845L7.376 0H0v24h7.727V11.155L16.624 24H24V0h-7.727z"/></svg>
+            Naver OAuth
+            <span style="margin-left:auto;font-size:10px;background:var(--yellow-l);color:var(--yellow);padding:2px 8px;border-radius:5px;font-weight:500">설정 필요</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Client ID</label>
+              <input class="form-input" placeholder="네이버 개발자 센터에서 발급" type="text">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Client Secret</label>
+              <input class="form-input" placeholder="Client Secret 입력" type="password">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Redirect URI</label>
+              <input class="form-input" value="https://plannerai.kr/auth/naver/callback" type="text">
+            </div>
+            <button class="btn-sm primary" onclick="saveOAuthConfig('Naver')">저장</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- OAuth 가이드 -->
+      <div class="table-card" style="padding:24px">
+        <div class="table-title" style="margin-bottom:16px">📖 OAuth 연동 가이드</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#4285F4">Google</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.8;font-weight:300">
+              1. Google Cloud Console 접속<br>
+              2. OAuth 2.0 클라이언트 ID 생성<br>
+              3. 승인된 리디렉션 URI 등록<br>
+              4. Client ID / Secret 복사 후 입력
+            </div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#FFB800">Kakao</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.8;font-weight:300">
+              1. Kakao Developers 접속<br>
+              2. 애플리케이션 추가<br>
+              3. 카카오 로그인 활성화<br>
+              4. Redirect URI 등록 후 키 복사
+            </div>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;color:#03C75A">Naver</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.8;font-weight:300">
+              1. NAVER Developers 접속<br>
+              2. 애플리케이션 등록<br>
+              3. 네이버 로그인 API 추가<br>
+              4. Client ID / Secret 발급 후 입력
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- PROMPT MODAL -->
+<div class="modal-backdrop" id="promptModal" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-title" id="modalTitle">새 프롬프트 추가</div>
+      <button class="modal-close" onclick="closePromptModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">기업</label>
+          <select class="form-select" id="f-company">
+            <option value="kakao">카카오</option>
+            <option value="naver">네이버</option>
+            <option value="toss">토스</option>
+            <option value="coupang">쿠팡</option>
+            <option value="line">라인</option>
+            <option value="krafton">크래프톤</option>
+            <option value="samsung">삼성 MX</option>
+            <option value="hyundai">현대자동차</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">카테고리</label>
+          <select class="form-select" id="f-cat">
+            <option value="prd">PRD 작성</option>
+            <option value="ux">UX 리서치</option>
+            <option value="data">데이터 분석</option>
+            <option value="roadmap">로드맵</option>
+            <option value="meeting">회의·소통</option>
+            <option value="ab">A/B 테스트</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">난이도</label>
+          <select class="form-select" id="f-diff">
+            <option value="초급">초급</option>
+            <option value="중급">중급</option>
+            <option value="고급">고급</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">상태</label>
+          <select class="form-select" id="f-status">
+            <option value="published">게시됨</option>
+            <option value="draft">초안</option>
+            <option value="hidden">숨김</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">프롬프트 제목</label>
+        <input class="form-input" id="f-title" placeholder="예: 금융 서비스 PRD 초안 작성">
+      </div>
+      <div class="form-group">
+        <label class="form-label">설명</label>
+        <input class="form-input" id="f-desc" placeholder="이 프롬프트의 활용 목적을 간략히 설명하세요">
+      </div>
+      <div class="form-group">
+        <label class="form-label">프롬프트 내용</label>
+        <textarea class="form-textarea" id="f-prompt" placeholder="프롬프트 템플릿을 입력하세요. {변수}는 중괄호로 표시하세요."></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">태그 (쉼표 구분)</label>
+        <input class="form-input" id="f-tags" placeholder="예: PRD, 금융, 기획서">
+      </div>
+      <div class="form-actions">
+        <button class="btn-lg cancel" onclick="closePromptModal()">취소</button>
+        <button class="btn-lg save" onclick="savePrompt()">저장하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──
+const CO_INFO = {
+  kakao:   { name:'Kakao',      bg:'#FFB800', text:'#000' },
+  naver:   { name:'Naver',      bg:'#03C75A', text:'#fff' },
+  toss:    { name:'Toss',       bg:'#1B64DA', text:'#fff' },
+  coupang: { name:'Coupang',    bg:'#EE2222', text:'#fff' },
+  line:    { name:'Line',       bg:'#06C755', text:'#fff' },
+  krafton: { name:'Krafton',    bg:'#FF6B35', text:'#fff' },
+  samsung: { name:'Samsung MX', bg:'#1428A0', text:'#fff' },
+  hyundai: { name:'Hyundai',    bg:'#002C5F', text:'#fff' },
+};
+const CAT_LABEL = { prd:'PRD 작성', ux:'UX 리서치', data:'데이터 분석', roadmap:'로드맵', meeting:'회의·소통', ab:'A/B 테스트' };
+
+let PROMPTS = [
+  { id:1, company:'toss', cat:'prd', diff:'중급', title:'금융 서비스 PRD 초안 작성', status:'published', copies:2140, created:'2025-02-01' },
+  { id:2, company:'kakao', cat:'ux', diff:'초급', title:'사용자 인터뷰 질문지 생성', status:'published', copies:1720, created:'2025-02-03' },
+  { id:3, company:'naver', cat:'data', diff:'고급', title:'검색 데이터 인사이트 분석', status:'published', copies:1390, created:'2025-02-05' },
+  { id:4, company:'coupang', cat:'ab', diff:'중급', title:'A/B 테스트 설계서 작성', status:'published', copies:1020, created:'2025-02-07' },
+  { id:5, company:'line', cat:'roadmap', diff:'고급', title:'분기 로드맵 스토리텔링', status:'published', copies:892, created:'2025-02-10' },
+  { id:6, company:'krafton', cat:'meeting', diff:'초급', title:'스프린트 회의록 자동 정리', status:'published', copies:698, created:'2025-02-12' },
+  { id:7, company:'samsung', cat:'prd', diff:'고급', title:'하드웨어-소프트웨어 연동 기능 기획', status:'draft', copies:421, created:'2025-02-14' },
+  { id:8, company:'hyundai', cat:'ux', diff:'중급', title:'자동차 인포테인먼트 UX 리서치', status:'published', copies:380, created:'2025-02-15' },
+  { id:9, company:'naver', cat:'data', diff:'초급', title:'지표 대시보드 해석 & 보고', status:'published', copies:312, created:'2025-02-17' },
+  { id:10, company:'toss', cat:'meeting', diff:'중급', title:'크로스펑셔널 이슈 에스컬레이션', status:'hidden', copies:278, created:'2025-02-20' },
+  { id:11, company:'kakao', cat:'roadmap', diff:'중급', title:'카카오 신기능 기회 탐색', status:'published', copies:241, created:'2025-02-22' },
+  { id:12, company:'coupang', cat:'ux', diff:'초급', title:'이커머스 온보딩 플로우 개선', status:'published', copies:210, created:'2025-02-25' },
+];
+
+const USERS = [
+  { id:1, name:'김지수', email:'jskim@gmail.com', provider:'google', plan:'pro', learned:84, lastSeen:'방금 전', status:'active', bg:'#4285F4' },
+  { id:2, name:'박민준', email:'mjpark@kakao.com', provider:'kakao', plan:'free', learned:32, lastSeen:'1시간 전', status:'active', bg:'#FEE500' },
+  { id:3, name:'이서연', email:'sylee@naver.com', provider:'naver', plan:'pro', learned:156, lastSeen:'3시간 전', status:'active', bg:'#03C75A' },
+  { id:4, name:'최준혁', email:'jhchoi@gmail.com', provider:'google', plan:'free', learned:12, lastSeen:'어제', status:'inactive', bg:'#4285F4' },
+  { id:5, name:'정유나', email:'ynjeong@kakao.com', provider:'kakao', plan:'pro', learned:201, lastSeen:'2일 전', status:'active', bg:'#FEE500' },
+  { id:6, name:'한승우', email:'swhan@naver.com', provider:'naver', plan:'free', learned:8, lastSeen:'1주 전', status:'inactive', bg:'#03C75A' },
+  { id:7, name:'류민아', email:'maryu@gmail.com', provider:'google', plan:'pro', learned:127, lastSeen:'어제', status:'active', bg:'#4285F4' },
+  { id:8, name:'윤태호', email:'thyoon@gmail.com', provider:'google', plan:'free', learned:45, lastSeen:'5시간 전', status:'active', bg:'#4285F4' },
+];
+
+const ACTIVITIES = [
+  { ico:'📝', text:'<strong>김지수</strong>님이 "금융 서비스 PRD" 프롬프트를 복사했습니다', time:'2분 전' },
+  { ico:'👤', text:'<strong>신규 사용자</strong>가 Google로 가입했습니다', time:'8분 전' },
+  { ico:'⭐', text:'<strong>이서연</strong>님이 "A/B 테스트 설계" 프롬프트를 북마크했습니다', time:'15분 전' },
+  { ico:'🎯', text:'<strong>박민준</strong>님이 퀴즈 5문제를 모두 맞췄습니다', time:'32분 전' },
+  { ico:'📋', text:'<strong>새 프롬프트</strong> "현대차 EV 기획" 초안이 등록됐습니다', time:'1시간 전' },
+];
+
+// ── INIT ──
+function init() {
+  // Load user from session
+  const saved = sessionStorage.getItem('plannerUser');
+  if (saved) {
+    const u = JSON.parse(saved);
+    document.getElementById('sidebarName').textContent = u.name || '관리자';
+    document.getElementById('sidebarAva').style.background = u.avatarBg || '#4F6FFF';
+  }
+
+  renderDashRecent();
+  renderCompanyChart();
+  renderActivity();
+  renderPromptTable();
+  renderUserTable('all');
+}
+
+// ── VIEW SWITCH ──
+function switchView(view, el) {
+  document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const titles = {
+    dashboard:'대시보드', prompts:'프롬프트 관리',
+    users:'사용자 관리', analytics:'분석', login_config:'로그인 설정'
+  };
+  document.getElementById('topbarTitle').textContent = titles[view] || view;
+}
+
+// ── DASHBOARD ──
+function renderDashRecent() {
+  document.getElementById('dashRecentTbody').innerHTML = PROMPTS.slice(0,5).map(p => {
+    const co = CO_INFO[p.company];
+    return `<tr>
+      <td><span style="font-size:13px;font-weight:500">${p.title}</span></td>
+      <td><span class="co-badge" style="background:${co.bg};color:${co.text}">${co.name}</span></td>
+      <td><span class="cat-badge">${CAT_LABEL[p.cat]}</span></td>
+      <td>${statusBadge(p.status)}</td>
+      <td><div class="row-actions">
+        <div class="act-btn" onclick="editPrompt(${p.id})">✏️</div>
+        <div class="act-btn del" onclick="deletePrompt(${p.id})">🗑️</div>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderCompanyChart() {
+  const co_counts = {
+    '카카오':42,'네이버':38,'토스':35,'쿠팡':31,'라인':28,'크래프톤':24,'삼성':29,'현대차':20
+  };
+  const max = Math.max(...Object.values(co_counts));
+  const colors = ['#FFB800','#03C75A','#1B64DA','#EE2222','#06C755','#FF6B35','#1428A0','#002C5F'];
+  document.getElementById('companyChart').innerHTML = Object.entries(co_counts).map(([name,val],i) => `
+    <div class="mini-bar-row">
+      <div class="mini-bar-label">${name}</div>
+      <div class="mini-bar-track"><div class="mini-bar-fill" style="width:${Math.round(val/max*100)}%;background:${colors[i]}"></div></div>
+      <div class="mini-bar-val">${val}</div>
+    </div>`).join('');
+}
+
+function renderActivity() {
+  document.getElementById('activityList').innerHTML = ACTIVITIES.map(a => `
+    <div class="activity-item">
+      <div class="act-ico">${a.ico}</div>
+      <div class="act-text">${a.text}</div>
+      <div class="act-time">${a.time}</div>
+    </div>`).join('');
+}
+
+// ── PROMPT TABLE ──
+function renderPromptTable() {
+  const fCo = document.getElementById('filterCo')?.value || 'all';
+  const fCat = document.getElementById('filterCat')?.value || 'all';
+  const filtered = PROMPTS.filter(p =>
+    (fCo==='all' || p.company===fCo) && (fCat==='all' || p.cat===fCat)
+  );
+  document.getElementById('promptTbody').innerHTML = filtered.map(p => {
+    const co = CO_INFO[p.company];
+    const diffCls = p.diff==='초급'?'diff-basic':p.diff==='중급'?'diff-mid':'diff-adv';
+    return `<tr>
+      <td><span style="font-family:'DM Mono';font-size:11px;color:var(--text3)">#${p.id}</span></td>
+      <td style="font-size:13px;font-weight:500;max-width:200px">${p.title}</td>
+      <td><span class="co-badge" style="background:${co.bg};color:${co.text}">${co.name}</span></td>
+      <td><span class="cat-badge">${CAT_LABEL[p.cat]}</span></td>
+      <td><span class="diff-badge ${diffCls}">${p.diff}</span></td>
+      <td><span style="font-family:'DM Mono';font-size:12px">${p.copies.toLocaleString()}</span></td>
+      <td>${statusBadge(p.status)}</td>
+      <td><div class="row-actions">
+        <div class="act-btn" onclick="editPrompt(${p.id})" title="수정">✏️</div>
+        <div class="act-btn" onclick="toggleStatus(${p.id})" title="상태변경">🔄</div>
+        <div class="act-btn del" onclick="deletePrompt(${p.id})" title="삭제">🗑️</div>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── USER TABLE ──
+function renderUserTable(provider) {
+  const filtered = provider==='all' ? USERS : USERS.filter(u => u.provider===provider);
+  const providerIco = {google:'🔵', kakao:'🟡', naver:'🟢'};
+  document.getElementById('userTbody').innerHTML = filtered.map(u => `<tr>
+    <td>
+      <div class="user-row-info">
+        <div class="user-ava-sm" style="background:${u.bg}">${providerIco[u.provider]}</div>
+        <div>
+          <div class="user-col-name">${u.name}</div>
+          <div class="user-col-email">${u.email}</div>
+        </div>
+      </div>
+    </td>
+    <td>
+      <span style="font-size:11px;display:flex;align-items:center;gap:5px;color:var(--text2)">
+        ${providerIco[u.provider]} ${u.provider.charAt(0).toUpperCase()+u.provider.slice(1)}
+      </span>
+    </td>
+    <td><span class="plan-badge ${u.plan==='pro'?'plan-pro':'plan-free'}">${u.plan.toUpperCase()}</span></td>
+    <td><span style="font-family:'DM Mono';font-size:12px">${u.learned}</span></td>
+    <td><span style="font-size:12px;color:var(--text2)">${u.lastSeen}</span></td>
+    <td>${u.status==='active'
+      ? '<span style="display:flex;align-items:center;font-size:12px;color:var(--green)"><span class="status-dot" style="background:var(--green)"></span>활성</span>'
+      : '<span style="display:flex;align-items:center;font-size:12px;color:var(--text3)"><span class="status-dot" style="background:var(--text3)"></span>비활성</span>'
+    }</td>
+    <td><div class="row-actions">
+      <div class="act-btn" onclick="showToast('👤 사용자 상세 보기: ${u.name}')">👁️</div>
+      <div class="act-btn" onclick="toggleUserPlan(${u.id})">⚡</div>
+      <div class="act-btn del" onclick="showToast('🚫 ${u.name}님이 정지되었습니다')">🚫</div>
+    </div></td>
+  </tr>`).join('');
+}
+
+// ── UTILS ──
+function statusBadge(s) {
+  const map = {
+    published: `<span style="background:var(--green-l);color:var(--green);padding:2px 9px;border-radius:5px;font-size:11px;font-weight:500">● 게시됨</span>`,
+    draft:     `<span style="background:var(--yellow-l);color:var(--yellow);padding:2px 9px;border-radius:5px;font-size:11px;font-weight:500">● 초안</span>`,
+    hidden:    `<span style="background:var(--bg2);color:var(--text3);padding:2px 9px;border-radius:5px;font-size:11px;font-weight:500">● 숨김</span>`,
+  };
+  return map[s] || '';
+}
+
+// ── MODAL ──
+let editingId = null;
+function openPromptModal(id) {
+  editingId = id || null;
+  document.getElementById('modalTitle').textContent = id ? '프롬프트 수정' : '새 프롬프트 추가';
+  if (id) {
+    const p = PROMPTS.find(x => x.id===id);
+    if(p) {
+      document.getElementById('f-company').value = p.company;
+      document.getElementById('f-cat').value = p.cat;
+      document.getElementById('f-diff').value = p.diff;
+      document.getElementById('f-status').value = p.status;
+      document.getElementById('f-title').value = p.title;
+    }
+  } else {
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-desc').value = '';
+    document.getElementById('f-prompt').value = '';
+    document.getElementById('f-tags').value = '';
+  }
+  document.getElementById('promptModal').classList.add('open');
+}
+
+function closePromptModal() { document.getElementById('promptModal').classList.remove('open'); }
+function closeModal(e) { if(e.target===document.getElementById('promptModal')) closePromptModal(); }
+
+function savePrompt() {
+  const title = document.getElementById('f-title').value.trim();
+  if(!title) { showToast('❌ 제목을 입력해주세요'); return; }
+
+  if(editingId) {
+    const idx = PROMPTS.findIndex(p => p.id===editingId);
+    if(idx>-1) {
+      PROMPTS[idx].company = document.getElementById('f-company').value;
+      PROMPTS[idx].cat = document.getElementById('f-cat').value;
+      PROMPTS[idx].diff = document.getElementById('f-diff').value;
+      PROMPTS[idx].status = document.getElementById('f-status').value;
+      PROMPTS[idx].title = title;
+    }
+    showToast('✅ 프롬프트가 수정되었습니다');
+  } else {
+    const newP = {
+      id: Math.max(...PROMPTS.map(p=>p.id))+1,
+      company: document.getElementById('f-company').value,
+      cat: document.getElementById('f-cat').value,
+      diff: document.getElementById('f-diff').value,
+      title,
+      status: document.getElementById('f-status').value,
+      copies: 0,
+      created: new Date().toISOString().split('T')[0]
+    };
+    PROMPTS.unshift(newP);
+    showToast('✅ 새 프롬프트가 등록되었습니다');
+  }
+  closePromptModal();
+  renderPromptTable();
+  renderDashRecent();
+}
+
+function editPrompt(id) { openPromptModal(id); }
+
+function deletePrompt(id) {
+  if(!confirm('이 프롬프트를 삭제하시겠습니까?')) return;
+  PROMPTS = PROMPTS.filter(p => p.id !== id);
+  renderPromptTable(); renderDashRecent();
+  showToast('🗑️ 프롬프트가 삭제되었습니다');
+}
+
+function toggleStatus(id) {
+  const p = PROMPTS.find(x => x.id===id);
+  if(!p) return;
+  const cycle = { published:'hidden', hidden:'draft', draft:'published' };
+  p.status = cycle[p.status];
+  renderPromptTable(); renderDashRecent();
+  showToast(`🔄 상태가 "${p.status}"으로 변경됐습니다`);
+}
+
+function toggleUserPlan(id) {
+  const u = USERS.find(x => x.id===id);
+  if(!u) return;
+  u.plan = u.plan==='free' ? 'pro' : 'free';
+  renderUserTable('all');
+  showToast(`⚡ ${u.name}님의 플랜이 ${u.plan.toUpperCase()}으로 변경됐습니다`);
+}
+
+function saveOAuthConfig(provider) {
+  showToast(`✅ ${provider} OAuth 설정이 저장됐습니다`);
+}
+
+function exportUsers() {
+  showToast('📥 사용자 데이터 CSV 다운로드 중...');
+}
+
+function globalSearch(val) {
+  if (!val) return;
+  showToast(`🔍 "${val}" 검색 중...`);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+init();
+</script>
+</body>
+</html>

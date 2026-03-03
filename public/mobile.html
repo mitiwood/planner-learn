@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PlannerAI Mobile</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   LIGHT THEME
+═══════════════════════════════════════ */
+:root,
+[data-theme="light"] {
+  --bg: #F4F2EE;
+  --bg2: #EDEAE4;
+  --card: #FFFFFF;
+  --border: #E2DDD6;
+  --text: #1A1714;
+  --text2: #5C5750;
+  --text3: #A09990;
+  --accent: #FF4D00;
+  --accent-light: #FFF0EB;
+  --blue: #0057FF;
+  --blue-light: #EBF0FF;
+  --green: #00C48C;
+  --green-light: #E6FAF4;
+  --yellow: #FFB800;
+  --yellow-light: #FFF8E6;
+  --purple: #7B2FFF;
+  --purple-light: #F3EBFF;
+  --nav-bg: rgba(255,255,255,0.95);
+  --header-bg: rgba(244,242,238,0.92);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+  --hero-gradient: linear-gradient(135deg, #1A1714 0%, #3D2B1F 100%);
+  --shell-shadow: 0 40px 100px rgba(0,0,0,0.25);
+  --shell-border: #CCC;
+  --status-bar-text: #1A1714;
+  --theme-icon: "☀️";
+}
+
+/* ═══════════════════════════════════════
+   DARK THEME
+═══════════════════════════════════════ */
+[data-theme="dark"] {
+  --bg: #0E0E14;
+  --bg2: #161620;
+  --card: #1C1C28;
+  --border: #2A2A3E;
+  --text: #F0EEF8;
+  --text2: #9090B0;
+  --text3: #55556A;
+  --accent: #FF6B2B;
+  --accent-light: rgba(255,107,43,0.15);
+  --blue: #4D8EFF;
+  --blue-light: rgba(77,142,255,0.15);
+  --green: #00D49A;
+  --green-light: rgba(0,212,154,0.12);
+  --yellow: #FFD000;
+  --yellow-light: rgba(255,208,0,0.12);
+  --purple: #9B6DFF;
+  --purple-light: rgba(155,109,255,0.12);
+  --nav-bg: rgba(14,14,20,0.95);
+  --header-bg: rgba(14,14,20,0.92);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+  --shadow: 0 4px 20px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+  --hero-gradient: linear-gradient(135deg, #1E0A40 0%, #2D1060 100%);
+  --shell-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  --shell-border: #333;
+  --status-bar-text: #F0EEF8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans KR', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── PHONE SHELL ── */
+.phone-shell {
+  width: 390px;
+  height: 844px;
+  background: var(--bg);
+  margin: 20px auto;
+  border-radius: 50px;
+  box-shadow: var(--shell-shadow), inset 0 0 0 2px var(--shell-border);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* Status Bar */
+.status-bar {
+  height: 50px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px 0;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--status-bar-text);
+  transition: background 0.3s, color 0.3s;
+  position: relative;
+}
+.status-notch {
+  width: 120px; height: 30px;
+  background: #000;
+  border-radius: 0 0 20px 20px;
+  position: absolute;
+  top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 1;
+}
+.status-icons { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+
+/* ── SCREENS ── */
+.screens { flex: 1; overflow: hidden; position: relative; }
+.screen {
+  position: absolute; inset: 0;
+  overflow-y: auto;
+  background: var(--bg);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s, background 0.3s;
+}
+.screen.hidden { transform: translateX(100%); opacity: 0; pointer-events: none; }
+.screen::-webkit-scrollbar { display: none; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  height: calc(64px + env(safe-area-inset-bottom, 0px));
+  background: var(--nav-bg);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  transition: background 0.3s, border-color 0.3s;
+}
+.nav-btn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+  cursor: pointer; transition: all 0.2s; padding: 8px 0; position: relative;
+}
+.nav-btn .nav-ico { font-size: 22px; transition: transform 0.2s; }
+.nav-btn .nav-lbl { font-size: 10px; font-weight: 500; color: var(--text3); transition: color 0.2s; }
+.nav-btn.active .nav-lbl { color: var(--accent); font-weight: 700; }
+.nav-btn.active .nav-ico { transform: translateY(-2px); }
+.nav-btn.active::after {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 36px; height: 3px;
+  background: var(--accent); border-radius: 0 0 4px 4px;
+}
+.nav-badge {
+  position: absolute; top: 6px; right: calc(50% - 18px);
+  background: var(--accent); color: white;
+  font-size: 9px; font-weight: 700;
+  min-width: 16px; height: 16px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; padding: 0 4px;
+}
+
+/* ── HEADER ── */
+.screen-header {
+  padding: 16px 20px 12px;
+  position: sticky; top: 0;
+  background: var(--header-bg);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  transition: background 0.3s;
+}
+.header-row { display: flex; align-items: center; justify-content: space-between; }
+.header-title { font-size: 26px; font-weight: 900; letter-spacing: -0.5px; }
+.header-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+
+/* ── DARK MODE TOGGLE ── */
+.theme-toggle {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer;
+  transition: all 0.25s;
+  flex-shrink: 0;
+}
+.theme-toggle:active { transform: scale(0.9); }
+
+/* Avatar */
+.avatar-btn {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--yellow));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; flex-shrink: 0;
+}
+
+/* Search */
+.search-box {
+  background: var(--card); border-radius: 12px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border: 1.5px solid transparent;
+  transition: border-color 0.2s, background 0.3s;
+  box-shadow: var(--shadow-sm);
+}
+.search-box:focus-within { border-color: var(--accent); }
+.search-box input {
+  flex: 1; border: none; outline: none; background: transparent;
+  font-size: 14px; font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text);
+}
+.search-box input::placeholder { color: var(--text3); }
+
+/* Chips */
+.chip-row { display: flex; gap: 8px; padding: 12px 20px; overflow-x: auto; }
+.chip-row::-webkit-scrollbar { display: none; }
+.chip {
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  white-space: nowrap; cursor: pointer;
+  background: var(--card); color: var(--text2);
+  border: 1.5px solid var(--border);
+  transition: all 0.2s; flex-shrink: 0;
+}
+.chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* ── HOME HERO ── */
+.home-hero {
+  margin: 8px 20px 0;
+  background: var(--hero-gradient);
+  border-radius: 20px; padding: 22px;
+  color: white; position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.home-hero::before {
+  content: ''; position: absolute; top: -30px; right: -30px;
+  width: 120px; height: 120px; background: var(--accent);
+  border-radius: 50%; opacity: 0.2;
+}
+.home-hero::after {
+  content: ''; position: absolute; bottom: -20px; left: 40%;
+  width: 80px; height: 80px; background: var(--yellow);
+  border-radius: 50%; opacity: 0.12;
+}
+.hero-greeting { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+.hero-name { font-size: 20px; font-weight: 900; margin-bottom: 14px; }
+.hero-streak {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,255,255,0.12); padding: 6px 12px;
+  border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 16px;
+}
+.hero-progress-label { display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 6px; }
+.hero-bar { background: rgba(255,255,255,0.15); border-radius: 4px; height: 6px; }
+.hero-bar-fill { background: linear-gradient(90deg, var(--accent), var(--yellow)); height: 6px; border-radius: 4px; width: 34%; }
+
+.section-title-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 20px 10px; }
+.section-title { font-size: 17px; font-weight: 800; }
+.section-more { font-size: 13px; color: var(--accent); font-weight: 600; cursor: pointer; }
+
+/* Stats */
+.stats-scroll { display: flex; gap: 10px; padding: 0 20px 4px; overflow-x: auto; }
+.stats-scroll::-webkit-scrollbar { display: none; }
+.stat-pill {
+  background: var(--card); border-radius: 12px; padding: 14px 16px;
+  min-width: 110px; box-shadow: var(--shadow-sm); flex-shrink: 0;
+  border: 1px solid var(--border); transition: background 0.3s, border-color 0.3s;
+}
+.stat-pill-icon { font-size: 20px; margin-bottom: 6px; }
+.stat-pill-val { font-size: 22px; font-weight: 900; font-family: 'DM Mono', monospace; }
+.stat-pill-lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* Today cards */
+.today-scroll { display: flex; gap: 12px; padding: 4px 20px 16px; overflow-x: auto; }
+.today-scroll::-webkit-scrollbar { display: none; }
+.today-card {
+  background: var(--card); border-radius: 20px; padding: 18px;
+  min-width: 240px; box-shadow: var(--shadow); cursor: pointer;
+  transition: transform 0.2s, background 0.3s; flex-shrink: 0;
+  position: relative; overflow: hidden;
+  border: 1px solid var(--border);
+}
+.today-card:active { transform: scale(0.97); }
+.today-card-accent { position: absolute; top: 0; right: 0; width: 60px; height: 60px; border-radius: 0 20px 0 60px; opacity: 0.15; }
+.today-card-title { font-size: 14px; font-weight: 800; line-height: 1.4; margin-bottom: 6px; }
+.today-card-cat { font-size: 11px; color: var(--text3); }
+.today-card-arrow { position: absolute; bottom: 16px; right: 16px; font-size: 18px; color: var(--text3); }
+
+/* Path */
+.path-scroll { display: flex; gap: 0; padding: 4px 20px 20px; overflow-x: auto; position: relative; }
+.path-scroll::-webkit-scrollbar { display: none; }
+.path-scroll::before { content: ''; position: absolute; top: 24px; left: 44px; right: 44px; height: 2px; background: var(--border); }
+.path-node { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 72px; flex-shrink: 0; }
+.path-circle {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; border: 2px solid var(--border);
+  background: var(--card); position: relative; z-index: 1;
+  transition: all 0.3s; cursor: pointer;
+}
+.path-circle.done { border-color: var(--green); background: var(--green-light); }
+.path-circle.now { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 4px rgba(255,77,0,0.12); }
+.path-lbl { font-size: 9px; color: var(--text3); text-align: center; line-height: 1.3; max-width: 64px; font-weight: 500; }
+
+/* ── LIBRARY ── */
+.company-row { display: flex; gap: 8px; padding: 8px 20px 4px; overflow-x: auto; }
+.company-row::-webkit-scrollbar { display: none; }
+.co-chip {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px;
+  background: var(--card); border: 1.5px solid var(--border);
+  font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+  transition: all 0.2s; flex-shrink: 0; color: var(--text2);
+}
+.co-chip.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
+.co-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+.prompt-list { padding: 8px 20px 20px; display: flex; flex-direction: column; gap: 12px; }
+.p-card {
+  background: var(--card); border-radius: 20px; padding: 18px;
+  box-shadow: var(--shadow-sm); cursor: pointer;
+  transition: all 0.2s; border: 1.5px solid var(--border);
+  position: relative;
+}
+.p-card:active { transform: scale(0.98); border-color: var(--accent); }
+.p-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.p-co-badge { padding: 3px 9px; border-radius: 6px; font-size: 10px; font-weight: 700; }
+.p-cat-badge { padding: 3px 9px; border-radius: 6px; font-size: 10px; background: var(--bg2); color: var(--text2); font-weight: 500; }
+.p-diff { margin-left: auto; font-size: 10px; color: var(--text3); }
+.p-title { font-size: 15px; font-weight: 800; margin-bottom: 6px; line-height: 1.4; }
+.p-desc { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 12px; }
+.p-preview {
+  background: var(--bg2); border-radius: 8px; padding: 10px 12px;
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--blue);
+  line-height: 1.6; margin-bottom: 12px; transition: background 0.3s;
+}
+.p-footer { display: flex; align-items: center; gap: 6px; }
+.p-tag { background: var(--bg2); padding: 3px 8px; border-radius: 4px; font-size: 10px; color: var(--text3); }
+.p-bm-btn {
+  margin-left: auto; width: 32px; height: 32px; border-radius: 10px;
+  background: var(--bg2); display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer; transition: all 0.2s; border: none;
+  color: var(--text3);
+}
+.p-bm-btn.on { background: var(--yellow-light); color: var(--yellow); }
+
+/* ── QUIZ ── */
+.quiz-wrapper { padding: 16px 20px 100px; }
+.quiz-progress-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.quiz-prog-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+.quiz-prog-fill { height: 4px; background: var(--accent); border-radius: 2px; transition: width 0.4s; }
+.quiz-prog-label { font-size: 12px; color: var(--text3); font-weight: 600; }
+.quiz-card-main {
+  background: var(--card); border-radius: 20px; padding: 24px;
+  box-shadow: var(--shadow); margin-bottom: 16px; border: 1px solid var(--border);
+  transition: background 0.3s;
+}
+.quiz-num { font-size: 11px; font-weight: 700; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px; }
+.quiz-q-text { font-size: 16px; font-weight: 800; line-height: 1.5; }
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-opt-btn {
+  background: var(--card); border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; font-size: 14px; font-family: 'Noto Sans KR', sans-serif;
+  color: var(--text); text-align: left; cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 12px; font-weight: 500;
+}
+.quiz-opt-btn:active { transform: scale(0.98); }
+.quiz-opt-btn.correct { border-color: var(--green); background: var(--green-light); color: var(--green); }
+.quiz-opt-btn.wrong { border-color: #FF3B30; background: rgba(255,59,48,0.1); color: #FF3B30; }
+.quiz-opt-letter {
+  width: 28px; height: 28px; border-radius: 8px; background: var(--bg2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0; transition: all 0.2s;
+}
+.quiz-opt-btn.correct .quiz-opt-letter { background: var(--green); color: white; }
+.quiz-opt-btn.wrong .quiz-opt-letter { background: #FF3B30; color: white; }
+.quiz-feedback {
+  background: var(--card); border-radius: 12px; padding: 14px 16px;
+  font-size: 13px; line-height: 1.6; color: var(--text2);
+  border-left: 3px solid var(--green); margin-top: 16px; display: none;
+}
+.quiz-feedback.show { display: block; animation: fadeUp 0.3s ease; }
+.quiz-feedback.wrong-fb { border-color: #FF3B30; }
+.quiz-next-btn {
+  width: 100%; padding: 16px; background: var(--accent); color: white;
+  border: none; border-radius: 12px; font-size: 16px; font-weight: 800;
+  font-family: 'Noto Sans KR', sans-serif; cursor: pointer; margin-top: 16px; transition: opacity 0.2s;
+}
+.quiz-next-btn:active { opacity: 0.8; }
+.score-card {
+  background: var(--card); border-radius: 20px; padding: 32px 24px;
+  text-align: center; box-shadow: var(--shadow-lg); border: 1px solid var(--border);
+}
+.score-emoji { font-size: 56px; margin-bottom: 12px; }
+.score-val { font-size: 48px; font-weight: 900; font-family: 'DM Mono', monospace; color: var(--accent); }
+.score-label { font-size: 14px; color: var(--text2); margin-top: 4px; margin-bottom: 24px; }
+
+/* ── BOOKMARK ── */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; color: var(--text3); gap: 12px; }
+.empty-state-icon { font-size: 48px; }
+.empty-state-text { font-size: 14px; font-weight: 500; }
+
+/* ── DETAIL SCREEN ── */
+.detail-screen {
+  position: absolute; inset: 0; background: var(--bg);
+  transform: translateX(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), background 0.3s;
+  z-index: 20; overflow-y: auto;
+}
+.detail-screen.open { transform: translateX(0); }
+.detail-screen::-webkit-scrollbar { display: none; }
+.detail-header {
+  position: sticky; top: 0;
+  background: var(--header-bg); backdrop-filter: blur(12px);
+  padding: 16px 20px; display: flex; align-items: center; gap: 12px;
+  z-index: 5; border-bottom: 1px solid var(--border);
+  transition: background 0.3s, border-color 0.3s;
+}
+.back-btn {
+  width: 36px; height: 36px; border-radius: 10px; background: var(--card);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; cursor: pointer; border: 1.5px solid var(--border); flex-shrink: 0;
+  color: var(--text); transition: background 0.3s;
+}
+.detail-header-title { font-size: 15px; font-weight: 800; flex: 1; }
+.detail-body { padding: 20px; }
+.detail-hero {
+  background: var(--hero-gradient); border-radius: 20px; padding: 24px;
+  color: white; margin-bottom: 20px; position: relative; overflow: hidden;
+  transition: background 0.3s;
+}
+.detail-hero::after {
+  content: ''; position: absolute; bottom: -20px; right: -20px;
+  width: 100px; height: 100px; background: var(--accent); border-radius: 50%; opacity: 0.15;
+}
+.detail-hero .company-row-inner { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.detail-hero-title { font-size: 20px; font-weight: 900; line-height: 1.3; margin-bottom: 8px; }
+.detail-hero-desc { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.6; }
+.detail-section { margin-bottom: 20px; }
+.detail-section-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+.prompt-block {
+  background: var(--card); border-radius: 12px; padding: 16px;
+  border-left: 3px solid var(--blue); font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--blue); line-height: 1.9; white-space: pre-wrap;
+  transition: background 0.3s;
+}
+.tip-list { display: flex; flex-direction: column; gap: 10px; }
+.tip-item {
+  display: flex; gap: 10px; background: var(--card); border-radius: 12px;
+  padding: 12px 14px; font-size: 13px; line-height: 1.6; color: var(--text2);
+  align-items: flex-start; border: 1px solid var(--border); transition: background 0.3s;
+}
+.tip-badge {
+  background: var(--yellow-light); color: var(--yellow); font-size: 10px; font-weight: 800;
+  padding: 2px 6px; border-radius: 4px; flex-shrink: 0; margin-top: 2px;
+}
+.example-block {
+  background: var(--purple-light); border-radius: 12px; padding: 14px 16px;
+  font-size: 13px; color: var(--purple); line-height: 1.7; transition: background 0.3s;
+}
+.copy-btn {
+  width: 100%; padding: 16px; background: var(--accent); color: white; border: none;
+  border-radius: 12px; font-size: 16px; font-weight: 800;
+  font-family: 'Noto Sans KR', sans-serif; cursor: pointer; margin-top: 8px; transition: opacity 0.2s;
+}
+.copy-btn:active { opacity: 0.8; }
+
+/* ── PROFILE SCREEN ── */
+.profile-screen { padding: 0 0 100px; }
+.profile-hero {
+  background: var(--hero-gradient); padding: 40px 24px 24px;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  color: white; position: relative; overflow: hidden;
+}
+.profile-hero::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 140px; height: 140px; background: var(--accent); border-radius: 50%; opacity: 0.12;
+}
+.profile-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--yellow));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; border: 3px solid rgba(255,255,255,0.2);
+}
+.profile-name { font-size: 20px; font-weight: 900; }
+.profile-email { font-size: 12px; color: rgba(255,255,255,0.6); }
+.profile-provider-badge {
+  padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700;
+  background: rgba(255,255,255,0.15);
+}
+
+.profile-stats { display: flex; gap: 1px; background: var(--border); border-radius: 16px; overflow: hidden; margin: 16px 20px; }
+.profile-stat {
+  flex: 1; background: var(--card); padding: 16px 10px; text-align: center;
+  transition: background 0.3s;
+}
+.profile-stat-val { font-size: 22px; font-weight: 900; font-family: 'DM Mono', monospace; color: var(--accent); }
+.profile-stat-lbl { font-size: 10px; color: var(--text3); margin-top: 3px; }
+
+.settings-list { margin: 0 20px; display: flex; flex-direction: column; gap: 8px; }
+.settings-section-title { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text3); margin: 16px 0 8px; }
+.settings-row {
+  background: var(--card); border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: all 0.2s; border: 1px solid var(--border);
+}
+.settings-row:active { opacity: 0.7; }
+.settings-row-ico { font-size: 18px; width: 24px; text-align: center; }
+.settings-row-label { font-size: 14px; font-weight: 500; flex: 1; }
+.settings-row-value { font-size: 12px; color: var(--text3); }
+.settings-row-arrow { font-size: 14px; color: var(--text3); }
+
+/* Toggle switch */
+.toggle-switch {
+  width: 44px; height: 24px; border-radius: 12px;
+  background: var(--border); position: relative; cursor: pointer;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.toggle-switch.on { background: var(--accent); }
+.toggle-switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: white; transition: transform 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.toggle-switch.on::after { transform: translateX(20px); }
+
+.logout-btn-row {
+  margin: 16px 20px 0;
+  background: rgba(255,59,48,0.08); border-radius: 14px; padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px; cursor: pointer;
+  border: 1px solid rgba(255,59,48,0.15); transition: all 0.2s;
+}
+.logout-btn-row:active { opacity: 0.7; }
+
+/* ── TOAST ── */
+.toast {
+  position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: rgba(26,23,20,0.92); color: white; padding: 10px 18px;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+  white-space: nowrap; z-index: 100; opacity: 0; transition: all 0.3s; pointer-events: none;
+}
+[data-theme="dark"] .toast { background: rgba(240,240,248,0.92); color: #1A1714; }
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.p-card { animation: fadeUp 0.3s ease both; }
+.p-card:nth-child(2) { animation-delay: 0.04s; }
+.p-card:nth-child(3) { animation-delay: 0.08s; }
+.p-card:nth-child(4) { animation-delay: 0.12s; }
+.p-card:nth-child(5) { animation-delay: 0.16s; }
+.today-card { animation: fadeUp 0.3s ease both; }
+.today-card:nth-child(2) { animation-delay: 0.06s; }
+
+/* Theme transition */
+*, *::before, *::after {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+/* but don't animate transforms */
+.screen, .detail-screen, .nav-btn .nav-ico, .p-card, .today-card, .quiz-opt-btn, .toggle-switch::after {
+  transition: none;
+}
+.screen { transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.35s; }
+.detail-screen { transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+.nav-btn .nav-ico { transition: transform 0.2s; }
+
+/* Responsive */
+@media (max-width: 420px) {
+  .phone-shell { width: 100%; height: 100vh; border-radius: 0; margin: 0; box-shadow: none; }
+  .status-notch { display: none; }
+}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="phone-shell" id="phoneShell">
+  <!-- Status Bar -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-notch"></div>
+    <span style="z-index:1">9:41</span>
+    <div class="status-icons" style="z-index:1">
+      <span>●●●</span><span>WiFi</span><span>🔋</span>
+    </div>
+  </div>
+
+  <!-- SCREENS -->
+  <div class="screens" id="screens">
+
+    <!-- ── HOME ── -->
+    <div class="screen" id="homeScreen">
+      <div class="screen-header">
+        <div class="header-row">
+          <div>
+            <div class="header-title">안녕하세요 👋</div>
+            <div class="header-sub">오늘도 AI와 함께 기획해봐요</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="theme-toggle" id="themeToggleHome" onclick="toggleTheme()">☀️</div>
+            <div class="avatar-btn" onclick="switchTab('profile')">🎯</div>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="search-box">
+            <span style="color:var(--text3)">🔍</span>
+            <input type="text" placeholder="프롬프트 검색..." oninput="searchFromHome(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <div class="home-hero">
+        <div class="hero-greeting">이번 주 학습 현황</div>
+        <div class="hero-name">12일 연속 학습 중 🔥</div>
+        <div class="hero-streak"><span>🏆</span> 상위 8% 기획자</div>
+        <div class="hero-progress-label"><span>전체 진도율</span><span>34% · 84/247</span></div>
+        <div class="hero-bar"><div class="hero-bar-fill"></div></div>
+      </div>
+
+      <div class="section-title-row" style="padding-bottom:6px"><div class="section-title">나의 기록</div></div>
+      <div class="stats-scroll">
+        <div class="stat-pill">
+          <div class="stat-pill-icon">📖</div>
+          <div class="stat-pill-val" style="color:var(--accent)">84</div>
+          <div class="stat-pill-lbl">학습한 프롬프트</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-pill-icon">⭐</div>
+          <div class="stat-pill-val" id="bmStatVal" style="color:var(--yellow)">0</div>
+          <div class="stat-pill-lbl">북마크</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-pill-icon">🎯</div>
+          <div class="stat-pill-val" style="color:var(--blue)">72%</div>
+          <div class="stat-pill-lbl">퀴즈 정답률</div>
+        </div>
+        <div class="stat-pill">
+          <div class="stat-pill-icon">🏆</div>
+          <div class="stat-pill-val" style="color:var(--green)">7</div>
+          <div class="stat-pill-lbl">획득 배지</div>
+        </div>
+      </div>
+
+      <div class="section-title-row">
+        <div class="section-title">오늘의 추천</div>
+        <div class="section-more" onclick="switchTab('library')">더보기 →</div>
+      </div>
+      <div class="today-scroll" id="todayScroll"></div>
+
+      <div class="section-title-row" style="padding-bottom:6px"><div class="section-title">학습 로드맵</div></div>
+      <div class="path-scroll">
+        <div class="path-node"><div class="path-circle done">✅</div><div class="path-lbl">기초 이해</div></div>
+        <div class="path-node"><div class="path-circle done">✅</div><div class="path-lbl">PRD 작성</div></div>
+        <div class="path-node"><div class="path-circle now">⚡</div><div class="path-lbl">UX 리서치</div></div>
+        <div class="path-node"><div class="path-circle">🧪</div><div class="path-lbl">데이터 분석</div></div>
+        <div class="path-node"><div class="path-circle">🗺️</div><div class="path-lbl">로드맵</div></div>
+        <div class="path-node"><div class="path-circle">🏆</div><div class="path-lbl">마스터</div></div>
+      </div>
+      <div style="height:20px"></div>
+    </div>
+
+    <!-- ── LIBRARY ── -->
+    <div class="screen hidden" id="libraryScreen">
+      <div class="screen-header">
+        <div class="header-row">
+          <div><div class="header-title">라이브러리</div><div class="header-sub">247개 프롬프트</div></div>
+          <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+        </div>
+        <div style="margin-top:10px">
+          <div class="search-box">
+            <span style="color:var(--text3)">🔍</span>
+            <input type="text" placeholder="프롬프트 검색..." oninput="filterLibrary(this.value)">
+          </div>
+        </div>
+      </div>
+      <div class="company-row" id="companyChips">
+        <div class="co-chip active" onclick="filterCompany('all',this)"><span class="co-dot" style="background:var(--text3)"></span>전체</div>
+        <div class="co-chip" onclick="filterCompany('toss',this)"><span class="co-dot" style="background:#1B64DA"></span>토스</div>
+        <div class="co-chip" onclick="filterCompany('kakao',this)"><span class="co-dot" style="background:#FFB800"></span>카카오</div>
+        <div class="co-chip" onclick="filterCompany('naver',this)"><span class="co-dot" style="background:#00C48C"></span>네이버</div>
+        <div class="co-chip" onclick="filterCompany('coupang',this)"><span class="co-dot" style="background:#EE2222"></span>쿠팡</div>
+        <div class="co-chip" onclick="filterCompany('line',this)"><span class="co-dot" style="background:#00C48C"></span>라인</div>
+        <div class="co-chip" onclick="filterCompany('krafton',this)"><span class="co-dot" style="background:#FF6B35"></span>크래프톤</div>
+        <div class="co-chip" onclick="filterCompany('samsung',this)"><span class="co-dot" style="background:#1428A0"></span>삼성</div>
+        <div class="co-chip" onclick="filterCompany('hyundai',this)"><span class="co-dot" style="background:#002C5F"></span>현대차</div>
+      </div>
+      <div class="chip-row" id="catChips">
+        <div class="chip active" onclick="filterCat('all',this)">전체</div>
+        <div class="chip" onclick="filterCat('prd',this)">PRD 작성</div>
+        <div class="chip" onclick="filterCat('ux',this)">UX 리서치</div>
+        <div class="chip" onclick="filterCat('data',this)">데이터 분석</div>
+        <div class="chip" onclick="filterCat('roadmap',this)">로드맵</div>
+        <div class="chip" onclick="filterCat('meeting',this)">회의·소통</div>
+        <div class="chip" onclick="filterCat('ab',this)">A/B 테스트</div>
+      </div>
+      <div class="prompt-list" id="promptList"></div>
+    </div>
+
+    <!-- ── QUIZ ── -->
+    <div class="screen hidden" id="quizScreen">
+      <div class="screen-header">
+        <div class="header-row">
+          <div class="header-title">퀴즈 & 연습</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="font-size:13px;color:var(--text3);font-weight:600" id="quizScoreLabel">0 / 0</div>
+            <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+          </div>
+        </div>
+      </div>
+      <div class="quiz-wrapper" id="quizWrapper"></div>
+    </div>
+
+    <!-- ── BOOKMARKS ── -->
+    <div class="screen hidden" id="bookmarkScreen">
+      <div class="screen-header">
+        <div class="header-row">
+          <div><div class="header-title">북마크</div><div class="header-sub" id="bmCount">0개 저장됨</div></div>
+          <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+        </div>
+      </div>
+      <div class="prompt-list" id="bmList"></div>
+      <div class="empty-state hidden" id="bmEmpty">
+        <div class="empty-state-icon">⭐</div>
+        <div class="empty-state-text">저장된 프롬프트가 없어요</div>
+        <div style="font-size:12px;color:var(--text3)">라이브러리에서 ☆를 눌러 저장하세요</div>
+      </div>
+    </div>
+
+    <!-- ── PROFILE ── -->
+    <div class="screen hidden" id="profileScreen">
+      <div class="profile-screen">
+        <div class="screen-header" style="position:relative">
+          <div class="header-row">
+            <div class="header-title">프로필</div>
+            <div class="theme-toggle" onclick="toggleTheme()">☀️</div>
+          </div>
+        </div>
+        <div class="profile-hero">
+          <div class="profile-avatar">🎯</div>
+          <div class="profile-name">기획 마스터</div>
+          <div class="profile-email">planner@example.com</div>
+          <div class="profile-provider-badge">🔵 Google 연동</div>
+        </div>
+        <div class="profile-stats">
+          <div class="profile-stat"><div class="profile-stat-val">84</div><div class="profile-stat-lbl">학습 완료</div></div>
+          <div class="profile-stat"><div class="profile-stat-val">12</div><div class="profile-stat-lbl">연속 일수</div></div>
+          <div class="profile-stat"><div class="profile-stat-val">7</div><div class="profile-stat-lbl">배지</div></div>
+        </div>
+        <div class="settings-list">
+          <div class="settings-section-title">앱 설정</div>
+          <div class="settings-row" onclick="toggleTheme()">
+            <span class="settings-row-ico">🌙</span>
+            <span class="settings-row-label">다크 모드</span>
+            <div class="toggle-switch" id="darkToggle"></div>
+          </div>
+          <div class="settings-row" onclick="showToast('알림 설정 준비 중...')">
+            <span class="settings-row-ico">🔔</span>
+            <span class="settings-row-label">학습 알림</span>
+            <div class="toggle-switch on"></div>
+          </div>
+          <div class="settings-row" onclick="showToast('언어 설정 준비 중...')">
+            <span class="settings-row-ico">🌏</span>
+            <span class="settings-row-label">언어</span>
+            <span class="settings-row-value">한국어</span>
+            <span class="settings-row-arrow">›</span>
+          </div>
+          <div class="settings-section-title">계정</div>
+          <div class="settings-row" onclick="showToast('프로필 수정 준비 중...')">
+            <span class="settings-row-ico">✏️</span>
+            <span class="settings-row-label">프로필 수정</span>
+            <span class="settings-row-arrow">›</span>
+          </div>
+          <div class="settings-row" onclick="showToast('플랜 관리 준비 중...')">
+            <span class="settings-row-ico">⚡</span>
+            <span class="settings-row-label">플랜 관리</span>
+            <span class="settings-row-value" style="color:var(--accent);font-weight:700">FREE</span>
+            <span class="settings-row-arrow">›</span>
+          </div>
+        </div>
+        <div class="logout-btn-row" onclick="window.location.href='login.html'">
+          <span style="font-size:18px">🚪</span>
+          <span style="font-size:14px;font-weight:700;color:#FF3B30;">로그아웃</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── DETAIL ── -->
+    <div class="detail-screen" id="detailScreen">
+      <div class="detail-header">
+        <div class="back-btn" onclick="closeDetail()">‹</div>
+        <div class="detail-header-title" id="detailHeaderTitle">프롬프트 상세</div>
+        <button class="p-bm-btn" id="detailBmBtn" onclick="toggleBmFromDetail()" style="margin-left:auto">☆</button>
+      </div>
+      <div class="detail-body" id="detailBody"></div>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-btn active" id="navHome" onclick="switchTab('home')">
+      <div class="nav-ico">🏠</div><div class="nav-lbl">홈</div>
+    </div>
+    <div class="nav-btn" id="navLibrary" onclick="switchTab('library')">
+      <div class="nav-ico">📚</div><div class="nav-lbl">라이브러리</div>
+      <div class="nav-badge">247</div>
+    </div>
+    <div class="nav-btn" id="navQuiz" onclick="switchTab('quiz')">
+      <div class="nav-ico">🎯</div><div class="nav-lbl">퀴즈</div>
+    </div>
+    <div class="nav-btn" id="navBm" onclick="switchTab('bookmarks')">
+      <div class="nav-ico">⭐</div><div class="nav-lbl">북마크</div>
+    </div>
+    <div class="nav-btn" id="navProfile" onclick="switchTab('profile')">
+      <div class="nav-ico">👤</div><div class="nav-lbl">프로필</div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+// ── DATA ──
+const CO = {
+  kakao:   { name:'Kakao',      bg:'#FFB800', text:'#000' },
+  naver:   { name:'Naver',      bg:'#00C48C', text:'#fff' },
+  toss:    { name:'Toss',       bg:'#1B64DA', text:'#fff' },
+  coupang: { name:'Coupang',    bg:'#EE2222', text:'#fff' },
+  line:    { name:'Line',       bg:'#06C755', text:'#fff' },
+  krafton: { name:'Krafton',    bg:'#FF6B35', text:'#fff' },
+  samsung: { name:'Samsung MX', bg:'#1428A0', text:'#fff' },
+  hyundai: { name:'Hyundai',    bg:'#002C5F', text:'#fff' },
+};
+const CAT_LABEL = { prd:'PRD 작성', ux:'UX 리서치', data:'데이터 분석', roadmap:'로드맵', meeting:'회의·소통', ab:'A/B 테스트' };
+
+const PROMPTS = [
+  { id:1, co:'toss', cat:'prd', diff:'중급', title:'금융 서비스 PRD 초안 작성', desc:'토스식 간결하고 임팩트 중심의 PRD를 빠르게 초안 작성할 때 사용', prompt:`당신은 핀테크 프로덕트 매니저입니다.\n아래 정보를 바탕으로 PRD를 작성해주세요.\n\n[기능명]: {기능명}\n[배경 및 목적]: {왜 이 기능이 필요한가}\n[목표 지표]: {KPI 또는 성공 지표}\n\n다음 항목을 포함해 작성하세요:\n1. Problem Statement (1-2줄)\n2. 솔루션 개요\n3. 핵심 사용자 스토리 (3개)\n4. 범위 외 항목\n5. 리스크 & 의존성`, tags:['PRD','금융','기획서'], tips:['목표 지표를 먼저 정의하면 PRD 품질이 올라갑니다','Out of scope 항목을 명확히 하면 개발팀과 소통이 쉬워집니다','토스는 Problem Statement를 1문장으로 압축하는 문화가 있습니다'], example:'예: 간편송금 기능 개선 PRD - "모바일 뱅킹 사용자 중 35%가 송금 실패를 경험, 3단계→1단계로 UX 개선"' },
+  { id:2, co:'kakao', cat:'ux', diff:'초급', title:'사용자 인터뷰 질문지 생성', desc:'카카오 스타일의 심층 사용자 인터뷰 질문을 빠르게 설계하는 프롬프트', prompt:`UX 리서처 역할을 해주세요.\n\n[인터뷰 목적]: {알고 싶은 것}\n[대상 사용자]: {페르소나 설명}\n[제품/기능]: {제품명}\n\n다음 유형별로 질문을 각 3개씩 만들어주세요:\n- 워밍업 질문 (현재 행동 파악)\n- 핵심 탐색 질문 (문제 발굴)\n- 감정/동기 질문 (Why 파악)\n- 마무리 질문 (추가 인사이트)`, tags:['인터뷰','UX리서치','사용자조사'], tips:['Why 질문을 최소 3번 이상 반복하면 근본 원인을 파악할 수 있습니다','행동 중심 질문이 더 신뢰성 있는 데이터를 줍니다','카카오는 "마지막으로 [행동]을 했던 때가 언제예요?" 형태를 선호합니다'], example:'예: 카카오페이 사용자 인터뷰 - 결제 경험 개선을 위한 Pain Point 발굴' },
+  { id:3, co:'naver', cat:'data', diff:'고급', title:'검색 데이터 인사이트 분석', desc:'네이버 검색 로그 데이터를 분석하고 의미 있는 인사이트를 도출', prompt:`데이터 분석가 역할을 해주세요.\n\n[데이터 요약]:\n- 검색어: {상위 검색어 목록}\n- 기간: {분석 기간}\n- 주요 지표: {CTR, 이탈률 등}\n\n아래 분석을 수행해주세요:\n1. 트렌드 패턴 분석\n2. 사용자 의도 분류\n3. 기회 영역 도출\n4. 액션 아이템 3가지\n5. 추가 데이터 요청사항`, tags:['데이터분석','검색','인사이트'], tips:['검색 의도 분류 시 Navigational/Informational/Transactional 프레임을 활용하세요','기회 영역은 검색량÷만족도 지수로 계산하면 효과적입니다'], example:'예: 여행 카테고리 검색 데이터 분석 - "제주도 맛집" 검색 CTR 12% 개선 기회 발굴' },
+  { id:4, co:'coupang', cat:'ab', diff:'중급', title:'A/B 테스트 설계서 작성', desc:'쿠팡 이커머스 환경에서 효과적인 A/B 테스트를 설계하는 프롬프트', prompt:`프로덕트 분석가로서 A/B 테스트 설계서를 작성해주세요.\n\n[테스트 배경]: {무엇을 왜 테스트하는가}\n[변경 항목]: {Control vs Treatment 설명}\n[성공 지표]: {Primary/Secondary Metric}\n\n다음 항목을 작성해주세요:\n- 가설 (If...Then...Because 형식)\n- 최소 샘플 사이즈 계산 방법\n- 테스트 기간 권고\n- 롤아웃 계획 (25%→50%→100%)`, tags:['A/B테스트','실험설계','이커머스'], tips:['통계적 유의성(p<0.05)과 실질적 유의성을 구분하세요','노벨티 이펙트 방지를 위해 최소 2주 이상 운영을 권장합니다'], example:'예: 상품 상세페이지 CTA 버튼 컬러 테스트 - "오렌지 vs 빨강, 구매전환율 3% 개선 목표"' },
+  { id:5, co:'line', cat:'roadmap', diff:'고급', title:'분기 로드맵 스토리텔링', desc:'라인 글로벌 팀을 위한 이해관계자 납득용 로드맵 스토리 구성 프롬프트', prompt:`프로덕트 전략가 역할을 해주세요.\n\n[현재 상황]: {AS-IS 문제 / 기회}\n[분기 목표]: {OKR 또는 목표}\n[후보 기능 목록]: {기능 A, B, C, D...}\n\n아래 형식으로 로드맵 스토리를 작성해주세요:\n1. 현재 우리의 위치 (3줄 이내)\n2. 왜 지금 이것을 해야 하는가\n3. 분기별 우선순위 결정 근거\n4. Q1/Q2/Q3 청사진\n5. 우리가 안 하는 것과 그 이유`, tags:['로드맵','전략','이해관계자'], tips:['Why Now를 항상 먼저 설명하면 설득력이 높아집니다','안 하는 것을 명시하면 오히려 신뢰가 올라갑니다'], example:'예: 라인 메시징 앱 2025 Q1 로드맵 - 그룹 채팅 개선 중심의 리텐션 강화 전략' },
+  { id:6, co:'krafton', cat:'meeting', diff:'초급', title:'스프린트 회의록 자동 정리', desc:'크래프톤 게임 개발 스프린트 회의 내용을 구조적으로 정리하는 프롬프트', prompt:`아래 회의 내용을 정리해주세요.\n\n[회의 원문 / 메모]:\n{회의에서 오간 내용을 붙여넣기}\n\n다음 형식으로 정리:\n📋 회의 요약 (3줄)\n✅ 결정된 사항\n🎯 액션 아이템 (담당자 | 내용 | 마감일)\n❓ 미결 사항\n📌 다음 회의 아젠다`, tags:['회의록','스프린트','협업'], tips:['회의 직후 10분 안에 정리하면 기억이 정확합니다','액션 아이템에 담당자와 마감일을 반드시 명시하세요'], example:'예: PUBG 신규 맵 스프린트 회의 - 런칭일정, 밸런싱 이슈, 테스트 서버 오픈 결정사항 정리' },
+  { id:7, co:'samsung', cat:'prd', diff:'고급', title:'하드웨어-소프트웨어 연동 기능 기획', desc:'삼성 MX 디바이스 하드웨어 기능과 One UI 소프트웨어 연동 기획서 작성', prompt:`하드웨어-소프트웨어 연동 기획 전문가 역할을 해주세요.\n\n[디바이스]: {갤럭시 모델명}\n[하드웨어 기능]: {센서, 칩셋, 카메라 스펙}\n[소프트웨어 목표]: {UX 목표}\n\n기획서 포함 사항:\n1. 기술-UX 매핑 테이블\n2. 사용 시나리오 3가지\n3. 타사 대비 차별화 포인트\n4. One UI 가이드라인 준수 체크리스트\n5. QA 테스트 시나리오 핵심 5개`, tags:['하드웨어','One UI','갤럭시'], tips:['하드웨어 스펙을 사용자 언어로 번역하는 것이 핵심입니다','삼성은 글로벌 출시이므로 지역별 규제 차이를 반드시 고려하세요'], example:'예: 갤럭시 S25 AI 카메라 편집 기능 기획 - 나이트 모드 AI 자동 보정 UX 설계' },
+  { id:8, co:'hyundai', cat:'ux', diff:'중급', title:'자동차 인포테인먼트 UX 리서치', desc:'현대차 커넥티드카 인포테인먼트 시스템 사용성 평가 및 개선 인사이트 도출', prompt:`자동차 UX 전문가 역할을 해주세요.\n\n[시스템]: {ccOS / Android Auto 등}\n[평가 시나리오]: {운전 중 내비게이션 변경 등}\n[수집된 피드백]: {사용자 반응}\n\n분석 및 작성:\n1. 운전 중 인지 부하 분석\n2. 핵심 Pain Point TOP 5\n3. 안전 관련 UX 이슈 (별도 강조)\n4. 경쟁사 벤치마킹 (Tesla/BMW)\n5. 차기 모델 반영 권고사항`, tags:['인포테인먼트','자동차UX','커넥티드카'], tips:['운전 중 UX는 절대로 2초 이상 시선이 필요하면 안 됩니다','음성 UI 커버리지를 항상 시각 UI와 함께 설계하세요'], example:'예: IONIQ 6 인포테인먼트 사용성 평가 - 음성 명령 인식률 개선 및 홈 화면 재설계 제안' },
+  { id:9, co:'naver', cat:'data', diff:'초급', title:'지표 대시보드 해석 & 보고', desc:'네이버 대시보드 데이터를 경영진에게 보고할 수 있는 내러티브로 변환', prompt:`데이터 스토리텔러 역할을 해주세요.\n\n[지표 데이터]:\n- DAU: {숫자}\n- 리텐션: {7D / 30D}\n- 전환율: {숫자}%\n- 전주 대비: {+/-X%}\n\n임원 보고용 요약:\n🔴/🟡/🟢 이번 주 헤드라인 (1문장)\n📊 핵심 수치 변화 & 원인 가설\n⚠️ 주의 지표\n✅ 잘 되고 있는 것\n🎯 다음 주 집중 포인트 (1가지)`, tags:['대시보드','보고','지표'], tips:['숫자만 나열하지 말고 "왜"를 항상 함께 제시하세요','나쁜 소식은 묻지 말고 먼저 말한 뒤 대안을 제시하세요'], example:'예: 네이버 쇼핑 주간 지표 보고 - DAU 12% 상승 배경 분석 및 8월 전략 수정 제안' },
+  { id:10, co:'toss', cat:'meeting', diff:'중급', title:'크로스펑셔널 이슈 에스컬레이션', desc:'토스 팀 간 이슈 발생 시 경영진에게 명확하게 에스컬레이션하는 커뮤니케이션 프롬프트', prompt:`시니어 PM으로서 이슈 에스컬레이션 문서를 작성해주세요.\n\n[이슈 내용]: {무슨 문제가 발생했는가}\n[영향 범위]: {어느 팀, 어느 서비스}\n[현재 대응]: {지금 어떻게 대응 중인가}\n\n작성 형식:\n🚨 이슈 요약 (2줄)\n📊 비즈니스 임팩트 (숫자로)\n⏰ 타임라인\n🔍 현재 가설\n✅ 이미 한 것\n❓ 의사결정 필요 사항\n📅 예상 해결 일정`, tags:['에스컬레이션','이슈관리','커뮤니케이션'], tips:['이슈를 늦게 보고할수록 신뢰가 떨어집니다. 빨리 알리세요','비즈니스 임팩트를 숫자로 표현하면 의사결정이 빨라집니다'], example:'예: 토스 결제 시스템 장애 - 30분간 결제 실패율 45% 상승, CEO 긴급 보고 문서' },
+  { id:11, co:'kakao', cat:'roadmap', diff:'중급', title:'카카오 신기능 기회 탐색', desc:'카카오 생태계 내 신규 기능 기회를 체계적으로 발굴하고 우선순위를 결정', prompt:`프로덕트 전략가 역할을 해주세요.\n\n[탐색 영역]: {메시징 / 커머스 / 게임 등}\n[현재 사용자 데이터]: {MAU, 사용 시간 등}\n[경쟁 환경]: {주요 경쟁자 현황}\n\n분석:\n1. Jobs to be Done 분석\n2. 카카오 생태계 내 빈틈 발견\n3. 기능 아이디어 10개 브레인스토밍\n4. ICE 스코어 평가\n5. TOP 3 추천 및 근거`, tags:['기회탐색','카카오톡','아이디어'], tips:['JTBD 프레임은 "나는 [상황]에서 [동기]를 위해 [행동]을 한다" 형태입니다','ICE 점수는 팀 전체가 함께 매겨야 편향이 줄어듭니다'], example:'예: 카카오톡 오픈채팅 기능 확장 기회 탐색 - Z세대 커뮤니티 니즈 분석' },
+  { id:12, co:'coupang', cat:'ux', diff:'초급', title:'이커머스 온보딩 플로우 개선', desc:'쿠팡 신규 사용자 첫 구매 전환율을 높이기 위한 온보딩 UX 개선안 도출', prompt:`UX/그로스 전문가 역할을 해주세요.\n\n[현재 온보딩 플로우]:\n1단계: {설명}\n2단계: {설명}\n3단계: {설명}\n\n[현재 지표]:\n- 회원가입 완료율: {%}\n- 첫 구매 전환율: {%}\n- 드롭 오프 구간: {어디서 이탈}\n\n개선안:\n1. 마찰 포인트 분석\n2. 개선된 온보딩 시나리오\n3. 개인화 요소 삽입 방안\n4. 측정할 핵심 지표`, tags:['온보딩','전환율','이커머스'], tips:['첫 가치 경험(AHA Moment)을 최대한 빨리 달성하게 설계하세요','필수 입력 항목만 남기고 나머지는 나중으로 미루세요'], example:'예: 쿠팡 신규 가입자 온보딩 개선 - 가입 후 72시간 내 첫 구매율 8%→15% 목표' },
+];
+
+const QUIZZES = [
+  { q:'토스의 PRD 작성 시 Problem Statement는 몇 줄 이내로 압축하는 것이 권장되나요?', opts:['5줄','3줄','1문장','10줄'], ans:2, explain:'토스는 Problem Statement를 1문장으로 압축하는 문화가 있습니다.' },
+  { q:'A/B 테스트에서 노벨티 이펙트(Novelty Effect)를 방지하기 위해 최소 몇 주 이상 운영을 권장하나요?', opts:['1주','2주','4주','8주'], ans:1, explain:'노벨티 이펙트 방지를 위해 최소 2주 이상 운영해야 실제 행동 변화를 측정할 수 있습니다.' },
+  { q:'운전 중 인포테인먼트 UX에서 시선을 빼앗아서는 안 되는 최대 시간은?', opts:['1초','2초','5초','10초'], ans:1, explain:'운전 중 UX는 안전을 위해 절대로 2초 이상 시선이 필요한 디자인을 피해야 합니다.' },
+  { q:'JTBD(Jobs To Be Done) 프레임의 올바른 문장 형식은?', opts:['나는 [기능]을 사용한다','나는 [상황]에서 [동기]를 위해 [행동]을 한다','사용자는 [기능]이 필요하다','제품은 [기능]을 제공한다'], ans:1, explain:'JTBD는 사용자의 맥락(상황), 목적(동기), 행동을 연결해 진짜 니즈를 파악하는 프레임워크입니다.' },
+  { q:'ICE 스코어에서 "C"가 의미하는 것은?', opts:['Cost(비용)','Confidence(확신)','Customer(고객)','Conversion(전환)'], ans:1, explain:'ICE = Impact × Confidence × Ease. 기능 우선순위 결정에 사용됩니다.' },
+];
+
+// ── STATE ──
+let state = {
+  tab: 'home',
+  filterCo: 'all',
+  filterCat: 'all',
+  filterText: '',
+  bookmarks: new Set(),
+  quizIdx: 0,
+  quizAnswered: false,
+  quizScore: 0,
+  detailId: null,
+  dark: false,
+};
+
+// ── DARK MODE ──
+function toggleTheme() {
+  state.dark = !state.dark;
+  const theme = state.dark ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('plannerTheme', theme);
+
+  // Update all toggle icons
+  const icon = state.dark ? '🌙' : '☀️';
+  document.querySelectorAll('.theme-toggle').forEach(el => el.textContent = icon);
+  // Update profile toggle
+  const dt = document.getElementById('darkToggle');
+  if (dt) dt.classList.toggle('on', state.dark);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('plannerTheme');
+  if (saved === 'dark') {
+    state.dark = true;
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.querySelectorAll('.theme-toggle').forEach(el => el.textContent = '🌙');
+    const dt = document.getElementById('darkToggle');
+    if (dt) dt.classList.add('on');
+  }
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  state.tab = tab;
+  const screens = { home:'homeScreen', library:'libraryScreen', quiz:'quizScreen', bookmarks:'bookmarkScreen', profile:'profileScreen' };
+  const navIds = { home:'navHome', library:'navLibrary', quiz:'navQuiz', bookmarks:'navBm', profile:'navProfile' };
+  Object.values(screens).forEach(s => document.getElementById(s).classList.add('hidden'));
+  document.getElementById(screens[tab]).classList.remove('hidden');
+  Object.values(navIds).forEach(n => document.getElementById(n).classList.remove('active'));
+  document.getElementById(navIds[tab]).classList.add('active');
+  if(tab==='library') renderList();
+  if(tab==='bookmarks') renderBookmarks();
+  if(tab==='quiz') renderQuiz();
+}
+
+// ── HOME ──
+function renderToday() {
+  document.getElementById('todayScroll').innerHTML = PROMPTS.slice(0,4).map(p => {
+    const c = CO[p.co];
+    return `<div class="today-card" onclick="openDetail(${p.id})">
+      <div class="today-card-accent" style="background:${c.bg}"></div>
+      <div style="margin-bottom:10px"><span style="background:${c.bg};color:${c.text};padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700">${c.name}</span> <span style="font-size:10px;color:var(--text3)">${CAT_LABEL[p.cat]}</span></div>
+      <div class="today-card-title">${p.title}</div>
+      <div class="today-card-cat">${p.diff} 난이도</div>
+      <div class="today-card-arrow">→</div>
+    </div>`;
+  }).join('');
+}
+
+// ── LIBRARY ──
+function getFiltered() {
+  return PROMPTS.filter(p => {
+    const coOk = state.filterCo==='all' || p.co===state.filterCo;
+    const catOk = state.filterCat==='all' || p.cat===state.filterCat;
+    const txtOk = !state.filterText || p.title.includes(state.filterText) || p.desc.includes(state.filterText);
+    return coOk && catOk && txtOk;
+  });
+}
+function renderList() {
+  const el = document.getElementById('promptList');
+  const items = getFiltered();
+  if(!items.length) { el.innerHTML='<div style="text-align:center;padding:40px 0;color:var(--text3)">🔍 검색 결과가 없습니다</div>'; return; }
+  el.innerHTML = items.map(p => {
+    const c = CO[p.co]; const bm = state.bookmarks.has(p.id);
+    return `<div class="p-card" onclick="openDetail(${p.id})">
+      <div class="p-card-top">
+        <span class="p-co-badge" style="background:${c.bg};color:${c.text}">${c.name}</span>
+        <span class="p-cat-badge">${CAT_LABEL[p.cat]}</span>
+        <span class="p-diff">${p.diff}</span>
+      </div>
+      <div class="p-title">${p.title}</div>
+      <div class="p-desc">${p.desc}</div>
+      <div class="p-preview">${p.prompt.substring(0,100)}...</div>
+      <div class="p-footer">
+        ${p.tags.slice(0,2).map(t=>`<span class="p-tag">#${t}</span>`).join('')}
+        <button class="p-bm-btn ${bm?'on':''}" onclick="event.stopPropagation();toggleBm(${p.id},this)">${bm?'★':'☆'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function filterCompany(co,el) { state.filterCo=co; document.querySelectorAll('.co-chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); renderList(); }
+function filterCat(cat,el) { state.filterCat=cat; el.closest('.chip-row').querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); el.classList.add('active'); renderList(); }
+function filterLibrary(val) { state.filterText=val; renderList(); }
+function searchFromHome(val) { state.filterText=val; if(val) switchTab('library'); }
+
+// ── BOOKMARK ──
+function toggleBm(id,btn) {
+  if(state.bookmarks.has(id)) { state.bookmarks.delete(id); btn.textContent='☆'; btn.classList.remove('on'); showToast('북마크 해제됨'); }
+  else { state.bookmarks.add(id); btn.textContent='★'; btn.classList.add('on'); showToast('⭐ 북마크에 저장!'); }
+  document.getElementById('bmStatVal').textContent = state.bookmarks.size;
+}
+function renderBookmarks() {
+  const bms = PROMPTS.filter(p=>state.bookmarks.has(p.id));
+  const el = document.getElementById('bmList'); const empty = document.getElementById('bmEmpty');
+  document.getElementById('bmCount').textContent = `${bms.length}개 저장됨`;
+  if(!bms.length) { el.innerHTML=''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  el.innerHTML = bms.map(p => { const c=CO[p.co];
+    return `<div class="p-card" onclick="openDetail(${p.id})">
+      <div class="p-card-top"><span class="p-co-badge" style="background:${c.bg};color:${c.text}">${c.name}</span><span class="p-cat-badge">${CAT_LABEL[p.cat]}</span></div>
+      <div class="p-title">${p.title}</div>
+      <div class="p-desc">${p.desc}</div>
+      <div class="p-footer">${p.tags.slice(0,2).map(t=>`<span class="p-tag">#${t}</span>`).join('')}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── DETAIL ──
+function openDetail(id) {
+  const p = PROMPTS.find(x=>x.id===id); if(!p) return;
+  state.detailId=id;
+  const c=CO[p.co]; const bm=state.bookmarks.has(id);
+  document.getElementById('detailHeaderTitle').textContent=p.title;
+  const btn=document.getElementById('detailBmBtn');
+  btn.textContent=bm?'★':'☆'; btn.className=`p-bm-btn ${bm?'on':''}`;
+  document.getElementById('detailBody').innerHTML=`
+    <div class="detail-hero">
+      <div class="company-row-inner">
+        <span style="background:${c.bg};color:${c.text};padding:3px 10px;border-radius:7px;font-size:11px;font-weight:700">${c.name}</span>
+        <span style="font-size:11px;color:rgba(255,255,255,0.6)">${CAT_LABEL[p.cat]} · ${p.diff}</span>
+      </div>
+      <div class="detail-hero-title">${p.title}</div>
+      <div class="detail-hero-desc">${p.desc}</div>
+    </div>
+    <div class="detail-section"><div class="detail-section-label">📋 프롬프트 템플릿</div><div class="prompt-block">${p.prompt}</div></div>
+    <div class="detail-section"><div class="detail-section-label">💡 활용 팁</div><div class="tip-list">${p.tips.map((t,i)=>`<div class="tip-item"><span class="tip-badge">TIP ${i+1}</span>${t}</div>`).join('')}</div></div>
+    <div class="detail-section"><div class="detail-section-label">📎 실제 활용 예시</div><div class="example-block">${p.example}</div></div>
+    <button class="copy-btn" onclick="copyPrompt()">📋 프롬프트 복사하기</button>
+    <div style="height:24px"></div>`;
+  document.getElementById('detailScreen').classList.add('open');
+}
+function closeDetail() { document.getElementById('detailScreen').classList.remove('open'); }
+function toggleBmFromDetail() {
+  const id=state.detailId; if(!id) return;
+  const btn=document.getElementById('detailBmBtn');
+  if(state.bookmarks.has(id)) { state.bookmarks.delete(id); btn.textContent='☆'; btn.classList.remove('on'); showToast('북마크 해제됨'); }
+  else { state.bookmarks.add(id); btn.textContent='★'; btn.classList.add('on'); showToast('⭐ 북마크에 저장!'); }
+  document.getElementById('bmStatVal').textContent = state.bookmarks.size;
+  if(state.tab==='library') renderList();
+}
+function copyPrompt() {
+  const p=PROMPTS.find(x=>x.id===state.detailId); if(!p) return;
+  navigator.clipboard.writeText(p.prompt).then(()=>showToast('✅ 클립보드에 복사됨!')).catch(()=>showToast('✅ 복사 완료!'));
+}
+
+// ── QUIZ ──
+function renderQuiz() {
+  const wrapper=document.getElementById('quizWrapper');
+  if(state.quizIdx>=QUIZZES.length) {
+    const pct=Math.round(state.quizScore/QUIZZES.length*100);
+    wrapper.innerHTML=`<div class="score-card">
+      <div class="score-emoji">${pct>=80?'🏆':pct>=60?'🎯':'📖'}</div>
+      <div class="score-val">${pct}%</div>
+      <div class="score-label">${state.quizScore} / ${QUIZZES.length} 정답</div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.6;margin-bottom:24px">${pct>=80?'훌륭해요! 기획 AI 프롬프트 마스터에 가까워지고 있습니다 🎉':pct>=60?'좋아요! 조금 더 연습하면 완벽해질 거예요 💪':'다시 학습하고 도전해보세요. 할 수 있어요! 📚'}</div>
+      <button class="quiz-next-btn" onclick="restartQuiz()">🔄 다시 시작하기</button>
+    </div>`; return;
+  }
+  const q=QUIZZES[state.quizIdx]; state.quizAnswered=false;
+  document.getElementById('quizScoreLabel').textContent=`${state.quizIdx+1} / ${QUIZZES.length}`;
+  const progPct=(state.quizIdx/QUIZZES.length)*100;
+  wrapper.innerHTML=`
+    <div class="quiz-progress-row"><div class="quiz-prog-bar"><div class="quiz-prog-fill" style="width:${progPct}%"></div></div><div class="quiz-prog-label">${state.quizIdx+1}/${QUIZZES.length}</div></div>
+    <div class="quiz-card-main"><div class="quiz-num">QUESTION ${state.quizIdx+1}</div><div class="quiz-q-text">${q.q}</div></div>
+    <div class="quiz-options">${q.opts.map((o,i)=>`<button class="quiz-opt-btn" onclick="answerQuiz(${i})"><div class="quiz-opt-letter">${String.fromCharCode(65+i)}</div>${o}</button>`).join('')}</div>
+    <div class="quiz-feedback" id="quizFb"></div>
+    <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuiz()" style="display:none">다음 문제 →</button>`;
+}
+function answerQuiz(i) {
+  if(state.quizAnswered) return; state.quizAnswered=true;
+  const q=QUIZZES[state.quizIdx];
+  document.querySelectorAll('.quiz-opt-btn')[q.ans].classList.add('correct');
+  if(i!==q.ans) document.querySelectorAll('.quiz-opt-btn')[i].classList.add('wrong');
+  const correct=i===q.ans; if(correct) state.quizScore++;
+  const fb=document.getElementById('quizFb');
+  fb.textContent=(correct?'✅ 정답! ':'❌ 오답. ')+q.explain;
+  fb.className=`quiz-feedback show${correct?'':' wrong-fb'}`;
+  document.getElementById('quizNextBtn').style.display='block';
+}
+function nextQuiz() { state.quizIdx++; renderQuiz(); }
+function restartQuiz() { state.quizIdx=0; state.quizScore=0; state.quizAnswered=false; renderQuiz(); }
+
+// ── TOAST ──
+function showToast(msg) {
+  const t=document.getElementById('toast'); t.textContent=msg;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ── INIT ──
+initTheme();
+renderToday();
+renderList();
+</script>
+</body>
+</html>
