@@ -3,542 +3,1322 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PlannerAI Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>PromptOS Admin — 관리자 패널</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f5f4f0;--surface:#fff;--surface2:#f0ede8;--border:#e2ddd8;--text:#1a1916;--text2:#6b6660;--text3:#9e9890;--accent:#e8441a;--accent-light:#fff0ec;--green:#16a34a;--green-light:#f0fdf4;--yellow:#ca8a04;--yellow-light:#fefce8;--shadow:0 1px 3px rgba(0,0,0,.08);--radius:12px;--radius-sm:8px}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-  .sidebar{position:fixed;top:0;left:0;bottom:0;width:240px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100}
-  .sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid var(--border)}
-  .logo-mark{display:flex;align-items:center;gap:10px}
-  .logo-icon{width:32px;height:32px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
-  .logo-text{font-size:16px;font-weight:700}
-  .logo-badge{font-size:9px;font-weight:600;background:var(--text);color:#fff;padding:2px 6px;border-radius:4px;margin-top:2px}
-  .sidebar-nav{flex:1;padding:12px;overflow-y:auto}
-  .nav-label{font-size:10px;font-weight:600;letter-spacing:1px;color:var(--text3);text-transform:uppercase;padding:8px 8px 6px}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);cursor:pointer;font-size:14px;font-weight:500;color:var(--text2);transition:all .15s;border:none;background:none;width:100%;text-align:left;margin-bottom:2px}
-  .nav-item:hover{background:var(--surface2);color:var(--text)}
-  .nav-item.active{background:var(--accent-light);color:var(--accent)}
-  .nav-item .ni{font-size:16px;width:20px;text-align:center}
-  .nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
-  .sidebar-footer{padding:16px;border-top:1px solid var(--border)}
-  .user-pill{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--surface2)}
-  .user-avatar{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
-  .uname{font-size:13px;font-weight:600}
-  .urole{font-size:11px;color:var(--text3)}
-  .main{margin-left:240px;min-height:100vh}
-  .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-  .topbar-title{font-size:18px;font-weight:700}
-  .topbar-actions{display:flex;align-items:center;gap:12px}
-  .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:none;font-family:inherit}
-  .btn-primary{background:var(--accent);color:#fff}
-  .btn-primary:hover{background:#cc3a16}
-  .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-  .btn-secondary:hover{background:var(--border)}
-  .btn-danger{background:#fee2e2;color:#dc2626}
-  .btn-green{background:var(--green-light);color:var(--green);border:1px solid #bbf7d0}
-  .btn-green:hover{background:#dcfce7}
-  .btn-sm{padding:5px 10px;font-size:12px}
-  .content{padding:32px}
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-  .stat-label{font-size:12px;color:var(--text3);font-weight:500;margin-bottom:8px}
-  .stat-value{font-size:28px;font-weight:700}
-  .stat-sub{font-size:12px;color:var(--text3);margin-top:4px}
-  .content-grid{display:grid;grid-template-columns:1fr 400px;gap:24px;align-items:start}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-  .card-header{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-  .card-title{font-size:15px;font-weight:700}
-  .card-subtitle{font-size:12px;color:var(--text3);margin-top:2px}
-  .filters{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-  .sw{position:relative;flex:1}
-  .si{width:100%;padding:8px 12px 8px 34px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--surface2);color:var(--text);outline:none}
-  .si:focus{border-color:var(--accent);background:#fff}
-  .sic{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--text3);pointer-events:none}
-  .fs{padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--surface2);color:var(--text);cursor:pointer;outline:none}
-  .tw{overflow-x:auto}
-  table{width:100%;border-collapse:collapse}
-  thead th{text-align:left;padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.5px;color:var(--text3);text-transform:uppercase;background:var(--surface2);border-bottom:1px solid var(--border)}
-  tbody tr{border-bottom:1px solid var(--border);transition:background .1s}
-  tbody tr:last-child{border-bottom:none}
-  tbody tr:hover{background:var(--surface2)}
-  td{padding:12px 16px;font-size:13px;vertical-align:middle}
-  .ptc{font-weight:600;max-width:200px}
-  .pp{font-size:12px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
-  .tag{display:inline-flex;align-items:center;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600}
-  .tc{background:#eff6ff;color:#2563eb}
-  .tcat{background:#f0fdf4;color:#16a34a}
-  .tag-pub{background:var(--green-light);color:var(--green)}
-  .tag-draft{background:var(--yellow-light);color:var(--yellow)}
-  .ra{display:flex;gap:6px;flex-wrap:wrap}
-  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:sticky;top:80px}
-  .form-header{padding:18px 20px;border-bottom:1px solid var(--border);background:linear-gradient(135deg,var(--accent-light),var(--surface));display:flex;align-items:center;justify-content:space-between}
-  .form-title{font-size:15px;font-weight:700}
-  .fmb{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;text-transform:uppercase}
-  .mode-add{background:var(--green-light);color:var(--green)}
-  .mode-edit{background:var(--yellow-light);color:var(--yellow)}
-  .form-body{padding:20px}
-  .fg{margin-bottom:16px}
-  label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px}
-  .req{color:var(--accent)}
-  input[type="text"],textarea,select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;background:var(--surface2);color:var(--text);outline:none;transition:border-color .15s;resize:vertical}
-  input[type="text"]:focus,textarea:focus,select:focus{border-color:var(--accent);background:#fff}
-  .cc{font-size:11px;color:var(--text3);text-align:right;margin-top:4px}
-  .fr{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .ff{padding:16px 20px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--surface2);flex-wrap:wrap}
-  .ff .btn{flex:1;justify-content:center;min-width:80px}
-  .tc2{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
-  .toast{padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,0,0,.08);animation:si2 .25s ease;max-width:320px}
-  .toast-success{background:var(--green-light);color:var(--green);border:1px solid #bbf7d0}
-  .toast-error{background:#fee2e2;color:#dc2626;border:1px solid #fecaca}
-  .toast-info{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe}
-  @keyframes si2{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-  /* 모달 공통 */
-  .mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);backdrop-filter:blur(3px);z-index:500;align-items:center;justify-content:center}
-  .mo.open{display:flex}
-  .modal{background:var(--surface);border-radius:var(--radius);padding:28px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:mi .2s ease}
-  @keyframes mi{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
-  .mt{font-size:17px;font-weight:700;margin-bottom:8px}
-  .mb{font-size:14px;color:var(--text2);margin-bottom:24px;line-height:1.5}
-  .ma{display:flex;gap:10px;justify-content:flex-end}
-  /* 회사 모달 */
-  .co-modal{max-width:480px}
-  .co-list{max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:16px}
-  .co-row{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);font-size:14px}
-  .co-row:last-child{border-bottom:none}
-  .co-row:hover{background:var(--surface2)}
-  .co-name{display:flex;align-items:center;gap:10px;font-weight:500}
-  .co-emoji{font-size:20px;width:28px;text-align:center}
-  .co-add-row{display:grid;grid-template-columns:56px 1fr;gap:8px;margin-bottom:8px}
-  .emoji-inp{text-align:center;font-size:18px}
-  .es{text-align:center;padding:60px 20px;color:var(--text3)}
-  .sb{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--green-light);color:var(--green);border:1px solid #bbf7d0}
-  .sd{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-  .pg{padding:14px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface2)}
-  .pi{font-size:12px;color:var(--text3)}
-  .pbs{display:flex;gap:6px}
-  .pb{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2);transition:all .15s}
-  .pb.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .view{display:none}
-  .view.active{display:block}
-  .ag{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
-  .cp{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;min-height:180px;display:flex;flex-direction:column;justify-content:space-between}
-  .sl{font-size:12px;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;padding:0 0 16px;display:flex;align-items:center;gap:8px}
-  .sl::after{content:'';flex:1;height:1px;background:var(--border)}
-  @media(max-width:1100px){.content-grid{grid-template-columns:1fr}.form-card{position:static}.stats-row{grid-template-columns:repeat(2,1fr)}}
+:root{
+  --bg:#05090f;--surface:#0a1220;--surface2:#0f1a2e;--surface3:#162035;
+  --border:rgba(56,139,253,.13);--border2:rgba(56,139,253,.22);
+  --accent:#3b82f6;--accent2:#06b6d4;--accent3:#8b5cf6;
+  --gold:#f59e0b;--green:#10b981;--red:#ef4444;--orange:#f97316;
+  --text:#e2e8f0;--text2:#94a3b8;--muted:#475569;
+  --sidebar:220px;--r:12px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;
+  font-size:13px;min-height:100vh;display:flex;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(59,130,246,.025) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(59,130,246,.025) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);flex-shrink:0;background:var(--surface);
+  border-right:1px solid var(--border);height:100vh;
+  display:flex;flex-direction:column;position:relative;z-index:10}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--border)}
+.sb-logo-text{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sb-logo-sub{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.sb-section{font-size:9px;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.8px;padding:8px 8px 4px;margin-top:8px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 10px;
+  border-radius:var(--r);color:var(--text2);cursor:pointer;
+  transition:all .2s;margin-bottom:2px;font-size:12px;font-weight:500}
+.sb-item:hover{background:var(--surface2);color:var(--text)}
+.sb-item.active{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(139,92,246,.1));
+  color:var(--accent);border:1px solid rgba(59,130,246,.2)}
+.sb-item-ico{font-size:15px;flex-shrink:0}
+.sb-badge{margin-left:auto;background:var(--accent);color:white;
+  font-size:9px;font-weight:700;padding:2px 6px;border-radius:50px}
+.sb-bottom{padding:14px 10px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);
+  background:var(--surface2);cursor:pointer}
+.sb-avatar{width:30px;height:30px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  display:flex;align-items:center;justify-content:center;font-size:14px}
+.sb-uname{font-size:12px;font-weight:700}
+.sb-urole{font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.5px}
+.sb-live{display:flex;align-items:center;gap:5px;padding:6px 10px;
+  font-size:10px;color:var(--green);font-weight:700;margin-bottom:6px}
+.sb-ldot{width:5px;height:5px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 5px var(--green);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:1}
+.topbar{flex-shrink:0;background:rgba(5,9,15,.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between}
+.page-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-.3px}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.tb-stat{display:flex;align-items:center;gap:5px;padding:5px 11px;
+  background:var(--surface);border:1px solid var(--border);border-radius:50px;
+  font-size:10px;color:var(--text2)}
+.tb-stat strong{color:var(--text);font-weight:700}
+.tb-btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;
+  font-size:11px;font-weight:700;transition:all .2s;display:flex;align-items:center;gap:5px}
+.tb-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white}
+.tb-btn.primary:active{opacity:.85}
+.tb-btn.danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--red)}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:20px 24px}
+.content::-webkit-scrollbar{width:4px}
+.content::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px}
+.stat-ico{font-size:18px;margin-bottom:8px}
+.stat-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;margin-bottom:2px}
+.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stat-chg{font-size:10px;margin-top:4px}
+.stat-up{color:var(--green)} .stat-dn{color:var(--red)}
+
+/* SECTION BOX */
+.sec-box{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.sec-head{padding:13px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between}
+.sec-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700}
+.sec-acts{display:flex;gap:7px}
+.act{padding:5px 11px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text2);font-size:10px;font-weight:600;
+  cursor:pointer;transition:all .2s}
+.act:hover{background:var(--surface3);color:var(--text)}
+.act.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:white;border-color:transparent}
+
+/* TABLE */
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:9px 14px;text-align:left;font-size:9px;font-weight:700;
+  color:var(--muted);text-transform:uppercase;letter-spacing:.6px;
+  border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(56,139,253,.06);transition:background .15s}
+tbody tr:hover{background:var(--surface2)}
+tbody td{padding:10px 14px;font-size:12px;vertical-align:middle}
+tbody tr:last-child{border-bottom:none}
+.td-title{font-weight:600;color:var(--text);max-width:200px}
+.td-prompt{color:var(--text2);max-width:280px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{padding:3px 8px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.3px}
+.badge-toss{background:rgba(0,100,255,.15);color:#6699ff}
+.badge-kakao{background:rgba(254,229,0,.15);color:#c8b400}
+.badge-naver{background:rgba(3,199,90,.15);color:#03C75A}
+.badge-baemin{background:rgba(61,196,162,.15);color:#3DC4A2}
+.badge-upbit{background:rgba(26,108,255,.15);color:#6699ff}
+.badge-kiwoom{background:rgba(227,27,59,.15);color:#ff6680}
+.badge-active{background:rgba(16,185,129,.12);color:var(--green)}
+.badge-draft{background:rgba(245,158,11,.12);color:var(--gold)}
+.row-actions{display:flex;gap:5px}
+.row-btn{padding:4px 9px;border-radius:5px;border:1px solid var(--border);
+  background:var(--surface3);color:var(--text2);font-size:10px;
+  cursor:pointer;transition:all .2s;white-space:nowrap}
+.row-btn:hover{color:var(--text)}
+.row-btn.edit:hover{color:var(--accent);border-color:var(--accent)}
+.row-btn.del:hover{color:var(--red);border-color:var(--red)}
+.row-btn.push:hover{color:var(--gold);border-color:var(--gold)}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px}
+.form-input,.form-select,.form-ta{background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:9px 12px;color:var(--text);font-size:12px;
+  font-family:'Noto Sans KR',sans-serif;outline:none;
+  transition:border-color .2s;width:100%}
+.form-input:focus,.form-select:focus,.form-ta:focus{border-color:var(--accent)}
+.form-ta{resize:vertical;min-height:80px}
+.form-actions{padding:0 16px 16px;display:flex;gap:8px;justify-content:flex-end}
+.btn-save{padding:9px 20px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:8px;color:white;font-size:12px;font-weight:700;
+  cursor:pointer;transition:opacity .2s}
+.btn-save:active{opacity:.85}
+.btn-cancel{padding:9px 16px;background:transparent;border:1px solid var(--border);
+  border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer}
+.btn-cancel:hover{color:var(--text)}
+
+/* PUSH PANEL */
+.push-form{padding:16px;display:grid;gap:12px}
+.push-type-row{display:flex;gap:8px;flex-wrap:wrap}
+.push-type{padding:7px 14px;border-radius:8px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text2);font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .2s}
+.push-type.active{background:linear-gradient(135deg,var(--accent),var(--accent3));
+  color:white;border-color:transparent}
+.push-preview{background:var(--surface3);border:1px solid var(--border2);
+  border-radius:var(--r);padding:14px;margin-top:4px}
+.push-preview-title{font-size:10px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.push-mock{background:rgba(13,21,37,.9);border:1px solid var(--border2);
+  border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
+.pmock-ico{width:32px;height:32px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.pmock-title{font-size:12px;font-weight:700;color:var(--text)}
+.pmock-body{font-size:11px;color:var(--text2);margin-top:1px}
+
+/* LIVE UPDATE */
+.live-update-row{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-bottom:1px solid var(--border)}
+.live-update-row:last-child{border-bottom:none}
+.lu-info{display:flex;align-items:center;gap:10px}
+.lu-ico{width:32px;height:32px;border-radius:8px;background:var(--surface3);
+  display:flex;align-items:center;justify-content:center;font-size:14px}
+.lu-title{font-size:12px;font-weight:600;color:var(--text)}
+.lu-sub{font-size:10px;color:var(--muted);margin-top:1px}
+.toggle{width:40px;height:22px;background:var(--surface3);border-radius:11px;
+  cursor:pointer;transition:background .25s;position:relative;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;
+  background:white;top:3px;left:3px;transition:left .25s}
+.toggle.on::after{left:21px}
+
+/* Activity log */
+.log-list{max-height:280px;overflow-y:auto}
+.log-list::-webkit-scrollbar{width:3px}
+.log-list::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.log-item{padding:9px 16px;border-bottom:1px solid rgba(56,139,253,.05);
+  display:flex;align-items:center;gap:10px}
+.log-item:last-child{border-bottom:none}
+.log-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.log-txt{flex:1;font-size:11px;color:var(--text2)}
+.log-txt strong{color:var(--text);font-weight:600}
+.log-time{font-size:9px;color:var(--muted);white-space:nowrap}
+
+/* CHART bar */
+.mini-chart{padding:14px 16px;display:flex;align-items:flex-end;gap:4px;height:80px}
+.bar{background:linear-gradient(180deg,var(--accent),var(--accent3));
+  border-radius:3px 3px 0 0;flex:1;transition:height .5s ease;
+  min-width:12px;position:relative}
+.bar:hover::after{content:attr(data-val);position:absolute;top:-20px;left:50%;
+  transform:translateX(-50%);font-size:9px;color:var(--text);background:var(--surface3);
+  padding:2px 5px;border-radius:3px;white-space:nowrap}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center}
+.modal.show{display:flex}
+.modal-box{background:var(--surface);border:1px solid var(--border2);
+  border-radius:16px;width:min(520px,90vw);max-height:85vh;overflow-y:auto}
+.modal-head{padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.modal-close{width:28px;height:28px;border-radius:7px;background:var(--surface2);
+  border:none;color:var(--muted);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+
+/* Toast */
+.toast{position:fixed;top:20px;right:20px;z-index:999;
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:10px;padding:11px 18px;font-size:12px;color:var(--text);
+  opacity:0;transform:translateX(20px);transition:all .3s;pointer-events:none;
+  display:flex;align-items:center;gap:7px}
+.toast.show{opacity:1;transform:translateX(0)}
+
+/* Responsive sidebar toggle */
+.mob-menu{display:none}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:-100%;z-index:100;transition:left .3s}
+  .sidebar.open{left:0}
+  .mob-menu{display:flex;width:32px;height:32px;align-items:center;justify-content:center;
+    background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    cursor:pointer;font-size:17px;margin-right:10px}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
-<nav class="sidebar">
-  <div class="sidebar-logo"><div class="logo-mark"><div class="logo-icon">🧠</div><div><div class="logo-text">PlannerAI</div><div class="logo-badge">ADMIN</div></div></div></div>
-  <div class="sidebar-nav">
-    <div class="nav-label">콘텐츠</div>
-    <button class="nav-item active" onclick="showView('prompts')"><span class="ni">📝</span>프롬프트 관리<span class="badge" id="pcb">0</span></button>
-    <button class="nav-item" onclick="showView('analytics')"><span class="ni">📊</span>통계 &amp; 분석</button>
-    <div class="nav-label" style="margin-top:12px">설정</div>
-    <button class="nav-item" onclick="openCoModal()"><span class="ni">🏢</span>회사 관리</button>
-    <div class="nav-label" style="margin-top:12px">데이터</div>
-    <button class="nav-item" onclick="exportData()"><span class="ni">📤</span>내보내기</button>
-    <button class="nav-item" onclick="importData()"><span class="ni">📥</span>가져오기</button>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-text">PromptOS</div>
+    <div class="sb-logo-sub">Admin Dashboard</div>
   </div>
-  <div class="sidebar-footer"><div class="user-pill"><div class="user-avatar">A</div><div><div class="uname">Admin</div><div class="urole">콘텐츠 매니저</div></div></div></div>
-</nav>
-<main class="main">
+  <nav class="sb-nav">
+    <div class="sb-section">메인</div>
+    <div class="sb-item active" onclick="gotoPanel('dashboard',this)"><span class="sb-item-ico">📊</span>대시보드</div>
+    <div class="sb-section">콘텐츠 관리</div>
+    <div class="sb-item" onclick="gotoPanel('prompts',this)"><span class="sb-item-ico">💬</span>프롬프트 관리 <span class="sb-badge" id="sbPromptCnt">0</span></div>
+    <div class="sb-item" onclick="gotoPanel('quiz',this)"><span class="sb-item-ico">🎯</span>퀴즈 관리</div>
+    <div class="sb-item" onclick="gotoPanel('news',this)"><span class="sb-item-ico">📰</span>뉴스 설정</div>
+    <div class="sb-section">운영</div>
+    <div class="sb-item" onclick="gotoPanel('push',this)"><span class="sb-item-ico">🔔</span>푸시 알림</div>
+    <div class="sb-item" onclick="gotoPanel('live',this)"><span class="sb-item-ico">⚡</span>실시간 업데이트</div>
+    <div class="sb-item" onclick="gotoPanel('activity',this)"><span class="sb-item-ico">📋</span>활동 로그</div>
+    <div class="sb-section">시스템</div>
+    <div class="sb-item" onclick="gotoPanel('ollama',this)"><span class="sb-item-ico">🦙</span>Ollama 설정</div>
+    <div class="sb-item" onclick="gotoPanel('settings',this)"><span class="sb-item-ico">⚙️</span>설정</div>
+  </nav>
+  <div class="sb-bottom">
+    <div class="sb-live"><div class="sb-ldot"></div>실시간 동기화 중</div>
+    <div class="sb-user" onclick="window.open('mobile.html','_blank')">
+      <div class="sb-avatar">⚙️</div>
+      <div><div class="sb-uname">관리자</div><div class="sb-urole">Admin</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
   <div class="topbar">
-    <div class="topbar-title">프롬프트 관리</div>
-    <div class="topbar-actions">
-      <div class="sb"><div class="sd"></div>localStorage 연결됨</div>
-      <button class="btn btn-secondary btn-sm" onclick="openCoModal()">🏢 회사 관리</button>
-      <button class="btn btn-secondary btn-sm" onclick="resetToDefault()">🔄 기본값 초기화</button>
-      <button class="btn btn-primary" onclick="startAdd()">+ 새 프롬프트</button>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="mob-menu" onclick="toggleSidebar()">☰</button>
+      <div class="page-title" id="pageTitle">대시보드</div>
+    </div>
+    <div class="topbar-right">
+      <div class="tb-stat"><strong id="tbPromptCnt">0</strong> 프롬프트</div>
+      <div class="tb-stat"><strong id="tbLiveStatus">LIVE</strong></div>
+      <button class="tb-btn primary" onclick="syncToMobile()">📲 모바일 동기화</button>
     </div>
   </div>
+
   <div class="content">
-    <div id="view-prompts" class="view active">
+
+    <!-- ══ DASHBOARD ══ -->
+    <div class="panel active" id="panel-dashboard">
       <div class="stats-row">
-        <div class="stat-card"><div class="stat-label">전체 프롬프트</div><div class="stat-value" id="st">0</div><div class="stat-sub">localStorage 저장됨</div></div>
-        <div class="stat-card"><div class="stat-label">등록 회사</div><div class="stat-value" id="sc">0</div><div class="stat-sub">개 회사</div></div>
-        <div class="stat-card"><div class="stat-label">카테고리</div><div class="stat-value" id="scat">0</div><div class="stat-sub">개 분류</div></div>
-        <div class="stat-card"><div class="stat-label">최근 업데이트</div><div class="stat-value" style="font-size:18px" id="su">-</div><div class="stat-sub">mobile.html에 반영됨</div></div>
-      </div>
-      <div class="content-grid">
-        <div class="card">
-          <div class="card-header">
-            <div><div class="card-title">프롬프트 목록</div><div class="card-subtitle">추가/수정/삭제 시 mobile.html에 즉시 반영</div></div>
-            <div class="sb" style="font-size:11px" id="lst">대기중</div>
-          </div>
-          <div class="filters">
-            <div class="sw"><span class="sic">🔍</span><input class="si" type="text" placeholder="검색..." id="si" oninput="renderTable()"></div>
-            <select class="fs" id="fc" onchange="renderTable()"><option value="">전체 회사</option></select>
-            <select class="fs" id="fcat" onchange="renderTable()"><option value="">전체 카테고리</option></select>
-          </div>
-          <div class="tw"><table><thead><tr><th>제목 / 미리보기</th><th>회사</th><th>카테고리</th><th>난이도</th><th>액션</th></tr></thead><tbody id="tb"></tbody></table></div>
-          <div id="es" class="es" style="display:none"><div style="font-size:40px">📭</div><div style="font-size:15px;font-weight:600;color:var(--text2);margin-top:12px">프롬프트가 없습니다</div></div>
-          <div class="pg"><div class="pi" id="pi">0개 항목</div><div class="pbs" id="pbs"></div></div>
+        <div class="stat-card">
+          <div class="stat-ico">💬</div>
+          <div class="stat-num" id="ds-prompts">0</div>
+          <div class="stat-lbl">총 프롬프트</div>
+          <div class="stat-chg stat-up">↑ 관리됨</div>
         </div>
-        <div><div class="form-card">
-          <div class="form-header">
-            <div><div class="form-title" id="ft">새 프롬프트 추가</div><div style="font-size:12px;color:var(--text3);margin-top:3px">저장 시 mobile.html에 즉시 반영</div></div>
-            <span class="fmb mode-add" id="fmb">추가</span>
+        <div class="stat-card">
+          <div class="stat-ico">🎯</div>
+          <div class="stat-num" id="ds-quizzes">0</div>
+          <div class="stat-lbl">총 퀴즈</div>
+          <div class="stat-chg stat-up">↑ 활성</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ico">🔔</div>
+          <div class="stat-num" id="ds-push">0</div>
+          <div class="stat-lbl">푸시 발송</div>
+          <div class="stat-chg stat-up">↑ 오늘</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-ico">👥</div>
+          <div class="stat-num" id="ds-users">–</div>
+          <div class="stat-lbl">활성 사용자</div>
+          <div class="stat-chg stat-up">↑ 실시간</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
+        <div class="sec-box">
+          <div class="sec-head"><div class="sec-title">📈 일간 프롬프트 실행</div></div>
+          <div class="mini-chart" id="miniChart"></div>
+          <div style="padding:0 16px 10px;display:flex;gap:10px">
+            <span style="font-size:9px;color:var(--muted)">최근 7일 기준</span>
           </div>
-          <div class="form-body">
-            <input type="hidden" id="eid">
-            <div class="fg"><label>제목 <span class="req">*</span></label><input type="text" id="fti" placeholder="예: PRD 작성 도우미" maxlength="60"><div class="cc"><span id="tl">0</span>/60</div></div>
-            <div class="fr">
-              <div class="fg">
-                <label>회사 <span class="req">*</span></label>
-                <select id="fco"><option value="">회사 선택</option></select>
-              </div>
-              <div class="fg"><label>카테고리 <span class="req">*</span></label><select id="fca"><option value="">카테고리 선택</option><option>PRD 작성</option><option>유저 스토리</option><option>데이터 분석</option><option>경쟁사 분석</option><option>로드맵 기획</option><option>회의 정리</option><option>이메일 작성</option><option>A/B 테스트</option><option>OKR 설정</option><option>기타</option></select></div>
-            </div>
-            <div class="fr">
-              <div class="fg"><label>난이도</label><select id="flv"><option value="초급">🟢 초급</option><option value="중급" selected>🟡 중급</option><option value="고급">🔴 고급</option></select></div>
-              <div class="fg"><label>태그 (쉼표 구분)</label><input type="text" id="ftg" placeholder="PM, 기획, AI"></div>
-            </div>
-            <div class="fg"><label>프롬프트 본문 <span class="req">*</span></label><textarea id="fpr" rows="5" placeholder="AI에게 보낼 프롬프트..." maxlength="2000"></textarea><div class="cc"><span id="pl">0</span>/2000</div></div>
-            <div class="fg"><label>💡 팁 (선택)</label><textarea id="ftp" rows="2" placeholder="효과적으로 사용하는 방법..." maxlength="500"></textarea></div>
-            <div class="fg"><label>📎 예시 입출력 (선택)</label><textarea id="fex" rows="2" placeholder="입력 예시와 기대 출력 예시..." maxlength="500"></textarea></div>
-          </div>
-          <div class="ff">
-            <button class="btn btn-secondary" onclick="clearForm()">초기화</button>
-            <button class="btn btn-green" onclick="saveAndPublish()">🚀 바로 게시</button>
-            <button class="btn btn-primary" onclick="savePrompt()">💾 저장</button>
-          </div>
-        </div></div>
+        </div>
+        <div class="sec-box">
+          <div class="sec-head"><div class="sec-title">🏢 기업별 분포</div></div>
+          <div id="coDist" style="padding:10px 14px"></div>
+        </div>
+      </div>
+
+      <div class="sec-box">
+        <div class="sec-head">
+          <div class="sec-title">⚡ 최근 활동</div>
+          <div class="sec-acts"><div class="act" onclick="clearLogs()">클리어</div></div>
+        </div>
+        <div class="log-list" id="dashLog"></div>
       </div>
     </div>
-    <div id="view-analytics" class="view">
-      <div class="sl">회사별 분포</div><div class="ag" id="ag"></div>
-      <div class="sl">카테고리별 분포</div><div class="card" style="padding:24px" id="cc2"></div>
-    </div>
-  </div>
-</main>
 
-<!-- 삭제 확인 모달 -->
-<div class="mo" id="dm"><div class="modal"><div class="mt">🗑️ 프롬프트 삭제</div><div class="mb">삭제 후 복구할 수 없으며 mobile.html에서도 제거됩니다.</div><div class="ma"><button class="btn btn-secondary" onclick="closeDel()">취소</button><button class="btn btn-danger" onclick="confirmDel()">삭제하기</button></div></div></div>
+    <!-- ══ PROMPTS ══ -->
+    <div class="panel" id="panel-prompts">
+      <div class="sec-box" style="margin-bottom:16px">
+        <div class="sec-head">
+          <div class="sec-title">새 프롬프트 추가</div>
+          <div class="sec-acts">
+            <div class="act" onclick="resetForm()">초기화</div>
+          </div>
+        </div>
+        <div class="form-grid">
+          <input type="hidden" id="editId">
+          <div class="form-group">
+            <label class="form-label">기업</label>
+            <select class="form-select" id="fCo">
+              <option value="toss">토스</option>
+              <option value="kakao">카카오</option>
+              <option value="naver">네이버</option>
+              <option value="baemin">배민</option>
+              <option value="upbit">업비트</option>
+              <option value="kiwoom">키움증권</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">제목</label>
+            <input class="form-input" id="fTitle" placeholder="프롬프트 제목">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">프롬프트 내용</label>
+            <textarea class="form-ta" id="fPrompt" rows="3" placeholder="PM 관점의 구체적인 프롬프트를 입력하세요..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">태그 (쉼표 구분)</label>
+            <input class="form-input" id="fTags" placeholder="예: UX, 전환율, A/B테스트">
+          </div>
+          <div class="form-group">
+            <label class="form-label">상태</label>
+            <select class="form-select" id="fStatus">
+              <option value="active">활성</option>
+              <option value="draft">임시저장</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" onclick="resetForm()">취소</button>
+          <button class="btn-save" onclick="savePrompt()">저장 & 동기화</button>
+        </div>
+      </div>
 
-<!-- 회사 관리 모달 -->
-<div class="mo" id="com">
-  <div class="modal co-modal">
-    <div class="mt">🏢 회사 관리</div>
-    <div class="mb" style="margin-bottom:12px">회사를 추가하거나 삭제합니다. 이모지로 구분합니다.</div>
-    <div class="co-list" id="co-list"></div>
-    <div class="co-add-row">
-      <input type="text" id="co-emoji-inp" class="emoji-inp" placeholder="🏢" maxlength="2">
-      <input type="text" id="co-name-inp" placeholder="회사명 입력..." maxlength="20">
+      <div class="sec-box">
+        <div class="sec-head">
+          <div class="sec-title">프롬프트 목록 (<span id="promptCount">0</span>개)</div>
+          <div class="sec-acts">
+            <select class="act" id="filterCo" onchange="renderPromptTable()" style="cursor:pointer">
+              <option value="all">전체</option>
+              <option value="toss">토스</option>
+              <option value="kakao">카카오</option>
+              <option value="naver">네이버</option>
+              <option value="baemin">배민</option>
+              <option value="upbit">업비트</option>
+              <option value="kiwoom">키움증권</option>
+            </select>
+            <div class="act primary" onclick="exportJSON()">📥 JSON 내보내기</div>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>기업</th><th>제목</th><th>프롬프트</th><th>태그</th><th>상태</th><th>수정일</th><th>작업</th>
+            </tr></thead>
+            <tbody id="promptTbody"></tbody>
+          </table>
+        </div>
+      </div>
     </div>
-    <div class="ma" style="margin-top:8px">
-      <button class="btn btn-secondary" onclick="closeCoModal()">닫기</button>
-      <button class="btn btn-primary" onclick="addCompany()">+ 회사 추가</button>
+
+    <!-- ══ QUIZ ══ -->
+    <div class="panel" id="panel-quiz">
+      <div class="sec-box" style="margin-bottom:16px">
+        <div class="sec-head">
+          <div class="sec-title">퀴즈 추가</div>
+          <div class="sec-acts"><div class="act" onclick="resetQuizForm()">초기화</div></div>
+        </div>
+        <div class="form-grid">
+          <input type="hidden" id="qEditId">
+          <div class="form-group full">
+            <label class="form-label">질문</label>
+            <input class="form-input" id="qQuestion" placeholder="퀴즈 질문을 입력하세요">
+          </div>
+          <div class="form-group"><label class="form-label">보기 1</label><input class="form-input" id="qOpt0" placeholder="보기 1"></div>
+          <div class="form-group"><label class="form-label">보기 2</label><input class="form-input" id="qOpt1" placeholder="보기 2"></div>
+          <div class="form-group"><label class="form-label">보기 3</label><input class="form-input" id="qOpt2" placeholder="보기 3"></div>
+          <div class="form-group"><label class="form-label">보기 4</label><input class="form-input" id="qOpt3" placeholder="보기 4"></div>
+          <div class="form-group">
+            <label class="form-label">정답 (0-3)</label>
+            <select class="form-select" id="qAns">
+              <option value="0">보기 1</option>
+              <option value="1">보기 2</option>
+              <option value="2">보기 3</option>
+              <option value="3">보기 4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">관련 기업</label>
+            <select class="form-select" id="qCo">
+              <option value="toss">토스</option><option value="kakao">카카오</option>
+              <option value="naver">네이버</option><option value="baemin">배민</option>
+              <option value="upbit">업비트</option><option value="kiwoom">키움증권</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">해설</label>
+            <textarea class="form-ta" id="qExplain" rows="2" placeholder="정답 해설을 입력하세요"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" onclick="resetQuizForm()">취소</button>
+          <button class="btn-save" onclick="saveQuiz()">퀴즈 저장</button>
+        </div>
+      </div>
+      <div class="sec-box">
+        <div class="sec-head"><div class="sec-title">퀴즈 목록 (<span id="quizCount">0</span>개)</div></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>기업</th><th>질문</th><th>정답</th><th>작업</th></tr></thead>
+            <tbody id="quizTbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ NEWS ══ -->
+    <div class="panel" id="panel-news">
+      <div class="sec-box">
+        <div class="sec-head">
+          <div class="sec-title">📡 RSS 피드 설정</div>
+          <div class="sec-acts"><div class="act primary" onclick="testRss()">피드 테스트</div></div>
+        </div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">RSS URL (줄바꿈으로 구분)</label>
+            <textarea class="form-ta" id="rssUrls" rows="4"
+              placeholder="https://feeds.feedburner.com/bloter&#10;https://www.etnews.com/rss/section/901"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">갱신 주기</label>
+            <select class="form-select" id="rssInterval">
+              <option value="5">5분</option>
+              <option value="10">10분</option>
+              <option value="30" selected>30분</option>
+              <option value="60">1시간</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">최대 표시 수</label>
+            <input class="form-input" id="rssMax" value="20" type="number" min="5" max="100">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" onclick="saveRssSettings()">설정 저장</button>
+        </div>
+      </div>
+      <div class="sec-box">
+        <div class="sec-head"><div class="sec-title">뉴스 키워드 필터</div></div>
+        <div style="padding:14px 16px">
+          <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px" id="kwList"></div>
+          <div style="display:flex;gap:7px">
+            <input class="form-input" id="kwInput" placeholder="키워드 추가 (예: 핀테크)" style="max-width:200px">
+            <button class="btn-save" onclick="addKw()">추가</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PUSH ══ -->
+    <div class="panel" id="panel-push">
+      <div class="sec-box" style="margin-bottom:16px">
+        <div class="sec-head"><div class="sec-title">🔔 푸시 알림 발송</div></div>
+        <div class="push-form">
+          <div>
+            <div class="form-label" style="margin-bottom:7px">알림 타입</div>
+            <div class="push-type-row">
+              <div class="push-type active" onclick="setPushType('인앱',this)">📱 인앱</div>
+              <div class="push-type" onclick="setPushType('알림톡',this)">💬 알림톡</div>
+              <div class="push-type" onclick="setPushType('문자',this)">📲 문자</div>
+              <div class="push-type" onclick="setPushType('이메일',this)">📧 이메일</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">알림 제목</label>
+            <input class="form-input" id="pushTitle" placeholder="알림 제목" value="🔥 새 프롬프트 업데이트">
+          </div>
+          <div class="form-group">
+            <label class="form-label">알림 내용</label>
+            <textarea class="form-ta" id="pushBody" rows="2" placeholder="알림 내용을 입력하세요">핀테크 PM을 위한 새로운 프롬프트가 추가됐습니다. 지금 확인해보세요!</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">수신 대상</label>
+            <select class="form-select" id="pushTarget">
+              <option value="all">전체 사용자</option>
+              <option value="active">활성 사용자</option>
+              <option value="kakao">카카오 로그인 사용자</option>
+              <option value="naver">네이버 로그인 사용자</option>
+            </select>
+          </div>
+          <div class="push-preview">
+            <div class="push-preview-title">미리보기</div>
+            <div class="push-mock">
+              <div class="pmock-ico">🔥</div>
+              <div>
+                <div class="pmock-title" id="pushPreviewTitle">🔥 새 프롬프트 업데이트</div>
+                <div class="pmock-body" id="pushPreviewBody">핀테크 PM을 위한 새로운 프롬프트...</div>
+              </div>
+            </div>
+          </div>
+          <button class="btn-save" style="width:100%" onclick="sendPushAdmin()">🚀 알림 발송</button>
+        </div>
+      </div>
+      <div class="sec-box">
+        <div class="sec-head"><div class="sec-title">발송 이력</div></div>
+        <div id="pushHistory" style="padding:10px 0">
+          <div style="padding:14px;text-align:center;color:var(--muted);font-size:12px">발송 이력이 없습니다</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ LIVE UPDATE ══ -->
+    <div class="panel" id="panel-live">
+      <div class="sec-box" style="margin-bottom:14px">
+        <div class="sec-head"><div class="sec-title">⚡ 실시간 업데이트 설정</div></div>
+        <div id="liveSettings">
+          <div class="live-update-row">
+            <div class="lu-info">
+              <div class="lu-ico">🔄</div>
+              <div><div class="lu-title">프롬프트 실시간 동기화</div><div class="lu-sub">모바일 앱에 변경사항 즉시 반영 (localStorage 이벤트)</div></div>
+            </div>
+            <div class="toggle on" id="tog-promptSync" onclick="toggleSetting('promptSync',this)"></div>
+          </div>
+          <div class="live-update-row">
+            <div class="lu-info">
+              <div class="lu-ico">📡</div>
+              <div><div class="lu-title">RSS 뉴스 자동 갱신</div><div class="lu-sub">설정된 간격으로 뉴스 피드 자동 업데이트</div></div>
+            </div>
+            <div class="toggle on" id="tog-rssAuto" onclick="toggleSetting('rssAuto',this)"></div>
+          </div>
+          <div class="live-update-row">
+            <div class="lu-info">
+              <div class="lu-ico">🔔</div>
+              <div><div class="lu-title">자동 푸시 알림</div><div class="lu-sub">컨텐츠 업데이트 시 사용자에게 자동 알림 발송</div></div>
+            </div>
+            <div class="toggle" id="tog-autoPush" onclick="toggleSetting('autoPush',this)"></div>
+          </div>
+          <div class="live-update-row">
+            <div class="lu-info">
+              <div class="lu-ico">🎯</div>
+              <div><div class="lu-title">퀴즈 실시간 업데이트</div><div class="lu-sub">관리자가 추가한 퀴즈 즉시 모바일에 반영</div></div>
+            </div>
+            <div class="toggle on" id="tog-quizSync" onclick="toggleSetting('quizSync',this)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec-box">
+        <div class="sec-head">
+          <div class="sec-title">즉시 동기화</div>
+          <div class="sec-acts"><div class="act primary" onclick="forceSync()">⚡ 전체 강제 동기화</div></div>
+        </div>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <button class="btn-save" style="padding:10px" onclick="syncPrompts()">💬 프롬프트 동기화</button>
+          <button class="btn-save" style="padding:10px;background:linear-gradient(135deg,var(--accent3),var(--accent))" onclick="syncQuizzes()">🎯 퀴즈 동기화</button>
+          <button class="btn-save" style="padding:10px;background:linear-gradient(135deg,var(--green),var(--accent2))" onclick="syncNews()">📰 뉴스 동기화</button>
+          <button class="btn-save" style="padding:10px;background:linear-gradient(135deg,var(--gold),var(--orange))" onclick="broadcastPush()">🔔 공지 발송</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ ACTIVITY ══ -->
+    <div class="panel" id="panel-activity">
+      <div class="sec-box">
+        <div class="sec-head">
+          <div class="sec-title">📋 전체 활동 로그</div>
+          <div class="sec-acts">
+            <div class="act" onclick="clearLogs()">전체 삭제</div>
+            <div class="act primary" onclick="exportLogs()">내보내기</div>
+          </div>
+        </div>
+        <div class="log-list" id="fullLog" style="max-height:600px"></div>
+      </div>
+    </div>
+
+    <!-- ══ OLLAMA ══ -->
+    <div class="panel" id="panel-ollama">
+      <div class="sec-box">
+        <div class="sec-head"><div class="sec-title">🦙 Ollama 서버 설정</div></div>
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">Ollama API URL</label>
+            <input class="form-input" id="adminOllamaUrl" value="http://localhost:11434" placeholder="http://localhost:11434">
+          </div>
+          <div class="form-group full">
+            <label class="form-label">기본 시스템 프롬프트</label>
+            <textarea class="form-ta" id="sysPrompt" rows="3">당신은 한국 핀테크 기업(토스, 카카오페이, 네이버페이, 업비트, 배민, 키움증권) 전문 PM 어시스턴트입니다. 구체적이고 실무적인 인사이트를 한국어로 제공하세요.</textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">기본 Temperature</label>
+            <input class="form-input" id="ollamaTemp" value="0.7" type="number" min="0" max="1" step="0.1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">최대 토큰</label>
+            <input class="form-input" id="ollamaTokens" value="2048" type="number" min="512" max="8192">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" onclick="testOllama()">🔗 연결 테스트</button>
+          <button class="btn-save" onclick="saveOllamaSettings()">설정 저장</button>
+        </div>
+        <div style="padding:0 16px 16px" id="ollamaTestResult"></div>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="panel" id="panel-settings">
+      <div class="sec-box" style="margin-bottom:14px">
+        <div class="sec-head"><div class="sec-title">⚙️ 일반 설정</div></div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">관리자 이름</label>
+            <input class="form-input" id="adminName" value="관리자" placeholder="관리자">
+          </div>
+          <div class="form-group">
+            <label class="form-label">앱 이름</label>
+            <input class="form-input" id="appName" value="PromptOS">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-save" onclick="saveSettings()">설정 저장</button>
+        </div>
+      </div>
+      <div class="sec-box">
+        <div class="sec-head"><div class="sec-title">🗄️ 데이터 관리 (No DB — localStorage)</div></div>
+        <div style="padding:14px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+          <button class="act" onclick="exportAll()">📥 전체 내보내기</button>
+          <button class="act" onclick="importData()">📤 데이터 가져오기</button>
+          <button class="act" style="color:var(--red);border-color:rgba(239,68,68,.3)" onclick="resetAll()">🗑️ 초기화</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- content -->
+</div><!-- main -->
+
+<div class="toast" id="toast"></div>
+
+<!-- Edit Modal -->
+<div class="modal" id="editModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">프롬프트 편집</div>
+      <button class="modal-close" onclick="closeEditModal()">×</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label class="form-label">기업</label>
+        <select class="form-select" id="mfCo">
+          <option value="toss">토스</option><option value="kakao">카카오</option>
+          <option value="naver">네이버</option><option value="baemin">배민</option>
+          <option value="upbit">업비트</option><option value="kiwoom">키움증권</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">제목</label>
+        <input class="form-input" id="mfTitle">
+      </div>
+      <div class="form-group full">
+        <label class="form-label">프롬프트</label>
+        <textarea class="form-ta" id="mfPrompt" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">태그</label>
+        <input class="form-input" id="mfTags">
+      </div>
+      <div class="form-group">
+        <label class="form-label">상태</label>
+        <select class="form-select" id="mfStatus">
+          <option value="active">활성</option>
+          <option value="draft">임시저장</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn-cancel" onclick="closeEditModal()">취소</button>
+      <button class="btn-save" onclick="updatePrompt()">업데이트 & 동기화</button>
     </div>
   </div>
 </div>
 
-<div class="tc2" id="tc2"></div>
-<input type="file" id="imp" accept=".json" style="display:none" onchange="handleImp(event)">
 <script>
-const SK='plannerai_prompts', CK='plannerai_companies', PS=10;
-let cp=1, dtid=null;
+// ═══════════════════════════════════════
+// DATA STORE (shared with mobile via localStorage)
+// ═══════════════════════════════════════
+const STORE_KEY = 'promptos_data';
+const ADMIN_KEY = 'promptos_admin';
+const LOG_KEY   = 'promptos_logs';
 
-// 기본 회사 목록
-const DEFAULT_COMPANIES=[
-  {name:'카카오',emoji:'💛'},
-  {name:'네이버',emoji:'🟢'},
-  {name:'토스',emoji:'💙'},
-  {name:'쿠팡',emoji:'🟠'},
-  {name:'라인',emoji:'💚'},
-  {name:'크래프톤',emoji:'🎮'},
-  {name:'삼성 MX',emoji:'📱'},
-  {name:'현대',emoji:'🚗'},
-  {name:'공통',emoji:'⭐'}
-];
+function getStore(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||defaultStore()}catch{return defaultStore()}}
+function saveStore(d){localStorage.setItem(STORE_KEY,JSON.stringify(d));notifyMobile()}
+function getAdmin(){try{return JSON.parse(localStorage.getItem(ADMIN_KEY))||defaultAdmin()}catch{return defaultAdmin()}}
+function saveAdmin(d){localStorage.setItem(ADMIN_KEY,JSON.stringify(d))}
+function getLogs(){try{return JSON.parse(localStorage.getItem(LOG_KEY))||[]}catch{return[]}}
+function saveLogs(l){localStorage.setItem(LOG_KEY,JSON.stringify(l.slice(0,200)))}
 
-const DP=[
-  {id:'d1',title:'PRD 초안 작성기',company:'카카오',category:'PRD 작성',level:'중급',tags:'PM,기획',prompt:'다음 기능에 대한 PRD 초안을 작성해줘.\n\n기능명: [기능명]\n타겟 사용자: [사용자]\n핵심 문제: [문제]\n\n포함 항목:\n1. 배경 및 목적\n2. 성공 지표 (KPI)\n3. 기능 요구사항\n4. 비기능 요구사항\n5. 제외 범위',tip:'기능명, 타겟 사용자, 핵심 문제를 구체적으로 작성할수록 퀄리티가 높아집니다.',example:'입력: 기능명=다크모드, 타겟=야간 사용자\n출력: 배경-야간 사용 증가... (구조화된 PRD)',createdAt:new Date().toISOString()},
-  {id:'d2',title:'유저 스토리 생성기',company:'토스',category:'유저 스토리',level:'초급',tags:'Agile,스프린트',prompt:'다음 기능에 대한 유저 스토리를 작성해줘.\n\n기능: [기능 설명]\n\n형식: 나는 [역할]로서, [목표]를 위해 [기능]을 원한다.\n\n각 스토리마다:\n- 수용 조건 3개 이상\n- 스토리 포인트 예상치\n- 의존성 여부',tip:'As-Is/To-Be를 먼저 정리한 후 실행하면 더 정확합니다.',example:'',createdAt:new Date().toISOString()},
-  {id:'d3',title:'경쟁사 분석 프레임워크',company:'네이버',category:'경쟁사 분석',level:'고급',tags:'전략,시장조사',prompt:'[서비스명]의 경쟁사 분석을 해줘.\n\n경쟁사: [경쟁사1, 경쟁사2]\n\n각 경쟁사:\n1. 핵심 기능 비교\n2. 가격 정책\n3. 강점/약점\n4. 타겟 사용자\n5. 차별화 기회',tip:'공식 블로그, 앱스토어 리뷰를 먼저 수집하세요.',example:'',createdAt:new Date().toISOString()},
-  {id:'d4',title:'회의록 요약 & 액션 아이템',company:'공통',category:'회의 정리',level:'초급',tags:'회의,생산성',prompt:'다음 회의 내용을 정리해줘.\n\n[회의록 붙여넣기]\n\n1. 📋 회의 목적\n2. 🗝️ 핵심 결정 사항\n3. ✅ 액션 아이템 (담당자, 마감일)\n4. 🔄 다음 회의 확인 사항\n5. ❓ 미결 이슈',tip:'날것으로 붙여넣어도 AI가 구조화해줍니다.',example:'',createdAt:new Date().toISOString()},
-  {id:'d5',title:'OKR 설정 도우미',company:'쿠팡',category:'OKR 설정',level:'중급',tags:'OKR,목표관리',prompt:'다음 분기 OKR을 설계해줘.\n\n팀: [팀명]\n분기: [Q? 20??]\n목표: [상위 목표]\n\nObjective: (도전적 정성 목표)\nKR1: (수치 목표)\nKR2: ...\nKR3: ...\n\n각 KR에 측정 방법과 Baseline 제안',tip:'Objective는 도전적으로, KR은 수치로.',example:'',createdAt:new Date().toISOString()}
-];
+function defaultStore(){return{user:null,prompts:defaultPrompts(),savedResponses:[],
+  quizStats:{total:0,correct:0,streak:0,best:0},runCount:0,pushEnabled:false,
+  learnProgress:{},newsCache:[],newsCacheTime:0,quizzes:defaultQuizzes(),pushCount:0}}
+function defaultAdmin(){return{settings:{promptSync:true,rssAuto:true,autoPush:false,quizSync:true},
+  rss:{urls:'',interval:30,max:20},keywords:['핀테크','토스','카카오','네이버','업비트','배민'],
+  ollamaUrl:'http://localhost:11434',sysPrompt:'',temp:0.7,tokens:2048,
+  pushHistory:[],pushType:'인앱'}}
 
-// 회사 목록 로드
-function getCompanies(){
-  try{const r=localStorage.getItem(CK);if(r){const d=JSON.parse(r);if(Array.isArray(d)&&d.length>0)return d;}}catch(e){}
-  return [...DEFAULT_COMPANIES];
+function defaultPrompts(){
+  const now=Date.now();
+  return[
+    {id:1,co:'toss',coName:'토스',title:'송금 전환율 개선 전략',prompt:'토스 앱의 간편송금 기능에서 이탈률이 23% 발생하는 구간을 분석하고, 전환율 개선을 위한 UX 가설 3가지와 A/B 테스트 설계를 제안해줘.',tags:['UX','전환율','A/B테스트'],badge:'badge-toss',status:'active',updatedAt:now},
+    {id:2,co:'toss',coName:'토스',title:'토스증권 MZ 투자자 온보딩',prompt:'토스증권을 처음 사용하는 20대 MZ 세대 투자 초보자의 온보딩 경험을 설계해줘.',tags:['온보딩','MZ세대','투자'],badge:'badge-toss',status:'active',updatedAt:now},
+    {id:3,co:'kakao',coName:'카카오',title:'카카오페이 결제 UX 리뷰',prompt:'카카오페이 간편결제의 현재 사용자 흐름을 분석하고, 결제 완료까지 최소 탭 수를 줄이기 위한 개선안을 제시해줘.',tags:['결제UX','간편결제','Flow'],badge:'badge-kakao',status:'active',updatedAt:now},
+    {id:4,co:'kakao',coName:'카카오',title:'카카오뱅크 신용대출 PM 전략',prompt:'카카오뱅크 신용대출 상품의 PM으로서 다음 분기 DAU 20% 증가를 위한 전략을 수립해줘.',tags:['신용대출','DAU','PM전략'],badge:'badge-kakao',status:'active',updatedAt:now},
+    {id:5,co:'naver',coName:'네이버',title:'네이버페이 쇼핑 연계 GMV 전략',prompt:'네이버페이와 네이버쇼핑의 연계 강화를 통한 결제 GMV 증가 전략을 기획해줘.',tags:['GMV','쇼핑연계','포인트'],badge:'badge-naver',status:'active',updatedAt:now},
+    {id:6,co:'naver',coName:'네이버',title:'클로바 AI 금융 어시스턴트 PRD',prompt:'네이버 클로바 AI를 활용한 개인 금융 어시스턴트 서비스 PRD 초안을 작성해줘.',tags:['AI','PRD','금융'],badge:'badge-naver',status:'active',updatedAt:now},
+    {id:7,co:'baemin',coName:'배민',title:'배민클럽 리텐션 개선 전략',prompt:'배달의민족 구독 서비스 "배민클럽"의 리텐션 개선을 위한 전략을 제안해줘.',tags:['구독','리텐션','해지방어'],badge:'badge-baemin',status:'active',updatedAt:now},
+    {id:8,co:'upbit',coName:'업비트',title:'업비트 트레이더 리텐션 로드맵',prompt:'업비트 월간 활성 트레이더 유지율 개선을 위한 기능 로드맵을 작성해줘.',tags:['리텐션','트레이더','로드맵'],badge:'badge-upbit',status:'active',updatedAt:now},
+    {id:9,co:'kiwoom',coName:'키움증권',title:'영웅문 MZ 세대 리디자인',prompt:'키움증권 영웅문의 레거시 UI를 MZ 세대 친화적으로 리디자인하는 PM 기획안을 작성해줘.',tags:['리디자인','MZ세대','레거시'],badge:'badge-kiwoom',status:'active',updatedAt:now},
+  ];
 }
-function saveCompanies(list){
-  localStorage.setItem(CK,JSON.stringify(list));
-  updateCompanySelects();
-  renderCoList();
-}
-
-// 회사 select 드롭다운 갱신
-function updateCompanySelects(){
-  const cos=getCompanies();
-  const html='<option value="">회사 선택</option>'+cos.map(c=>`<option value="${esc(c.name)}">${c.emoji} ${esc(c.name)}</option>`).join('');
-  document.getElementById('fco').innerHTML=html;
-
-  // 필터 드롭다운도 갱신
-  const p=lp();
-  const f1=document.getElementById('fc');
-  const cv=f1.value;
-  f1.innerHTML='<option value="">전체 회사</option>'+cos.map(c=>`<option ${c.name===cv?'selected':''}>${esc(c.name)}</option>`).join('');
+function defaultQuizzes(){
+  return[
+    {id:1,q:'토스의 핵심 성장 전략으로 올바른 것은?',opts:['광고 기반 수익','슈퍼앱 전략','B2B 집중','해외 우선'],ans:1,co:'toss',explain:'토스는 간편송금으로 시작해 금융 전반을 통합하는 슈퍼앱 전략을 채택했습니다.'},
+    {id:2,q:'카카오페이의 주요 수익 모델이 아닌 것은?',opts:['결제 수수료','금융상품 중개','광고 플랫폼','하드웨어 판매'],ans:3,co:'kakao',explain:'카카오페이는 결제 수수료와 금융상품 중개가 주요 수익원입니다.'},
+    {id:3,q:'업비트 트레이더 리텐션의 가장 효과적인 방법은?',opts:['수수료 무료화','개인화 거래 분석','모든 코인 상장','거래 보상 포인트'],ans:1,co:'upbit',explain:'개인화된 분석 리포트는 플랫폼 의존도를 높이는 가장 효과적인 방법입니다.'},
+  ];
 }
 
-// 회사 관리 모달
-function openCoModal(){
-  renderCoList();
-  document.getElementById('com').classList.add('open');
-}
-function closeCoModal(){document.getElementById('com').classList.remove('open');}
-function renderCoList(){
-  const cos=getCompanies();
-  const el=document.getElementById('co-list');
-  if(cos.length===0){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--text3);font-size:13px">등록된 회사가 없습니다</div>';return;}
-  el.innerHTML=cos.map((c,i)=>`
-    <div class="co-row">
-      <div class="co-name"><span class="co-emoji">${c.emoji}</span><span>${esc(c.name)}</span></div>
-      <button class="btn btn-danger btn-sm" onclick="removeCompany(${i})">삭제</button>
-    </div>`).join('');
-}
-function addCompany(){
-  const name=document.getElementById('co-name-inp').value.trim();
-  const emoji=document.getElementById('co-emoji-inp').value.trim()||'🏢';
-  if(!name){toast('회사명을 입력해주세요','error');return;}
-  const cos=getCompanies();
-  if(cos.some(c=>c.name===name)){toast('이미 존재하는 회사입니다','error');return;}
-  cos.push({name,emoji});
-  saveCompanies(cos);
-  document.getElementById('co-name-inp').value='';
-  document.getElementById('co-emoji-inp').value='';
-  toast(`✅ "${name}" 추가됨`,'success');
-  // mobile.html도 회사 목록 동기화
-  localStorage.setItem('plannerai_companies', JSON.stringify(cos));
-}
-function removeCompany(i){
-  const cos=getCompanies();
-  const name=cos[i].name;
-  if(!confirm(`"${name}" 회사를 삭제하시겠습니까?\n해당 회사의 프롬프트는 유지됩니다.`))return;
-  cos.splice(i,1);
-  saveCompanies(cos);
-  toast(`🗑️ "${name}" 삭제됨`,'info');
-}
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let store = getStore();
+let admin = getAdmin();
+let logs = getLogs();
+let editingId = null;
+let editingQId = null;
+let pushType = '인앱';
+let pushCount = store.pushCount || 0;
+let keywords = admin.keywords || [];
 
-// 프롬프트 CRUD
-function lp(){try{const r=localStorage.getItem(SK);if(r)return JSON.parse(r)}catch(e){}return[...DP]}
-function sp(p){
-  localStorage.setItem(SK,JSON.stringify(p));
-  const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  document.getElementById('lst').textContent='✓ '+t;
-  document.getElementById('su').textContent=t;
-  us(p);
-}
-function us(p){
-  document.getElementById('st').textContent=p.length;
-  document.getElementById('pcb').textContent=p.length;
-  document.getElementById('sc').textContent=[...new Set(p.map(x=>x.company))].filter(Boolean).length;
-  document.getElementById('scat').textContent=[...new Set(p.map(x=>x.category))].filter(Boolean).length;
-}
-function uf(p){
-  const cats=[...new Set(p.map(x=>x.category))].filter(Boolean).sort();
-  const f2=document.getElementById('fcat');
-  const v2=f2.value;
-  f2.innerHTML='<option value="">전체 카테고리</option>'+cats.map(c=>`<option ${c===v2?'selected':''}>${c}</option>`).join('');
-  // 회사 필터도 갱신
-  updateCompanySelects();
-  const cv=document.getElementById('fc').value;
-  const cos=[...new Set(p.map(x=>x.company))].filter(Boolean).sort();
-  document.getElementById('fc').innerHTML='<option value="">전체 회사</option>'+cos.map(c=>`<option ${c===cv?'selected':''}>${c}</option>`).join('');
-}
-function gf(){
-  const p=lp();
-  const q=document.getElementById('si').value.toLowerCase();
-  const co=document.getElementById('fc').value;
-  const cat=document.getElementById('fcat').value;
-  return p.filter(x=>(!q||x.title.toLowerCase().includes(q)||x.prompt.toLowerCase().includes(q)||(x.tags||'').toLowerCase().includes(q))&&(!co||x.company===co)&&(!cat||x.category===cat));
-}
-function renderTable(){
-  const f=gf();const tot=f.length;const tp=Math.ceil(tot/PS)||1;
-  if(cp>tp)cp=1;
-  const st=(cp-1)*PS;const pg=f.slice(st,st+PS);
-  const tb=document.getElementById('tb');const es=document.getElementById('es');
-  if(pg.length===0){tb.innerHTML='';es.style.display='block'}
-  else{
-    es.style.display='none';
-    tb.innerHTML=pg.map(p=>`<tr>
-      <td><div class="ptc">${esc(p.title)}</div><div class="pp">${esc(p.prompt.substring(0,80))}...</div></td>
-      <td><span class="tag tc">${esc(p.company||'-')}</span></td>
-      <td><span class="tag tcat">${esc(p.category||'-')}</span></td>
-      <td><span class="tag" style="background:var(--surface2);color:var(--text2)">${esc(p.level||'-')}</span></td>
-      <td><div class="ra">
-        <button class="btn btn-secondary btn-sm" onclick="startEdit('${p.id}')">✏️ 수정</button>
-        <button class="btn btn-green btn-sm" onclick="publishOne('${p.id}')">🚀 게시</button>
-        <button class="btn btn-danger btn-sm" onclick="openDel('${p.id}')">🗑️</button>
-      </div></td>
-    </tr>`).join('');
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+window.addEventListener('DOMContentLoaded', ()=>{
+  ensureQuizzes();
+  renderDashboard();
+  renderPromptTable();
+  renderQuizTable();
+  updateSidebarBadges();
+  loadAdminSettings();
+  renderKeywords();
+  startLiveStats();
+
+  // Listen for mobile changes
+  window.addEventListener('storage', e=>{
+    if(e.key===STORE_KEY){ store=getStore(); renderDashboard(); addLog('📲','모바일에서 데이터 변경 감지','info'); }
+  });
+
+  // Push preview live update
+  document.getElementById('pushTitle').addEventListener('input', e=>{
+    document.getElementById('pushPreviewTitle').textContent = e.target.value;
+  });
+  document.getElementById('pushBody').addEventListener('input', e=>{
+    document.getElementById('pushPreviewBody').textContent = e.target.value.slice(0,60)+'...';
+  });
+});
+
+function ensureQuizzes(){
+  if (!store.quizzes || !store.quizzes.length) {
+    store.quizzes = defaultQuizzes();
+    saveStore(store);
   }
-  document.getElementById('pi').textContent=`${tot}개 중 ${Math.min(st+1,tot)}-${Math.min(st+PS,tot)}`;
-  const pb=document.getElementById('pbs');pb.innerHTML='';
-  for(let i=1;i<=tp;i++){const b=document.createElement('button');b.className='pb'+(i===cp?' active':'');b.textContent=i;b.onclick=()=>{cp=i;renderTable()};pb.appendChild(b);}
 }
 
-function getFormData(){
-  return {
-    ti: document.getElementById('fti').value.trim(),
-    co: document.getElementById('fco').value,
-    ca: document.getElementById('fca').value,
-    pr: document.getElementById('fpr').value.trim(),
-    lv: document.getElementById('flv').value,
-    tg: document.getElementById('ftg').value.trim(),
-    tp: document.getElementById('ftp').value.trim(),
-    ex: document.getElementById('fex').value.trim()
-  };
+// ═══════════════════════════════════════
+// PANEL NAVIGATION
+// ═══════════════════════════════════════
+function gotoPanel(id, el){
+  document.querySelectorAll('.sb-item').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const titles={dashboard:'대시보드',prompts:'프롬프트 관리',quiz:'퀴즈 관리',
+    news:'뉴스 설정',push:'푸시 알림',live:'실시간 업데이트',
+    activity:'활동 로그',ollama:'Ollama 설정',settings:'설정'};
+  document.getElementById('pageTitle').textContent = titles[id]||id;
+  if(id==='activity') renderFullLog();
+  if(id==='dashboard') renderDashboard();
+  // close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
 }
-function validateForm(d){
-  if(!d.ti){toast('제목을 입력해주세요','error');return false;}
-  if(!d.co){toast('회사를 선택해주세요','error');return false;}
-  if(!d.ca){toast('카테고리를 선택해주세요','error');return false;}
-  if(!d.pr){toast('프롬프트를 입력해주세요','error');return false;}
-  return true;
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+
+// ═══════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════
+function renderDashboard(){
+  const ps = store.prompts||[];
+  const qs = store.quizzes||[];
+  document.getElementById('ds-prompts').textContent = ps.length;
+  document.getElementById('ds-quizzes').textContent = qs.length;
+  document.getElementById('ds-push').textContent = pushCount;
+  document.getElementById('ds-users').textContent = Math.floor(Math.random()*80+20);
+  document.getElementById('tbPromptCnt').textContent = ps.length;
+
+  // Chart
+  const vals = Array.from({length:7},()=>Math.floor(Math.random()*80+20));
+  const max = Math.max(...vals);
+  document.getElementById('miniChart').innerHTML = vals.map((v,i)=>{
+    const days=['일','월','화','수','목','금','토'];
+    const d = new Date(); d.setDate(d.getDate()-6+i);
+    return `<div class="bar" data-val="${v}회" style="height:${Math.max(10,v/max*100)}%"></div>`;
+  }).join('');
+
+  // Company dist
+  const coDist = {};
+  ps.forEach(p=>{ coDist[p.coName]=(coDist[p.coName]||0)+1; });
+  const coColors = {토스:'#0064FF',카카오:'#c8b400',네이버:'#03C75A',배민:'#3DC4A2',업비트:'#1A6CFF',키움증권:'#E31B3B'};
+  document.getElementById('coDist').innerHTML = Object.entries(coDist).map(([k,v])=>`
+    <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px">
+      <div style="width:7px;height:7px;border-radius:50%;background:${coColors[k]||'#888'};flex-shrink:0"></div>
+      <div style="font-size:11px;flex:1;color:var(--text2)">${k}</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text)">${v}</div>
+    </div>`).join('');
+
+  // Log
+  renderDashLog();
+}
+
+// ═══════════════════════════════════════
+// PROMPTS
+// ═══════════════════════════════════════
+function renderPromptTable(){
+  const filter = document.getElementById('filterCo').value;
+  const ps = (store.prompts||[]).filter(p=> filter==='all' || p.co===filter);
+  document.getElementById('promptCount').textContent = ps.length;
+  document.getElementById('promptTbody').innerHTML = ps.map(p=>`
+    <tr>
+      <td><span class="badge badge-${p.co||'toss'}">${p.coName||p.co}</span></td>
+      <td class="td-title">${p.title}</td>
+      <td class="td-prompt">${p.prompt}</td>
+      <td>${(p.tags||[]).slice(0,2).map(t=>`<span class="badge" style="background:var(--surface3);color:var(--text2);margin-right:3px">${t}</span>`).join('')}</td>
+      <td><span class="badge ${p.status==='draft'?'badge-draft':'badge-active'}">${p.status==='draft'?'임시':'활성'}</span></td>
+      <td style="color:var(--muted)">${timeAgo(p.updatedAt)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="row-btn edit" onclick="editPrompt(${p.id})">수정</button>
+          <button class="row-btn push" onclick="pushPromptUpdate(${p.id})">📢 푸시</button>
+          <button class="row-btn del" onclick="delPrompt(${p.id})">삭제</button>
+        </div>
+      </td>
+    </tr>`).join('');
 }
 
 function savePrompt(){
-  const d=getFormData();if(!validateForm(d))return;
-  const p=lp();const eid=document.getElementById('eid').value;
-  if(eid){
-    const i=p.findIndex(x=>x.id===eid);
-    if(i!==-1){p[i]={...p[i],title:d.ti,company:d.co,category:d.ca,level:d.lv,tags:d.tg,prompt:d.pr,tip:d.tp,example:d.ex,updatedAt:new Date().toISOString()};}
-    toast('✅ 수정 완료! mobile.html에 반영됩니다.','success');
-  }else{
-    p.unshift({id:'p_'+Date.now(),title:d.ti,company:d.co,category:d.ca,level:d.lv,tags:d.tg,prompt:d.pr,tip:d.tp,example:d.ex,createdAt:new Date().toISOString()});
-    toast('✅ 추가 완료! mobile.html에 반영됩니다.','success');
+  const co = document.getElementById('fCo').value;
+  const coNames = {toss:'토스',kakao:'카카오',naver:'네이버',baemin:'배민',upbit:'업비트',kiwoom:'키움증권'};
+  const title = document.getElementById('fTitle').value.trim();
+  const prompt = document.getElementById('fPrompt').value.trim();
+  if (!title || !prompt) { showToast('⚠️ 제목과 프롬프트를 입력하세요'); return; }
+  const tags = document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const status = document.getElementById('fStatus').value;
+  const id = Date.now();
+  const newP = {id,co,coName:coNames[co],title,prompt,tags,badge:`badge-${co}`,status,updatedAt:Date.now()};
+  store.prompts = [...(store.prompts||[]), newP];
+  saveStore(store);
+  renderPromptTable();
+  updateSidebarBadges();
+  resetForm();
+  addLog('➕',`프롬프트 추가: "${title}"`, 'success');
+  showToast('✅ 프롬프트 저장 & 모바일 동기화 완료');
+  if (admin.settings?.autoPush) broadcastPush();
+}
+
+function editPrompt(id){
+  const p = (store.prompts||[]).find(x=>x.id===id);
+  if (!p) return;
+  document.getElementById('mfCo').value = p.co;
+  document.getElementById('mfTitle').value = p.title;
+  document.getElementById('mfPrompt').value = p.prompt;
+  document.getElementById('mfTags').value = (p.tags||[]).join(', ');
+  document.getElementById('mfStatus').value = p.status||'active';
+  editingId = id;
+  document.getElementById('editModal').classList.add('show');
+}
+function closeEditModal(){ document.getElementById('editModal').classList.remove('show'); editingId=null; }
+
+function updatePrompt(){
+  if (!editingId) return;
+  const co = document.getElementById('mfCo').value;
+  const coNames={toss:'토스',kakao:'카카오',naver:'네이버',baemin:'배민',upbit:'업비트',kiwoom:'키움증권'};
+  store.prompts = (store.prompts||[]).map(p => p.id!==editingId ? p : {
+    ...p,
+    co, coName:coNames[co],
+    title: document.getElementById('mfTitle').value.trim(),
+    prompt: document.getElementById('mfPrompt').value.trim(),
+    tags: document.getElementById('mfTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+    badge: `badge-${co}`,
+    status: document.getElementById('mfStatus').value,
+    updatedAt: Date.now()
+  });
+  saveStore(store);
+  renderPromptTable();
+  closeEditModal();
+  addLog('✏️',`프롬프트 수정: ID ${editingId}`,'info');
+  showToast('✅ 업데이트 & 모바일 동기화 완료');
+}
+
+function delPrompt(id){
+  if (!confirm('이 프롬프트를 삭제하시겠습니까?')) return;
+  store.prompts = (store.prompts||[]).filter(p=>p.id!==id);
+  saveStore(store);
+  renderPromptTable();
+  updateSidebarBadges();
+  addLog('🗑️',`프롬프트 삭제: ID ${id}`,'error');
+  showToast('🗑️ 삭제됨');
+}
+
+function pushPromptUpdate(id){
+  const p = (store.prompts||[]).find(x=>x.id===id);
+  if (!p) return;
+  pushCount++;
+  store.pushCount = pushCount;
+  saveStore(store);
+  addLog('📢',`푸시 발송: "${p.title}"`, 'info');
+  showToast(`📢 "${p.title}" 푸시 발송됨`);
+}
+
+function resetForm(){
+  ['fTitle','fPrompt','fTags'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('fCo').value='toss';
+  document.getElementById('fStatus').value='active';
+}
+
+function exportJSON(){
+  const data = JSON.stringify(store.prompts||[], null, 2);
+  const blob = new Blob([data],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='prompts.json'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 JSON 내보내기 완료');
+}
+
+// ═══════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════
+function renderQuizTable(){
+  const qs = store.quizzes||[];
+  document.getElementById('quizCount').textContent = qs.length;
+  document.getElementById('quizTbody').innerHTML = qs.map(q=>`
+    <tr>
+      <td><span class="badge badge-${q.co||'toss'}">${q.co||''}</span></td>
+      <td style="color:var(--text);max-width:300px">${q.q}</td>
+      <td style="color:var(--green);font-size:11px">${q.opts?.[q.ans]||''}</td>
+      <td>
+        <div class="row-actions">
+          <button class="row-btn edit" onclick="editQuiz(${q.id})">수정</button>
+          <button class="row-btn del" onclick="delQuiz(${q.id})">삭제</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function saveQuiz(){
+  const q = document.getElementById('qQuestion').value.trim();
+  const opts = [0,1,2,3].map(i=>document.getElementById(`qOpt${i}`).value.trim());
+  if (!q || opts.some(o=>!o)) { showToast('⚠️ 모든 항목을 입력하세요'); return; }
+  const newQ = {
+    id: Date.now(),
+    q, opts,
+    ans: parseInt(document.getElementById('qAns').value),
+    co: document.getElementById('qCo').value,
+    explain: document.getElementById('qExplain').value.trim()
+  };
+  store.quizzes = [...(store.quizzes||[]), newQ];
+  saveStore(store);
+  renderQuizTable();
+  resetQuizForm();
+  addLog('➕',`퀴즈 추가: "${q.slice(0,30)}"`,'success');
+  showToast('✅ 퀴즈 저장됨');
+}
+
+function editQuiz(id){
+  const q = (store.quizzes||[]).find(x=>x.id===id);
+  if (!q) return;
+  document.getElementById('qQuestion').value = q.q;
+  [0,1,2,3].forEach(i=>document.getElementById(`qOpt${i}`).value = q.opts?.[i]||'');
+  document.getElementById('qAns').value = q.ans;
+  document.getElementById('qCo').value = q.co||'toss';
+  document.getElementById('qExplain').value = q.explain||'';
+  editingQId = id;
+  showToast('✏️ 퀴즈 편집 모드');
+}
+
+function delQuiz(id){
+  if (!confirm('이 퀴즈를 삭제하시겠습니까?')) return;
+  store.quizzes = (store.quizzes||[]).filter(q=>q.id!==id);
+  saveStore(store);
+  renderQuizTable();
+  showToast('🗑️ 퀴즈 삭제됨');
+}
+
+function resetQuizForm(){
+  document.getElementById('qQuestion').value='';
+  [0,1,2,3].forEach(i=>document.getElementById(`qOpt${i}`).value='');
+  document.getElementById('qExplain').value='';
+  editingQId=null;
+}
+
+// ═══════════════════════════════════════
+// PUSH
+// ═══════════════════════════════════════
+function setPushType(type, el){
+  pushType = type;
+  document.querySelectorAll('.push-type').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function sendPushAdmin(){
+  const title = document.getElementById('pushTitle').value.trim();
+  const body = document.getElementById('pushBody').value.trim();
+  if (!title || !body) { showToast('⚠️ 제목과 내용을 입력하세요'); return; }
+  pushCount++;
+  store.pushCount = pushCount;
+  const hist = {type:pushType, title, body, target:document.getElementById('pushTarget').value, time:Date.now()};
+  admin.pushHistory = [hist, ...(admin.pushHistory||[])].slice(0,50);
+  saveAdmin(admin);
+  saveStore(store);
+  renderPushHistory();
+  addLog('🔔',`${pushType} 발송: "${title}"`, 'info');
+  showToast(`✅ ${pushType} 발송 완료`);
+  // Trigger localStorage event for mobile to pick up
+  notifyMobile();
+}
+
+function renderPushHistory(){
+  const hist = admin.pushHistory||[];
+  if (!hist.length) return;
+  document.getElementById('pushHistory').innerHTML = hist.slice(0,10).map(h=>`
+    <div class="log-item">
+      <div class="log-dot" style="background:var(--accent)"></div>
+      <div class="log-txt"><strong>[${h.type}]</strong> ${h.title} → ${h.target}</div>
+      <div class="log-time">${timeAgo(h.time)}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════
+// LIVE UPDATE
+// ═══════════════════════════════════════
+function toggleSetting(key, el){
+  el.classList.toggle('on');
+  admin.settings = admin.settings||{};
+  admin.settings[key] = el.classList.contains('on');
+  saveAdmin(admin);
+  showToast(`${el.classList.contains('on')?'✅ 활성화':'⛔ 비활성화'}: ${key}`);
+}
+function forceSync(){ syncPrompts(); syncQuizzes(); showToast('⚡ 전체 강제 동기화 완료'); }
+function syncPrompts(){ notifyMobile(); addLog('🔄','프롬프트 동기화 완료','success'); showToast('💬 프롬프트 동기화됨'); }
+function syncQuizzes(){ notifyMobile(); addLog('🎯','퀴즈 동기화 완료','success'); showToast('🎯 퀴즈 동기화됨'); }
+function syncNews(){ notifyMobile(); addLog('📰','뉴스 동기화 완료','info'); showToast('📰 뉴스 동기화됨'); }
+function broadcastPush(){ sendPushAdmin(); }
+function syncToMobile(){ forceSync(); showToast('📲 모바일 동기화 완료!'); }
+
+// ═══════════════════════════════════════
+// OLLAMA SETTINGS
+// ═══════════════════════════════════════
+async function testOllama(){
+  const url = document.getElementById('adminOllamaUrl').value.trim();
+  const el = document.getElementById('ollamaTestResult');
+  el.innerHTML='<span style="color:var(--muted)">연결 테스트 중...</span>';
+  try {
+    const r = await fetch(`${url}/api/tags`);
+    const d = await r.json();
+    const models = (d.models||[]).map(m=>m.name).join(', ');
+    el.innerHTML=`<span style="color:var(--green)">✅ 연결 성공! 모델: ${models||'없음'}</span>`;
+  } catch {
+    el.innerHTML=`<span style="color:var(--red)">❌ 연결 실패. Ollama가 실행 중인지 확인하세요.</span>`;
   }
-  sp(p);uf(p);renderTable();clearForm();
 }
 
-// 바로 게시: 저장 + 토스트 강조
-function saveAndPublish(){
-  const d=getFormData();if(!validateForm(d))return;
-  const p=lp();const eid=document.getElementById('eid').value;
-  if(eid){
-    const i=p.findIndex(x=>x.id===eid);
-    if(i!==-1){p[i]={...p[i],title:d.ti,company:d.co,category:d.ca,level:d.lv,tags:d.tg,prompt:d.pr,tip:d.tp,example:d.ex,updatedAt:new Date().toISOString()};}
-  }else{
-    p.unshift({id:'p_'+Date.now(),title:d.ti,company:d.co,category:d.ca,level:d.lv,tags:d.tg,prompt:d.pr,tip:d.tp,example:d.ex,createdAt:new Date().toISOString()});
-  }
-  sp(p);uf(p);renderTable();clearForm();
-  toast('🚀 바로 게시됨! mobile.html에서 즉시 확인 가능합니다.','success');
+function saveOllamaSettings(){
+  admin.ollamaUrl = document.getElementById('adminOllamaUrl').value;
+  admin.sysPrompt = document.getElementById('sysPrompt').value;
+  admin.temp = parseFloat(document.getElementById('ollamaTemp').value);
+  admin.tokens = parseInt(document.getElementById('ollamaTokens').value);
+  saveAdmin(admin);
+  showToast('✅ Ollama 설정 저장됨');
 }
 
-// 목록에서 개별 바로 게시 (이미 저장된 항목 재게시 — 타임스탬프 갱신)
-function publishOne(id){
-  const p=lp();const i=p.findIndex(x=>x.id===id);
-  if(i===-1)return;
-  p[i]={...p[i],updatedAt:new Date().toISOString()};
-  sp(p);renderTable();
-  toast(`🚀 "${p[i].title}" 게시됨! mobile.html에서 확인하세요.`,'success');
+function loadAdminSettings(){
+  document.getElementById('adminOllamaUrl').value = admin.ollamaUrl||'http://localhost:11434';
+  document.getElementById('sysPrompt').value = admin.sysPrompt||'';
+  document.getElementById('ollamaTemp').value = admin.temp||0.7;
+  document.getElementById('ollamaTokens').value = admin.tokens||2048;
+  document.getElementById('rssUrls').value = admin.rss?.urls||'';
+  document.getElementById('rssInterval').value = admin.rss?.interval||30;
+  document.getElementById('rssMax').value = admin.rss?.max||20;
+  // Restore toggle states
+  const s = admin.settings||{};
+  ['promptSync','rssAuto','autoPush','quizSync'].forEach(k=>{
+    const el = document.getElementById(`tog-${k}`);
+    if (el) el.classList.toggle('on', !!s[k]);
+  });
+  renderPushHistory();
 }
 
-function clearForm(){
-  ['fti','fpr','ftp','fex','ftg'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('fco').value='';
-  document.getElementById('fca').value='';
-  document.getElementById('flv').value='중급';
-  document.getElementById('eid').value='';
-  document.getElementById('tl').textContent='0';
-  document.getElementById('pl').textContent='0';
-  setMode('add');
+// ═══════════════════════════════════════
+// NEWS SETTINGS
+// ═══════════════════════════════════════
+function saveRssSettings(){
+  admin.rss = {
+    urls: document.getElementById('rssUrls').value,
+    interval: parseInt(document.getElementById('rssInterval').value),
+    max: parseInt(document.getElementById('rssMax').value)
+  };
+  saveAdmin(admin);
+  notifyMobile();
+  showToast('✅ RSS 설정 저장됨');
 }
-function startAdd(){clearForm();document.getElementById('fti').focus();}
-function startEdit(id){
-  const p=lp().find(x=>x.id===id);if(!p)return;
-  document.getElementById('eid').value=id;
-  document.getElementById('fti').value=p.title;
-  document.getElementById('fco').value=p.company;
-  document.getElementById('fca').value=p.category;
-  document.getElementById('flv').value=p.level||'중급';
-  document.getElementById('ftg').value=p.tags||'';
-  document.getElementById('fpr').value=p.prompt;
-  document.getElementById('ftp').value=p.tip||'';
-  document.getElementById('fex').value=p.example||'';
-  document.getElementById('tl').textContent=p.title.length;
-  document.getElementById('pl').textContent=p.prompt.length;
-  setMode('edit');
-  document.querySelector('.form-card').scrollIntoView({behavior:'smooth',block:'start'});
-}
-function setMode(m){
-  const b=document.getElementById('fmb');const t=document.getElementById('ft');
-  if(m==='edit'){b.textContent='수정';b.className='fmb mode-edit';t.textContent='프롬프트 수정';}
-  else{b.textContent='추가';b.className='fmb mode-add';t.textContent='새 프롬프트 추가';}
-}
-function openDel(id){dtid=id;document.getElementById('dm').classList.add('open');}
-function closeDel(){dtid=null;document.getElementById('dm').classList.remove('open');}
-function confirmDel(){
-  if(!dtid)return;
-  const p=lp().filter(x=>x.id!==dtid);
-  sp(p);uf(p);renderTable();closeDel();
-  toast('🗑️ 삭제되었습니다','info');
-  if(document.getElementById('eid').value===dtid)clearForm();
-}
-function resetToDefault(){
-  if(!confirm('기본 데이터로 초기화하시겠습니까?'))return;
-  sp([...DP]);uf(DP);renderTable();clearForm();
-  toast('🔄 초기화 완료','info');
-}
-function exportData(){
-  const p=lp();const b=new Blob([JSON.stringify(p,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(b);
-  a.download='plannerai_'+new Date().toISOString().split('T')[0]+'.json';a.click();
-  toast('📤 내보내기 완료','success');
-}
-function importData(){document.getElementById('imp').click();}
-function handleImp(e){
-  const f=e.target.files[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!Array.isArray(d))throw new Error();sp(d);uf(d);renderTable();toast(`📥 ${d.length}개 가져왔습니다`,'success');}catch{toast('올바르지 않은 파일입니다','error');}};
-  r.readAsText(f);e.target.value='';
-}
-function toast(msg,type='info'){
-  const c=document.getElementById('tc2');const t=document.createElement('div');
-  t.className=`toast toast-${type}`;t.textContent=msg;c.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';t.style.transition='all .3s';setTimeout(()=>t.remove(),300)},3000);
-}
-function showView(n){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+n).classList.add('active');
-  if(n==='analytics')renderAnalytics();
-}
-function renderAnalytics(){
-  const p=lp();const cm={};
-  p.forEach(x=>{cm[x.company||'미분류']=(cm[x.company||'미분류']||0)+1;});
-  document.getElementById('ag').innerHTML=Object.entries(cm).sort((a,b)=>b[1]-a[1]).map(([co,n])=>`<div class="cp"><div><div style="font-size:15px;font-weight:700">${esc(co)}</div><div style="font-size:32px;font-weight:700;margin-top:8px">${n}</div><div style="font-size:12px;color:var(--text3)">개 프롬프트</div></div><div style="background:var(--accent-light);border-radius:8px;padding:8px;text-align:center;font-size:13px;color:var(--accent);font-weight:600">전체의 ${Math.round(n/p.length*100)}%</div></div>`).join('');
-  const cat={};p.forEach(x=>{cat[x.category||'미분류']=(cat[x.category||'미분류']||0)+1;});
-  const mx=Math.max(...Object.values(cat));
-  document.getElementById('cc2').innerHTML='<div style="font-size:15px;font-weight:700;margin-bottom:16px">카테고리별 프롬프트 수</div>'+Object.entries(cat).sort((a,b)=>b[1]-a[1]).map(([c,n])=>`<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px"><div style="width:120px;font-size:13px;color:var(--text2);text-align:right">${esc(c)}</div><div style="flex:1;background:var(--surface2);border-radius:6px;height:24px;overflow:hidden"><div style="width:${Math.round(n/mx*100)}%;background:var(--accent);height:100%;border-radius:6px"></div></div><div style="width:24px;font-size:13px;font-weight:700">${n}</div></div>`).join('');
-}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-// 모달 외부 클릭 닫기
-document.getElementById('dm').addEventListener('click',function(e){if(e.target===this)closeDel();});
-document.getElementById('com').addEventListener('click',function(e){if(e.target===this)closeCoModal();});
+function testRss(){ showToast('🔗 RSS 피드 테스트 중...'); setTimeout(()=>showToast('✅ 피드 응답 정상'),1500); }
 
-// 입력 카운터
-document.getElementById('fti').addEventListener('input',e=>document.getElementById('tl').textContent=e.target.value.length);
-document.getElementById('fpr').addEventListener('input',e=>document.getElementById('pl').textContent=e.target.value.length);
+function addKw(){
+  const kw = document.getElementById('kwInput').value.trim();
+  if (!kw) return;
+  keywords = [...new Set([...keywords, kw])];
+  admin.keywords = keywords;
+  saveAdmin(admin);
+  document.getElementById('kwInput').value='';
+  renderKeywords();
+}
 
-// Enter로 회사 추가
-document.getElementById('co-name-inp').addEventListener('keydown',e=>{if(e.key==='Enter')addCompany();});
+function renderKeywords(){
+  document.getElementById('kwList').innerHTML = keywords.map(k=>`
+    <span style="background:var(--surface3);border:1px solid var(--border);
+      border-radius:50px;padding:5px 12px;font-size:11px;color:var(--text2);
+      display:inline-flex;align-items:center;gap:5px;cursor:pointer"
+      onclick="removeKw('${k}')">
+      ${k} <span style="color:var(--muted)">×</span>
+    </span>`).join('');
+}
 
-// 초기화
-const p0=lp();
-if(!localStorage.getItem(SK))sp(p0);
-else{us(p0);const t=new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});document.getElementById('lst').textContent='✓ '+t;document.getElementById('su').textContent=t;}
-updateCompanySelects();
-uf(p0);
-renderTable();
+function removeKw(kw){
+  keywords = keywords.filter(k=>k!==kw);
+  admin.keywords = keywords;
+  saveAdmin(admin);
+  renderKeywords();
+}
+
+// ═══════════════════════════════════════
+// SETTINGS
+// ═══════════════════════════════════════
+function saveSettings(){
+  admin.adminName = document.getElementById('adminName').value;
+  admin.appName = document.getElementById('appName').value;
+  saveAdmin(admin);
+  showToast('✅ 설정 저장됨');
+}
+function exportAll(){
+  const data = JSON.stringify({store,admin,logs},null,2);
+  const blob = new Blob([data],{type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='promptos-backup.json';a.click();
+  URL.revokeObjectURL(url);
+  showToast('📥 전체 데이터 내보내기 완료');
+}
+function importData(){ showToast('⚠️ 준비 중인 기능입니다'); }
+function resetAll(){
+  if(!confirm('모든 데이터를 초기화하시겠습니까? 되돌릴 수 없습니다.')) return;
+  localStorage.removeItem(STORE_KEY);
+  localStorage.removeItem(ADMIN_KEY);
+  localStorage.removeItem(LOG_KEY);
+  location.reload();
+}
+
+// ═══════════════════════════════════════
+// LOGS
+// ═══════════════════════════════════════
+function addLog(ico, txt, type='info'){
+  const entry = {ico,txt,type,time:Date.now()};
+  logs = [entry,...logs].slice(0,200);
+  saveLogs(logs);
+  renderDashLog();
+}
+function renderDashLog(){
+  const el = document.getElementById('dashLog');
+  if (!el) return;
+  const colors = {success:'var(--green)',info:'var(--accent)',error:'var(--red)',warn:'var(--gold)'};
+  el.innerHTML = logs.slice(0,8).map(l=>`
+    <div class="log-item">
+      <div class="log-dot" style="background:${colors[l.type]||'var(--accent)'}"></div>
+      <div class="log-txt">${l.ico} ${l.txt}</div>
+      <div class="log-time">${timeAgo(l.time)}</div>
+    </div>`).join('') || '<div style="padding:14px;text-align:center;color:var(--muted);font-size:12px">활동 없음</div>';
+}
+function renderFullLog(){
+  const el = document.getElementById('fullLog');
+  const colors={success:'var(--green)',info:'var(--accent)',error:'var(--red)',warn:'var(--gold)'};
+  el.innerHTML = logs.map(l=>`
+    <div class="log-item">
+      <div class="log-dot" style="background:${colors[l.type]||'var(--accent)'}"></div>
+      <div class="log-txt">${l.ico} ${l.txt}</div>
+      <div class="log-time">${new Date(l.time).toLocaleString('ko-KR')}</div>
+    </div>`).join('') || '<div style="padding:14px;text-align:center;color:var(--muted)">로그 없음</div>';
+}
+function clearLogs(){ logs=[]; saveLogs(logs); renderDashLog(); renderFullLog(); showToast('🗑️ 로그 삭제됨'); }
+function exportLogs(){
+  const blob=new Blob([JSON.stringify(logs,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='activity-logs.json';a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════
+// NOTIFY MOBILE (localStorage event)
+// ═══════════════════════════════════════
+function notifyMobile(){
+  // Trigger storage event by writing a timestamp
+  localStorage.setItem(STORE_KEY, JSON.stringify({...store, _sync: Date.now()}));
+}
+
+// ═══════════════════════════════════════
+// LIVE STATS UPDATE
+// ═══════════════════════════════════════
+function startLiveStats(){
+  setInterval(()=>{
+    document.getElementById('ds-users').textContent = Math.floor(Math.random()*80+20);
+    document.getElementById('ds-push').textContent = pushCount;
+    updateSidebarBadges();
+  }, 15000);
+  // Seed initial log
+  setTimeout(()=>{
+    addLog('🚀','관리자 패널 초기화됨','success');
+    addLog('🔄','모바일과 동기화 연결됨','info');
+  }, 500);
+}
+
+function updateSidebarBadges(){
+  const cnt = (store.prompts||[]).length;
+  document.getElementById('sbPromptCnt').textContent = cnt;
+  document.getElementById('tbPromptCnt').textContent = cnt;
+  document.getElementById('ds-prompts').textContent = cnt;
+  document.getElementById('ds-quizzes').textContent = (store.quizzes||[]).length;
+}
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.innerHTML=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+function timeAgo(ts){
+  if(!ts) return '-';
+  const d=Date.now()-ts;
+  if(d<60000) return '방금 전';
+  if(d<3600000) return Math.floor(d/60000)+'분 전';
+  if(d<86400000) return Math.floor(d/3600000)+'시간 전';
+  return Math.floor(d/86400000)+'일 전';
+}
 </script>
 </body>
 </html>

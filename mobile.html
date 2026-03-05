@@ -2,317 +2,1278 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>PlannerAI</title>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PromptOS — Fintech PM Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root{--bg:#f7f6f2;--surface:#fff;--surface2:#f0ede8;--border:#e8e3dc;--text:#1a1916;--text2:#5a5551;--text3:#9e9890;--accent:#e8441a;--cr:16px;--th:64px;--hh:60px}
-  [data-theme="dark"]{--bg:#0f0e0d;--surface:#1c1b19;--surface2:#252320;--border:#2e2c29;--text:#f2ede6;--text2:#a09890;--text3:#5a5551;--accent:#ff6b42}
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%;overflow:hidden;font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
-  .app{display:flex;flex-direction:column;height:100dvh;height:100vh;max-width:430px;margin:0 auto;position:relative;overflow:hidden}
-  .hdr{height:var(--hh);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;flex-shrink:0;z-index:50}
-  .hlogo{display:flex;align-items:center;gap:10px;flex:1}
-  .lorb{width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px}
-  .lname{font-size:18px;font-weight:800;letter-spacing:-.5px}
-  .lname span{color:var(--accent)}
-  .hact{display:flex;align-items:center;gap:8px}
-  .ib{width:36px;height:36px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all .15s;flex-shrink:0}
-  .ib:active{transform:scale(.92)}
-  .ca{flex:1;overflow:hidden;position:relative}
-  .sc{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--th) + env(safe-area-inset-bottom) + 16px);display:none;animation:fi .2s ease}
-  .sc.active{display:block}
-  @keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-  .hhero{padding:24px 20px 16px}
-  .greet{font-size:13px;color:var(--text3);font-weight:500;margin-bottom:4px}
-  .htit{font-size:24px;font-weight:800;letter-spacing:-.5px;line-height:1.2;margin-bottom:4px}
-  .hsub{font-size:13px;color:var(--text2)}
-  .sbw{padding:0 20px 16px}
-  .sbar{display:flex;align-items:center;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:11px 16px;transition:border-color .2s}
-  .sbar:focus-within{border-color:var(--accent)}
-  .sbar input{flex:1;border:none;outline:none;font-size:14px;font-family:inherit;background:transparent;color:var(--text)}
-  .sbar input::placeholder{color:var(--text3)}
-  .sh{padding:0 20px 10px;display:flex;align-items:center;justify-content:space-between}
-  .stit{font-size:14px;font-weight:700}
-  .sa{font-size:12px;color:var(--accent);font-weight:600;cursor:pointer}
-  .csc{display:flex;gap:8px;padding:0 20px 20px;overflow-x:auto;scrollbar-width:none}
-  .csc::-webkit-scrollbar{display:none}
-  .chip{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;cursor:pointer;padding:12px 16px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;min-width:70px;transition:all .2s}
-  .chip:active{transform:scale(.94)}
-  .chip.active{border-color:var(--accent);background:var(--accent)}
-  .ce{font-size:22px}
-  .cn{font-size:11px;font-weight:700;white-space:nowrap}
-  .chip.active .cn{color:#fff}
-  .cs{padding:0 16px}
-  .pc{background:var(--surface);border:1px solid var(--border);border-radius:var(--cr);margin-bottom:12px;overflow:hidden;cursor:pointer;transition:all .2s}
-  .pc:active{transform:scale(.98)}
-  .ct{padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
-  .ci{width:40px;height:40px;border-radius:12px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-  .cm{flex:1;min-width:0}
-  .ctit{font-size:15px;font-weight:700;margin-bottom:4px;line-height:1.3}
-  .ctags{display:flex;gap:6px;flex-wrap:wrap}
-  .ctag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:6px}
-  .ctco{background:#eff6ff;color:#2563eb}
-  [data-theme="dark"] .ctco{background:#1e3a5f;color:#93c5fd}
-  .ctcat{background:#f0fdf4;color:#16a34a}
-  [data-theme="dark"] .ctcat{background:#1a3a2a;color:#86efac}
-  .ctlv-초급{background:#f0fdf4;color:#16a34a}
-  .ctlv-중급{background:#fefce8;color:#ca8a04}
-  .ctlv-고급{background:#fee2e2;color:#dc2626}
-  [data-theme="dark"] .ctlv-초급{background:#1a3a2a;color:#86efac}
-  [data-theme="dark"] .ctlv-중급{background:#3a3010;color:#fde68a}
-  [data-theme="dark"] .ctlv-고급{background:#3a1010;color:#fca5a5}
-  .cchev{font-size:14px;color:var(--text3);transition:transform .3s;flex-shrink:0;padding-top:2px}
-  .pc.open .cchev{transform:rotate(180deg)}
-  .cb{display:none;border-top:1px solid var(--border);padding:16px;animation:ei .2s ease}
-  @keyframes ei{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
-  .pc.open .cb{display:block}
-  .pt{font-size:13px;line-height:1.65;color:var(--text2);background:var(--surface2);border-radius:10px;padding:12px 14px;white-space:pre-wrap;word-break:break-word;margin-bottom:12px}
-  .ib2{border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:12px;line-height:1.6}
-  .ib-tip{background:#fffbeb;border:1px solid #fef3c7;color:#92400e}
-  [data-theme="dark"] .ib-tip{background:#2a1f0a;border-color:#4a3500;color:#fde68a}
-  .ib-ex{background:var(--surface2);border:1px solid var(--border);color:var(--text2)}
-  .il{font-weight:700;font-size:11px;margin-bottom:5px}
-  .cas{display:flex;gap:8px}
-  .ab{flex:1;padding:11px;border-radius:12px;border:none;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
-  .ab:active{transform:scale(.96)}
-  .ab-cp{background:var(--accent);color:#fff}
-  .ab-sv{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
-  .ab-cp.copied{background:#22c55e!important}
-  .emp{text-align:center;padding:48px 20px;color:var(--text3)}
-  .ei{font-size:44px;margin-bottom:12px}
-  .et{font-size:16px;font-weight:700;color:var(--text2);margin-bottom:6px}
-  .ed{font-size:13px}
-  .ssrch{padding:16px 20px 8px}
-  .sil{width:100%;padding:14px 16px;border:1.5px solid var(--accent);border-radius:14px;font-size:15px;font-family:inherit;background:var(--surface);color:var(--text);outline:none}
-  .fr{display:flex;gap:8px;padding:12px 20px;overflow-x:auto;scrollbar-width:none}
-  .fr::-webkit-scrollbar{display:none}
-  .fp{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);font-size:12px;font-weight:600;background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s}
-  .fp.active{border-color:var(--accent);background:var(--accent);color:#fff}
-  .fp:active{transform:scale(.94)}
-  .sr{padding:0 16px}
-  .svhdr{padding:20px 20px 12px}
-  .svtit{font-size:22px;font-weight:800;letter-spacing:-.5px}
-  .svsub{font-size:13px;color:var(--text3);margin-top:4px}
-  .svc{padding:0 16px}
-  .sethdr{padding:20px 20px 8px}
-  .settit{font-size:22px;font-weight:800;letter-spacing:-.5px}
-  .setlist{padding:0 16px 16px}
-  .setg{margin-bottom:16px}
-  .setgt{font-size:11px;font-weight:700;letter-spacing:1px;color:var(--text3);text-transform:uppercase;padding:0 4px;margin-bottom:8px}
-  .setc{background:var(--surface);border:1px solid var(--border);border-radius:var(--cr);overflow:hidden}
-  .setr{display:flex;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border)}
-  .setr:last-child{border-bottom:none}
-  .sri{font-size:20px;width:32px;flex-shrink:0}
-  .srin{flex:1}
-  .srl{font-size:14px;font-weight:600}
-  .srs{font-size:12px;color:var(--text3);margin-top:2px}
-  .tgl{width:44px;height:24px;border-radius:12px;background:var(--border);cursor:pointer;position:relative;transition:background .3s;flex-shrink:0;border:none}
-  .tgl.on{background:var(--accent)}
-  .tgl::after{content:'';position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;top:2px;left:2px;transition:transform .3s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
-  .tgl.on::after{transform:translateX(20px)}
-  .synci{margin:0 16px 12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px}
-  .sdot{width:8px;height:8px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pg2 1.5s infinite}
-  @keyframes pg2{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{box-shadow:0 0 0 6px rgba(34,197,94,0)}}
-  .syt{font-size:12px;color:var(--text2)}
-  .syt strong{color:var(--text)}
-  .tab-bar{height:var(--th);padding-bottom:env(safe-area-inset-bottom);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:center;flex-shrink:0;z-index:100}
-  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;padding:8px 0;position:relative;transition:all .2s}
-  .tab:active{opacity:.7}
-  .tbi{font-size:22px;transition:transform .2s}
-  .tab.active .tbi{transform:scale(1.15)}
-  .tbl{font-size:10px;font-weight:600;color:var(--text3)}
-  .tab.active .tbl{color:var(--accent)}
-  .tdot{position:absolute;top:6px;right:calc(50% - 16px);width:6px;height:6px;border-radius:50%;background:var(--accent);display:none}
-  .tab[data-badge] .tdot{display:block}
-  .tw{position:absolute;bottom:calc(var(--th) + 16px);left:16px;right:16px;z-index:999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
-  .mts{background:var(--text);color:var(--bg);padding:12px 20px;border-radius:24px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.25);animation:tu .25s ease;max-width:300px;text-align:center}
-  @keyframes tu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+:root{
+  --bg:#070d1a;--surface:#0d1525;--surface2:#121e30;--surface3:#1a2840;
+  --border:rgba(56,139,253,0.13);--border2:rgba(56,139,253,0.22);
+  --accent:#3b82f6;--accent2:#06b6d4;--accent3:#8b5cf6;
+  --gold:#f59e0b;--green:#10b981;--red:#ef4444;--orange:#f97316;
+  --text:#e2e8f0;--text2:#94a3b8;--muted:#475569;
+  --toss:#0064FF;--kakao:#FEE500;--naver:#03C75A;
+  --baemin:#3DC4A2;--upbit:#1A6CFF;--kiwoom:#E31B3B;
+  --r:16px;--rsm:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px}
+body::before{content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(59,130,246,.03) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(59,130,246,.03) 1px,transparent 1px);
+  background-size:44px 44px;pointer-events:none;z-index:0}
+.orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0}
+.orb1{width:320px;height:320px;background:rgba(59,130,246,.07);top:-100px;right:-80px}
+.orb2{width:260px;height:260px;background:rgba(139,92,246,.05);bottom:80px;left:-80px}
+
+/* LAYOUT */
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+
+/* TOP NAV */
+.topnav{flex-shrink:0;background:rgba(7,13,26,.95);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;z-index:50}
+.logo{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.5px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.logo em{-webkit-text-fill-color:var(--accent3);font-style:normal}
+.nav-right{display:flex;align-items:center;gap:10px}
+.status-pill{display:flex;align-items:center;gap:5px;background:var(--surface);
+  border:1px solid var(--border);border-radius:50px;padding:4px 10px;font-size:10px;color:var(--text2);cursor:pointer}
+.sdot{width:6px;height:6px;border-radius:50%}
+.sdot.on{background:var(--green);box-shadow:0 0 5px var(--green);animation:blink 2s infinite}
+.sdot.off{background:var(--red);box-shadow:0 0 5px var(--red)}
+.sdot.demo{background:var(--gold);box-shadow:0 0 5px var(--gold);animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.avatar-btn{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent3));
+  border:none;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+
+/* SCROLL AREA */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.scroll-area::-webkit-scrollbar{display:none}
+.page{display:none;padding-bottom:12px}
+.page.active{display:block}
+
+/* BOTTOM TAB BAR */
+.bottomnav{flex-shrink:0;background:rgba(7,13,26,.97);backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);display:flex;align-items:stretch;
+  padding-bottom:env(safe-area-inset-bottom,0px);z-index:50}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:8px 4px 10px;cursor:pointer;
+  position:relative;transition:color .2s;color:var(--muted)}
+.bnav-item.active{color:var(--accent)}
+.bnav-item.active::before{content:'';position:absolute;top:0;left:20%;right:20%;
+  height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));
+  border-radius:0 0 3px 3px}
+.bnav-ico{font-size:20px;line-height:1}
+.bnav-lbl{font-size:9px;font-weight:700;letter-spacing:.2px}
+.bnav-badge{position:absolute;top:6px;right:calc(50% - 18px);
+  background:var(--red);color:white;font-size:8px;font-weight:700;
+  padding:1px 5px;border-radius:50px;min-width:14px;text-align:center;display:none}
+
+/* HOME */
+.config-block{margin:12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px 14px}
+.config-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.config-ico{width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.config-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.config-name{font-size:12px;font-weight:700;color:var(--text);margin-top:2px}
+.config-row{display:flex;gap:6px}
+.url-input{flex:1;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:7px 10px;color:var(--text);font-size:12px;
+  font-family:'Syne',monospace;outline:none;transition:border-color .2s}
+.url-input:focus{border-color:var(--accent)}
+.btn-connect{padding:7px 14px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:8px;color:white;font-size:11px;font-weight:700;cursor:pointer}
+.btn-connect:active{opacity:.8}
+.model-row{display:flex;gap:6px;margin-top:8px;align-items:center}
+.model-sel{flex:1;background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:7px 10px;color:var(--text);font-size:12px;outline:none;appearance:none}
+.btn-ico{width:32px;height:32px;border-radius:8px;background:var(--surface2);
+  border:1px solid var(--border);color:var(--accent);font-size:15px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+/* Demo guide */
+.demo-guide{margin:0 12px 10px;background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(245,158,11,.03));
+  border:1px solid rgba(245,158,11,.25);border-radius:var(--rsm);padding:11px 13px;display:none}
+.demo-guide.show{display:block}
+.demo-guide-ttl{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:7px;
+  display:flex;align-items:center;justify-content:space-between}
+.demo-guide-steps{font-size:11px;color:var(--text2);line-height:1.9}
+.demo-guide-steps code{background:rgba(245,158,11,.15);color:var(--gold);
+  padding:1px 6px;border-radius:4px;font-family:'Syne',monospace;font-size:10px}
+.dg-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px}
+
+/* Chips */
+.chips-scroll{padding:8px 12px;overflow-x:auto;white-space:nowrap;display:flex;gap:7px;scrollbar-width:none}
+.chips-scroll::-webkit-scrollbar{display:none}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;
+  border-radius:50px;border:1px solid var(--border);background:var(--surface);
+  color:var(--muted);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;flex-shrink:0}
+.chip.active{color:white;border-color:transparent}
+.cdot{width:6px;height:6px;border-radius:50%}
+.chip-all.active{background:linear-gradient(135deg,var(--accent),var(--accent3))}
+.chip-toss.active{background:linear-gradient(135deg,#001233,#002d80);border:1px solid var(--toss)!important;color:#88aaff!important}
+.chip-kakao.active{background:linear-gradient(135deg,#1a1a00,#3d3500);border:1px solid var(--kakao)!important}
+.chip-naver.active{background:linear-gradient(135deg,#001a08,#003d18);border:1px solid var(--naver)!important}
+.chip-baemin.active{background:linear-gradient(135deg,#001a15,#003d2e);border:1px solid var(--baemin)!important}
+.chip-upbit.active{background:linear-gradient(135deg,#001233,#002d80);border:1px solid var(--upbit)!important;color:#88aaff!important}
+.chip-kiwoom.active{background:linear-gradient(135deg,#1a0006,#3d0013);border:1px solid var(--kiwoom)!important}
+
+/* Section head */
+.sec-head{padding:2px 16px 8px;display:flex;align-items:center;justify-content:space-between}
+.sec-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;letter-spacing:-.2px}
+.live-pill{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--green);font-weight:700;
+  background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);padding:3px 8px;border-radius:50px}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:blink 1.5s infinite}
+.refresh-txt{font-size:10px;color:var(--muted)}
+
+/* Cards */
+.cards-list{padding:0 12px;display:flex;flex-direction:column;gap:9px}
+.pcard{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s}
+.pcard:active{transform:scale(.99)}
+.pcard.running{border-color:var(--accent)}
+.pcard-head{padding:13px 14px 9px;display:flex;align-items:flex-start;gap:9px}
+.co-badge{padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;letter-spacing:.4px;flex-shrink:0;margin-top:1px}
+.badge-toss{background:rgba(0,100,255,.15);color:#6699ff}
+.badge-kakao{background:rgba(254,229,0,.15);color:#c8a800}
+.badge-naver{background:rgba(3,199,90,.15);color:var(--naver)}
+.badge-baemin{background:rgba(61,196,162,.15);color:var(--baemin)}
+.badge-upbit{background:rgba(26,108,255,.15);color:#6699ff}
+.badge-kiwoom{background:rgba(227,27,59,.15);color:#ff6680}
+.pcard-title{flex:1;font-size:13px;font-weight:700;line-height:1.4;letter-spacing:-.2px}
+.run-btn{width:28px;height:28px;border-radius:7px;background:var(--surface2);
+  border:1px solid var(--border);color:var(--accent);font-size:12px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.run-btn:active{background:var(--accent);color:white}
+.run-btn.spinning{animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pcard-body{padding:0 14px 11px;font-size:11px;color:var(--text2);line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcard-foot{padding:9px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.tags{display:flex;gap:4px;overflow:hidden}
+.tag{padding:2px 7px;border-radius:4px;background:var(--surface2);
+  border:1px solid var(--border);font-size:9px;color:var(--muted);white-space:nowrap}
+
+/* Response */
+.resp-panel{margin:10px 12px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;display:none}
+.resp-panel.show{display:block}
+.resp-head{padding:11px 14px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between}
+.resp-title{font-size:12px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:5px}
+.resp-close{width:24px;height:24px;border-radius:5px;background:var(--surface2);
+  border:1px solid var(--border);color:var(--muted);font-size:13px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.resp-body{padding:13px 14px;font-size:12px;color:var(--text);line-height:1.8;
+  min-height:70px;white-space:pre-wrap;word-break:break-word;max-height:280px;overflow-y:auto}
+.resp-body::-webkit-scrollbar{width:3px}
+.resp-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.cursor{display:inline-block;width:7px;height:13px;background:var(--accent);
+  margin-left:2px;animation:blink .6s step-end infinite;vertical-align:middle}
+.resp-acts{padding:9px 14px;border-top:1px solid var(--border);display:flex;gap:7px;justify-content:flex-end}
+.act-btn{padding:6px 12px;border-radius:7px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--text2);font-size:11px;cursor:pointer}
+.act-btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border-color:transparent}
+
+/* Custom */
+.custom-wrap{padding:10px 12px 16px}
+.custom-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.custom-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .2s}
+.custom-box:focus-within{border-color:var(--accent)}
+.custom-ta{width:100%;padding:11px 13px;background:transparent;border:none;
+  color:var(--text);font-size:12px;font-family:'Noto Sans KR',sans-serif;
+  line-height:1.6;resize:none;outline:none;min-height:72px}
+.custom-ta::placeholder{color:var(--muted)}
+.custom-foot{padding:7px 11px;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center}
+.send-btn{padding:7px 16px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;border-radius:7px;color:white;font-size:11px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;gap:4px}
+.send-btn:active{opacity:.85}
+
+/* PAGE HEADER */
+.page-hdr{padding:14px 16px 6px;display:flex;align-items:center;justify-content:space-between}
+.page-h1{font-family:'Syne',sans-serif;font-size:16px;font-weight:800}
+.page-sub{font-size:10px;color:var(--text2);margin-top:2px}
+
+/* NEWS */
+.rss-status{margin:0 12px 8px;padding:9px 12px;border-radius:var(--rsm);
+  font-size:11px;display:flex;align-items:center;gap:7px;transition:all .4s}
+.rss-ok{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:var(--green)}
+.rss-fail{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:var(--gold)}
+.rss-loading{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:var(--accent)}
+.news-filter{padding:0 12px 8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.news-filter::-webkit-scrollbar{display:none}
+.nf-chip{padding:5px 12px;border-radius:50px;border:1px solid var(--border);
+  background:var(--surface);color:var(--muted);font-size:11px;font-weight:600;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.nf-chip.active{background:var(--accent);color:white;border-color:var(--accent)}
+.news-list{padding:0 12px;display:flex;flex-direction:column;gap:8px}
+.news-card{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:13px 14px;cursor:pointer;transition:all .2s}
+.news-card:active{transform:scale(.99)}
+.news-card.is-new{border-left:3px solid var(--accent)}
+.news-meta{display:flex;align-items:center;gap:6px;margin-bottom:7px;flex-wrap:wrap}
+.news-src{font-size:9px;font-weight:700;color:var(--accent);
+  background:rgba(59,130,246,.1);padding:2px 7px;border-radius:4px}
+.news-time{font-size:9px;color:var(--muted)}
+.news-new-badge{font-size:9px;color:var(--green);font-weight:700;
+  background:rgba(16,185,129,.1);padding:2px 6px;border-radius:4px}
+.news-title{font-size:13px;font-weight:700;line-height:1.45;margin-bottom:6px}
+.news-summary{font-size:11px;color:var(--text2);line-height:1.6;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.news-footer{margin-top:9px;display:flex;align-items:center;justify-content:space-between}
+.news-ask{padding:4px 10px;border-radius:6px;border:1px solid var(--border);
+  background:var(--surface2);color:var(--accent);font-size:10px;font-weight:700;cursor:pointer}
+.news-placeholder{padding:16px;text-align:center;font-size:12px;color:var(--muted)}
+.news-spinner-wrap{display:flex;flex-direction:column;align-items:center;padding:28px;color:var(--muted);font-size:12px;gap:10px}
+.spinner{width:26px;height:26px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+.refresh-row{display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:12px;color:var(--accent);font-size:12px;font-weight:600;cursor:pointer;margin-bottom:8px}
+
+/* QUIZ */
+.quiz-hero{padding:14px 16px 10px;text-align:center}
+.quiz-hero h1{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:4px}
+.quiz-hero p{font-size:11px;color:var(--text2)}
+.quiz-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 12px 10px}
+.qstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px;text-align:center}
+.qstat-num{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--accent)}
+.qstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
+.quiz-src-info{margin:0 12px 10px;padding:9px 12px;border-radius:var(--rsm);
+  background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);
+  font-size:11px;color:var(--accent3);display:flex;align-items:center;gap:7px}
+.quiz-gen-btn{width:calc(100% - 24px);margin:0 12px 12px;padding:12px;
+  border-radius:var(--r);background:linear-gradient(135deg,var(--accent3),var(--accent));
+  border:none;color:white;font-size:13px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;transition:opacity .2s}
+.quiz-gen-btn:active{opacity:.85}
+.quiz-gen-btn:disabled{opacity:.6;cursor:default}
+.quiz-body{padding:0 12px}
+.qcard{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 15px;margin-bottom:12px}
+.qcard-num{font-size:10px;color:var(--muted);margin-bottom:7px;font-weight:600}
+.qcard-q{font-size:13px;font-weight:700;line-height:1.5;margin-bottom:13px}
+.options{display:flex;flex-direction:column;gap:7px}
+.option{padding:10px 13px;border-radius:var(--rsm);border:1px solid var(--border);
+  background:var(--surface2);color:var(--text);font-size:12px;cursor:pointer;
+  transition:all .2s;text-align:left;font-family:'Noto Sans KR',sans-serif}
+.option:active{transform:scale(.99)}
+.option.correct{background:rgba(16,185,129,.12);border-color:var(--green);color:var(--green)}
+.option.wrong{background:rgba(239,68,68,.1);border-color:var(--red);color:var(--red)}
+.option.disabled{pointer-events:none}
+.qcard-explain{margin-top:11px;padding:10px 12px;background:rgba(59,130,246,.07);
+  border-left:3px solid var(--accent);border-radius:0 var(--rsm) var(--rsm) 0;
+  font-size:11px;color:var(--text2);line-height:1.6;display:none}
+.qcard-explain.show{display:block}
+.qcard-next{margin-top:11px;width:100%;padding:10px;border-radius:var(--rsm);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;color:white;font-size:12px;font-weight:700;cursor:pointer;display:none}
+.qcard-next.show{display:block}
+.qcard-next:active{opacity:.85}
+.quiz-spin-wrap{display:flex;flex-direction:column;align-items:center;padding:30px;color:var(--muted);font-size:12px;gap:10px}
+.quiz-spinner{width:26px;height:26px;border:2px solid var(--border2);border-top-color:var(--accent3);border-radius:50%;animation:spin .7s linear infinite}
+
+/* LEARN */
+.learn-cats{padding:6px 12px 8px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+.learn-cats::-webkit-scrollbar{display:none}
+.lcat{padding:5px 13px;border-radius:50px;border:1px solid var(--border);
+  background:var(--surface);color:var(--muted);font-size:11px;font-weight:600;
+  cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .2s}
+.lcat.active{background:var(--accent3);color:white;border-color:var(--accent3)}
+.learn-cards{padding:0 12px;display:flex;flex-direction:column;gap:9px}
+.lcard{background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s}
+.lcard:active{transform:scale(.99)}
+.lcard-stripe{height:4px}
+.lcard-body{padding:13px 14px}
+.lcard-catrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.lcard-cat{font-size:9px;font-weight:700;color:var(--accent3);text-transform:uppercase;letter-spacing:.6px}
+.lcard-src{font-size:9px;color:var(--accent3);font-weight:600;
+  background:rgba(139,92,246,.1);padding:2px 6px;border-radius:4px}
+.lcard-title{font-size:14px;font-weight:700;line-height:1.4;margin-bottom:6px}
+.lcard-desc{font-size:11px;color:var(--text2);line-height:1.6}
+.lcard-foot{padding:9px 14px;border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between}
+.progress-bar{height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;flex:1;margin:0 10px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent));border-radius:2px;transition:width .5s ease}
+.lcard-pct{font-size:10px;color:var(--text2)}
+.learn-spin-wrap{display:flex;flex-direction:column;align-items:center;padding:30px;color:var(--muted);font-size:12px;gap:10px}
+.learn-spinner{width:26px;height:26px;border:2px solid var(--border2);border-top-color:var(--accent3);border-radius:50%;animation:spin .7s linear infinite}
+
+/* Learn detail */
+.learn-detail{position:fixed;inset:0;z-index:200;
+  background:rgba(7,13,26,.99);backdrop-filter:blur(12px);
+  display:none;flex-direction:column;max-width:430px;margin:0 auto}
+.learn-detail.show{display:flex}
+.ld-head{padding:14px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;flex-shrink:0}
+.ld-back{width:32px;height:32px;border-radius:8px;background:var(--surface);
+  border:1px solid var(--border);color:var(--text);font-size:17px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer}
+.ld-ttl{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;flex:1}
+.ld-body{flex:1;overflow-y:auto;padding:16px}
+.ld-body::-webkit-scrollbar{width:3px}
+.ld-body::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.ld-sec{margin-bottom:18px}
+.ld-sec h3{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px}
+.ld-sec p{font-size:12px;color:var(--text2);line-height:1.75}
+.ld-prompt-box{background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--rsm);padding:12px;margin-top:8px;
+  font-size:11px;color:var(--text2);line-height:1.7;font-style:italic}
+.ld-run-btn{width:100%;padding:12px;border-radius:var(--r);
+  background:linear-gradient(135deg,var(--accent3),var(--accent));
+  border:none;color:white;font-size:13px;font-weight:700;cursor:pointer;margin-top:14px}
+.ld-run-btn:active{opacity:.85}
+
+/* Push */
+.push-notif{position:fixed;top:0;left:50%;transform:translateX(-50%) translateY(-100%);
+  z-index:999;width:min(390px,90vw);
+  background:rgba(13,21,37,.97);backdrop-filter:blur(16px);
+  border:1px solid var(--border2);border-radius:0 0 18px 18px;
+  padding:14px 18px;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.push-notif.show{transform:translateX(-50%) translateY(0)}
+.push-inner{display:flex;align-items:center;gap:11px}
+.push-ico{width:36px;height:36px;border-radius:9px;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.push-close{width:24px;height:24px;border-radius:50%;background:var(--surface3);
+  border:none;color:var(--muted);font-size:14px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-left:auto}
+.push-ttl{font-size:12px;font-weight:700;color:var(--text)}
+.push-body-txt{font-size:11px;color:var(--text2);margin-top:1px}
+
+/* Login modal */
+.modal-overlay{position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-sheet{width:100%;max-width:430px;background:var(--surface);
+  border-radius:24px 24px 0 0;padding:24px 20px 40px;
+  animation:slide-up .35s cubic-bezier(.34,1.2,.64,1)}
+@keyframes slide-up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--surface3);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;text-align:center;margin-bottom:5px}
+.modal-sub{font-size:12px;color:var(--text2);text-align:center;margin-bottom:22px}
+.social-btn{width:100%;padding:13px;border-radius:var(--rsm);border:1px solid var(--border);
+  cursor:pointer;font-size:14px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px}
+.social-btn:active{transform:scale(.98)}
+.btn-kakao{background:var(--kakao);border-color:var(--kakao);color:#1a1a00}
+.btn-naver{background:var(--naver);border-color:var(--naver);color:white}
+.btn-google{background:white;border-color:rgba(0,0,0,.12);color:#333}
+.guest-btn{width:100%;padding:12px;background:transparent;border:1px solid var(--border);
+  border-radius:var(--rsm);color:var(--muted);font-size:13px;cursor:pointer;margin-top:4px}
+
+/* Profile */
+.profile-sheet{position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);
+  display:none;align-items:flex-end;justify-content:center}
+.profile-sheet.show{display:flex}
+.profile-panel{width:100%;max-width:430px;background:var(--surface);
+  border-radius:24px 24px 0 0;padding:24px 20px 40px;position:relative;
+  animation:slide-up .35s cubic-bezier(.34,1.2,.64,1)}
+.prof-avatar{width:64px;height:64px;border-radius:50%;margin:0 auto 12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent3));
+  display:flex;align-items:center;justify-content:center;font-size:28px}
+.prof-name{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;text-align:center;margin-bottom:2px}
+.prof-email{font-size:11px;color:var(--text2);text-align:center;margin-bottom:16px}
+.prof-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:18px}
+.pstat{background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--rsm);padding:10px;text-align:center}
+.pstat-num{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--accent)}
+.pstat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
+.prof-menu{display:flex;flex-direction:column;gap:8px}
+.pmenu-item{padding:12px 14px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:var(--rsm);display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:13px}
+.pmenu-item:active{background:var(--surface3)}
+.logout-btn{width:100%;padding:12px;background:rgba(239,68,68,.1);
+  border:1px solid rgba(239,68,68,.25);border-radius:var(--rsm);
+  color:var(--red);font-size:13px;font-weight:700;cursor:pointer;margin-top:10px}
+.close-sheet{width:28px;height:28px;border-radius:50%;background:var(--surface3);
+  border:none;color:var(--muted);font-size:16px;cursor:pointer;
+  position:absolute;top:20px;right:20px;display:flex;align-items:center;justify-content:center}
+
+/* Toast */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(16px);
+  background:var(--surface2);border:1px solid var(--border2);
+  border-radius:50px;padding:9px 18px;font-size:12px;color:var(--text);
+  opacity:0;transition:all .3s;z-index:500;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@keyframes card-flash{0%{border-color:var(--accent);box-shadow:0 0 12px rgba(59,130,246,.25)}100%{border-color:var(--border);box-shadow:none}}
+.flash{animation:card-flash 1.5s ease}
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="hdr">
-    <div class="hlogo"><div class="lorb">&#x1F9E0;</div><div class="lname">Planner<span>AI</span></div></div>
-    <div class="hact">
-      <button class="ib" id="dtb" onclick="toggleDark()">&#x1F319;</button>
-      <button class="ib" onclick="showSc('settings')">&#x2699;&#xFE0F;</button>
-    </div>
-  </header>
-  <div class="ca">
-    <div id="sc-home" class="sc active">
-      <div class="hhero">
-        <div class="greet">&#xC548;&#xB155;&#xD558;&#xC138;&#xC694; &#x1F44B;</div>
-        <div class="htit">&#xC624;&#xB298;&#xC740; &#xC5B4;&#xB5A4; &#xD504;&#xB86C;&#xD504;&#xD2B8;&#xB97C;<br>&#xBC30;&#xC6CC;&#xBCFC;&#xAE4C;&#xC694;?</div>
-        <div class="hsub" id="pct">&#xB85C;&#xB529;&#xC911;...</div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div id="app">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="logo">Prompt<em>OS</em></div>
+    <div class="nav-right">
+      <div class="status-pill" onclick="showDemoGuide()">
+        <div class="sdot demo" id="sdot"></div>
+        <span id="stext">데모</span>
       </div>
-      <div class="sbw"><div class="sbar"><span>&#x1F50D;</span><input type="text" placeholder="&#xD504;&#xB86C;&#xD504;&#xD2B8; &#xAC80;&#xC0C9;..." id="hs" oninput="onHS()" autocomplete="off"></div></div>
-      <div class="sh"><div class="stit">&#xD68C;&#xC0AC;&#xBCC4; &#xBCF4;&#xAE30;</div></div>
-      <div class="csc" id="cchips"></div>
-      <div class="sh"><div class="stit" id="hlt">&#xC804;&#xCCB4; &#xD504;&#xB86C;&#xD504;&#xD2B8;</div><div class="sa" onclick="clearF()">&#xC804;&#xCCB4;&#xBCF4;&#xAE30;</div></div>
-      <div class="cs" id="hcards"></div>
+      <button class="avatar-btn" onclick="openProfile()"><span id="avatarEmoji">👤</span></button>
     </div>
-    <div id="sc-search" class="sc">
-      <div class="ssrch"><input class="sil" type="text" placeholder="&#xD504;&#xB86C;&#xD504;&#xD2B8;, &#xD68C;&#xC0AC;, &#xCE74;&#xD14C;&#xACE0;&#xB9AC; &#xAC80;&#xC0C9;..." id="sri2" oninput="renderSearch()" autocomplete="off"></div>
-      <div class="fr" id="fpills"></div>
-      <div class="sr" id="sres"></div>
-    </div>
-    <div id="sc-saved" class="sc">
-      <div class="svhdr"><div class="svtit">&#xC800;&#xC7A5;&#xB41C; &#xD504;&#xB86C;&#xD504;&#xD2B8;</div><div class="svsub" id="svct">0&#xAC1C; &#xC800;&#xC7A5;&#xB428;</div></div>
-      <div class="svc" id="svcards"></div>
-    </div>
-    <div id="sc-settings" class="sc">
-      <div class="sethdr"><div class="settit">&#xC124;&#xC815;</div></div>
-      <div class="synci"><div class="sdot"></div><div class="syt"><strong>localStorage &#xB3D9;&#xAE30;&#xD654; &#xD65C;&#xC131;&#xD654;</strong><br>admin.html&#xC5D0;&#xC11C; &#xBCC0;&#xACBD; &#xC2DC; &#xC7AC;&#xC811;&#xC18D;&#xC73C;&#xB85C; &#xBC18;&#xC601;</div></div>
-      <div class="setlist">
-        <div class="setg"><div class="setgt">&#xD654;&#xBA74; &#xC124;&#xC815;</div>
-          <div class="setc"><div class="setr"><div class="sri">&#x1F319;</div><div class="srin"><div class="srl">&#xB2E4;&#xD06C; &#xBAA8;&#xB4DC;</div><div class="srs">&#xC5B4;&#xB450;&#xC6B4; &#xD654;&#xBA74;&#xC73C;&#xB85C; &#xC804;&#xD658;</div></div><button class="tgl" id="dtgl" onclick="toggleDark()"></button></div></div>
-        </div>
-        <div class="setg"><div class="setgt">&#xB370;&#xC774;&#xD130;</div>
-          <div class="setc">
-            <div class="setr"><div class="sri">&#x1F4CA;</div><div class="srin"><div class="srl">&#xC800;&#xC7A5;&#xB41C; &#xD504;&#xB86C;&#xD504;&#xD2B8; &#xC218;</div><div class="srs" id="spc">-</div></div></div>
-            <div class="setr"><div class="sri">&#x1F3E2;</div><div class="srin"><div class="srl">&#xB4F1;&#xB85D; &#xD68C;&#xC0AC; &#xC218;</div><div class="srs" id="scct">-</div></div></div>
-            <div class="setr"><div class="sri">&#x1F504;</div><div class="srin"><div class="srl">&#xCF58;&#xD150;&#xCE20; &#xC0C8;&#xB85C;&#xACE0;&#xCE68;</div><div class="srs">admin.html&#xC758; &#xCD5C;&#xC2E0; &#xB370;&#xC774;&#xD130; &#xB85C;&#xB4DC;</div></div><button class="ib" onclick="refreshData()">&#x21BB;</button></div>
-            <div class="setr"><div class="sri">&#x1F5D1;&#xFE0F;</div><div class="srin"><div class="srl">&#xC800;&#xC7A5; &#xBAA9;&#xB85D; &#xCD08;&#xAE30;&#xD654;</div><div class="srs">&#xBD81;&#xB9C8;&#xD06C;&#xD55C; &#xD504;&#xB86C;&#xD504;&#xD2B8; &#xC804;&#xCCB4; &#xC0AD;&#xC81C;</div></div><button class="ib" onclick="clearSaved()">&#x2715;</button></div>
+  </nav>
+
+  <!-- SCROLL AREA -->
+  <div class="scroll-area">
+
+    <!-- ══ HOME ══ -->
+    <div class="page active" id="page-home">
+      <div class="config-block">
+        <div class="config-top">
+          <div class="config-ico">🦙</div>
+          <div>
+            <div class="config-lbl">Ollama 로컬 모델 연결</div>
+            <div class="config-name" id="connName">미연결 — 데모 모드 실행 중</div>
           </div>
         </div>
-        <div class="setg"><div class="setgt">&#xC815;&#xBCF4;</div>
-          <div class="setc"><div class="setr"><div class="sri">&#x1F4F1;</div><div class="srin"><div class="srl">PlannerAI</div><div class="srs">v1.1 &mdash; PM&#xC744; &#xC704;&#xD55C; AI &#xD504;&#xB86C;&#xD504;&#xD2B8; &#xC571;</div></div></div></div>
+        <div class="config-row">
+          <input class="url-input" id="ollamaUrl" value="http://localhost:11434">
+          <button class="btn-connect" onclick="connectOllama()">연결</button>
+        </div>
+        <div class="model-row">
+          <select class="model-sel" id="modelSel"><option value="demo">🎭 데모 모드</option></select>
+          <button class="btn-ico" onclick="loadModels()">↻</button>
+        </div>
+      </div>
+
+      <div class="demo-guide" id="demoGuide">
+        <div class="demo-guide-ttl">
+          <span>🦙 데모 모드 — Ollama 연결 가이드</span>
+          <button class="dg-close" onclick="document.getElementById('demoGuide').classList.remove('show')">×</button>
+        </div>
+        <div class="demo-guide-steps">
+          1. <a href="https://ollama.com" target="_blank" style="color:var(--gold)">ollama.com</a> 에서 Ollama 설치 (Mac/Windows/Linux)<br>
+          2. 터미널에서 <code>ollama serve</code> 실행<br>
+          3. 모델 설치: <code>ollama pull llama3</code> 또는 <code>ollama pull mistral</code><br>
+          4. 위 URL에 <code>http://localhost:11434</code> 입력 후 <strong style="color:var(--gold)">연결</strong> 클릭<br>
+          5. 🟢 연결됨 상태 확인 → 실제 AI 스트리밍 응답 사용 가능!
+        </div>
+      </div>
+
+      <div class="chips-scroll">
+        <div class="chip chip-all active" onclick="filterCo('all',this)"><div class="cdot" style="background:white"></div>전체</div>
+        <div class="chip chip-toss" onclick="filterCo('toss',this)"><div class="cdot" style="background:var(--toss)"></div>토스</div>
+        <div class="chip chip-kakao" onclick="filterCo('kakao',this)"><div class="cdot" style="background:var(--kakao)"></div>카카오</div>
+        <div class="chip chip-naver" onclick="filterCo('naver',this)"><div class="cdot" style="background:var(--naver)"></div>네이버</div>
+        <div class="chip chip-baemin" onclick="filterCo('baemin',this)"><div class="cdot" style="background:var(--baemin)"></div>배민</div>
+        <div class="chip chip-upbit" onclick="filterCo('upbit',this)"><div class="cdot" style="background:var(--upbit)"></div>업비트</div>
+        <div class="chip chip-kiwoom" onclick="filterCo('kiwoom',this)"><div class="cdot" style="background:var(--kiwoom)"></div>키움증권</div>
+      </div>
+
+      <div class="sec-head">
+        <div class="sec-title">PM 프롬프트</div>
+        <div style="display:flex;align-items:center;gap:7px">
+          <div class="live-pill"><div class="ldot"></div>LIVE</div>
+          <div class="refresh-txt" id="refreshTxt">30초 갱신</div>
+        </div>
+      </div>
+
+      <div class="resp-panel" id="respPanel">
+        <div class="resp-head">
+          <div class="resp-title">🤖 <span id="respTitle">AI 응답</span></div>
+          <div class="resp-close" onclick="closeResp()">×</div>
+        </div>
+        <div class="resp-body" id="respBody"><span class="cursor"></span></div>
+        <div class="resp-acts">
+          <button class="act-btn" onclick="copyResp()">📋 복사</button>
+          <button class="act-btn" onclick="saveResp()">🔖 저장</button>
+          <button class="act-btn primary" onclick="shareResp()">공유</button>
+        </div>
+      </div>
+
+      <div class="cards-list" id="cardsList"></div>
+
+      <div class="custom-wrap">
+        <div class="custom-lbl">커스텀 프롬프트</div>
+        <div class="custom-box">
+          <textarea class="custom-ta" id="customTA" placeholder="예: 토스의 BNPL 서비스 기획안을 작성해줘. 타겟 고객, 수익모델, 리스크 관리까지 포함해서..." rows="3"></textarea>
+          <div class="custom-foot">
+            <span style="font-size:10px;color:var(--muted)">💡 핀테크 도메인 특화</span>
+            <button class="send-btn" onclick="sendCustom()"><span>실행</span> ▶</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <nav class="tab-bar">
-    <div class="tab active" id="tab-home" onclick="showSc('home')"><div class="tbi">&#x1F3E0;</div><div class="tbl">&#xD648;</div></div>
-    <div class="tab" id="tab-search" onclick="showSc('search')"><div class="tbi">&#x1F50D;</div><div class="tbl">&#xD0D0;&#xC0C9;</div></div>
-    <div class="tab" id="tab-saved" onclick="showSc('saved')"><div class="tbi">&#x1F516;</div><div class="tbl">&#xC800;&#xC7A5;</div><div class="tdot"></div></div>
-    <div class="tab" id="tab-settings" onclick="showSc('settings')"><div class="tbi">&#x2699;&#xFE0F;</div><div class="tbl">&#xC124;&#xC815;</div></div>
-  </nav>
-  <div class="tw" id="tw"></div>
-</div>
-<script>
-const SK='plannerai_prompts',CK='plannerai_companies',SVK='plannerai_saved',DK='plannerai_dark';
-const DEFAULT_CE={'카카오':'💛','네이버':'🟢','토스':'💙','쿠팡':'🟠','라인':'💚','크래프톤':'🎮','삼성 MX':'📱','현대':'🚗','공통':'⭐'};
-const DP=[
-  {id:'d1',title:'PRD 초안 작성기',company:'카카오',category:'PRD 작성',level:'중급',tags:'PM,기획',prompt:'다음 기능에 대한 PRD 초안을 작성해줘.\n\n기능명: [기능명]\n타겟 사용자: [사용자]\n핵심 문제: [문제]\n\n포함 항목:\n1. 배경 및 목적\n2. 성공 지표 (KPI)\n3. 기능 요구사항\n4. 비기능 요구사항\n5. 제외 범위',tip:'기능명, 타겟 사용자, 핵심 문제를 구체적으로 작성할수록 퀄리티가 높아집니다.',example:'입력: 기능명=다크모드, 타겟=야간 사용자\n출력: 배경-야간 사용 증가... (구조화된 PRD)',createdAt:new Date().toISOString()},
-  {id:'d2',title:'유저 스토리 생성기',company:'토스',category:'유저 스토리',level:'초급',tags:'Agile,스프린트',prompt:'다음 기능에 대한 유저 스토리를 작성해줘.\n\n기능: [기능 설명]\n\n형식: 나는 [역할]로서, [목표]를 위해 [기능]을 원한다.\n\n각 스토리마다:\n- 수용 조건 3개 이상\n- 스토리 포인트 예상치\n- 의존성 여부',tip:'As-Is/To-Be를 먼저 정리한 후 실행하면 더 정확합니다.',example:'',createdAt:new Date().toISOString()},
-  {id:'d3',title:'경쟁사 분석 프레임워크',company:'네이버',category:'경쟁사 분석',level:'고급',tags:'전략,시장조사',prompt:'[서비스명]의 경쟁사 분석을 해줘.\n\n경쟁사: [경쟁사1, 경쟁사2]\n\n각 경쟁사:\n1. 핵심 기능 비교\n2. 가격 정책\n3. 강점/약점\n4. 타겟 사용자\n5. 차별화 기회',tip:'공식 블로그, 앱스토어 리뷰를 먼저 수집하세요.',example:'',createdAt:new Date().toISOString()},
-  {id:'d4',title:'회의록 요약 & 액션 아이템',company:'공통',category:'회의 정리',level:'초급',tags:'회의,생산성',prompt:'다음 회의 내용을 정리해줘.\n\n[회의록 붙여넣기]\n\n1. 📋 회의 목적\n2. 🗝️ 핵심 결정 사항\n3. ✅ 액션 아이템 (담당자, 마감일)\n4. 🔄 다음 회의 확인 사항\n5. ❓ 미결 이슈',tip:'날것으로 붙여넣어도 AI가 구조화해줍니다.',example:'',createdAt:new Date().toISOString()},
-  {id:'d5',title:'OKR 설정 도우미',company:'쿠팡',category:'OKR 설정',level:'중급',tags:'OKR,목표관리',prompt:'다음 분기 OKR을 설계해줘.\n\n팀: [팀명]\n분기: [Q? 20??]\n목표: [상위 목표]\n\nObjective: (도전적 정성 목표)\nKR1: (수치 목표)\nKR2: ...\nKR3: ...\n\n각 KR에 측정 방법과 Baseline 제안',tip:'Objective는 도전적으로, KR은 수치로.',example:'',createdAt:new Date().toISOString()}
-];
-let AP=[],CE={},SI=new Set(),AC='',SQ='',SF='',dark=false;
 
-function loadCompanyEmojis(){
-  CE={...DEFAULT_CE};
-  try{const r=localStorage.getItem(CK);if(r){const list=JSON.parse(r);if(Array.isArray(list)){list.forEach(c=>{if(c.name&&c.emoji)CE[c.name]=c.emoji;});}}}catch(e){}
-}
-function lp(){
-  try{const r=localStorage.getItem(SK);if(r){const d=JSON.parse(r);if(Array.isArray(d)&&d.length>0){AP=d;return;}}}catch(e){}
-  AP=[...DP];
-}
-function init(){
-  dark=localStorage.getItem(DK)==='true';applyDark();
-  loadCompanyEmojis();lp();
-  try{SI=new Set(JSON.parse(localStorage.getItem(SVK)||'[]'));}catch(e){}
-  rh();rsf();usb();
-}
-function toggleDark(){dark=!dark;localStorage.setItem(DK,dark);applyDark();}
-function applyDark(){
-  document.documentElement.setAttribute('data-theme',dark?'dark':'');
-  const b=document.getElementById('dtb');const t=document.getElementById('dtgl');
-  if(b)b.textContent=dark?'☀️':'🌙';
-  if(t){if(dark)t.classList.add('on');else t.classList.remove('on');}
-}
-function showSc(n){
-  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('sc-'+n).classList.add('active');
-  document.getElementById('tab-'+n)?.classList.add('active');
-  if(n==='saved')rsv();
-  if(n==='settings'){
-    document.getElementById('spc').textContent=AP.length+'개 (localStorage)';
-    const cos=[...new Set(AP.map(p=>p.company).filter(Boolean))];
-    document.getElementById('scct').textContent=cos.length+'개 회사';
-    const t=document.getElementById('dtgl');
-    if(t){if(dark)t.classList.add('on');else t.classList.remove('on');}
-  }
-  if(n==='search')setTimeout(()=>document.getElementById('sri2')?.focus(),100);
-}
-function rh(){document.getElementById('pct').textContent=AP.length+'개의 프롬프트 준비됨';rchips();rcards();}
-function rchips(){
-  const cos=[...new Set(AP.map(p=>p.company).filter(Boolean))].sort();
-  document.getElementById('cchips').innerHTML=cos.map(co=>`<div class="chip ${AC===co?'active':''}" onclick="fc('${co}')"><div class="ce">${CE[co]||'🏢'}</div><div class="cn">${co}</div></div>`).join('');
-}
-function fc(co){AC=(AC===co)?'':co;document.getElementById('hs').value='';SQ='';rchips();rcards();document.getElementById('hlt').textContent=AC?AC+' 프롬프트':'전체 프롬프트';}
-function clearF(){AC='';SQ='';document.getElementById('hs').value='';rchips();rcards();document.getElementById('hlt').textContent='전체 프롬프트';}
-function onHS(){SQ=document.getElementById('hs').value.toLowerCase();AC='';rchips();rcards();document.getElementById('hlt').textContent=SQ?'"'+SQ+'" 검색 결과':'전체 프롬프트';}
-function rcards(){
-  let f=AP;
-  if(AC)f=f.filter(p=>p.company===AC);
-  if(SQ)f=f.filter(p=>(p.title||'').toLowerCase().includes(SQ)||(p.prompt||'').toLowerCase().includes(SQ)||(p.tags||'').toLowerCase().includes(SQ)||(p.category||'').toLowerCase().includes(SQ));
-  const c=document.getElementById('hcards');
-  c.innerHTML=f.length===0?emph('🔎','결과가 없습니다','다른 키워드나 회사로 검색해보세요'):f.map(rc).join('');
-}
-function rsf(){
-  const cats=[...new Set(AP.map(p=>p.category).filter(Boolean))].sort();
-  document.getElementById('fpills').innerHTML=`<div class="fp ${!SF?'active':''}" onclick="ssf('')">전체</div>`+cats.map(c=>`<div class="fp ${SF===c?'active':''}" onclick="ssf('${c}')">${c}</div>`).join('');
-}
-function ssf(f){SF=f;rsf();renderSearch();}
-function renderSearch(){
-  const q=(document.getElementById('sri2').value||'').toLowerCase();
-  let f=AP;
-  if(q)f=f.filter(p=>(p.title||'').toLowerCase().includes(q)||(p.prompt||'').toLowerCase().includes(q)||(p.company||'').toLowerCase().includes(q)||(p.category||'').toLowerCase().includes(q)||(p.tags||'').toLowerCase().includes(q));
-  if(SF)f=f.filter(p=>p.category===SF);
-  const c=document.getElementById('sres');
-  c.innerHTML=f.length===0?emph('🔍','검색 결과 없음','다른 검색어를 입력해보세요'):f.map(rc).join('');
-}
-function rsv(){
-  const sv=AP.filter(p=>SI.has(p.id));
-  document.getElementById('svct').textContent=sv.length+'개 저장됨';
-  const c=document.getElementById('svcards');
-  c.innerHTML=sv.length===0?emph('🔖','저장된 프롬프트가 없습니다','🔖 버튼을 눌러 저장하세요'):sv.map(rc).join('');
-}
-function usb(){const t=document.getElementById('tab-saved');if(SI.size>0)t.setAttribute('data-badge','true');else t.removeAttribute('data-badge');}
-function clearSaved(){if(!confirm('저장 목록을 모두 삭제하시겠습니까?'))return;SI.clear();localStorage.setItem(SVK,'[]');usb();rsv();toast('저장 목록이 초기화되었습니다');}
-function refreshData(){
-  loadCompanyEmojis();lp();rh();rsf();
-  toast('✅ 최신 데이터로 업데이트되었습니다');
-  document.getElementById('spc').textContent=AP.length+'개 (localStorage)';
-  const cos=[...new Set(AP.map(p=>p.company).filter(Boolean))];
-  document.getElementById('scct').textContent=cos.length+'개 회사';
-}
-function rc(p){
-  const sv=SI.has(p.id);
-  return `<div class="pc" id="c-${p.id}" onclick="tc('${p.id}')"><div class="ct"><div class="ci">${CE[p.company]||'📝'}</div><div class="cm"><div class="ctit">${esc(p.title)}</div><div class="ctags">${p.company?`<span class="ctag ctco">${esc(p.company)}</span>`:''}${p.category?`<span class="ctag ctcat">${esc(p.category)}</span>`:''}${p.level?`<span class="ctag ctlv-${p.level}">${esc(p.level)}</span>`:''}</div></div><div class="cchev">▾</div></div><div class="cb"><div class="pt">${esc(p.prompt)}</div>${p.tip?`<div class="ib2 ib-tip"><div class="il">💡 팁</div>${esc(p.tip)}</div>`:''}${p.example?`<div class="ib2 ib-ex"><div class="il">📎 예시</div>${esc(p.example)}</div>`:''}<div class="cas"><button class="ab ab-cp" id="cb-${p.id}" onclick="cpP(event,'${p.id}')">📋 복사하기</button><button class="ab ab-sv" onclick="svP(event,'${p.id}')" id="sb-${p.id}">${sv?'🔖 저장됨':'🔖 저장'}</button></div></div></div>`;
-}
-function tc(id){document.getElementById('c-'+id)?.classList.toggle('open');}
-function cpP(e,id){
-  e.stopPropagation();const p=AP.find(x=>x.id===id);if(!p)return;
-  const done=()=>{const b=document.getElementById('cb-'+id);if(b){b.textContent='✅ 복사됨!';b.classList.add('copied');setTimeout(()=>{b.textContent='📋 복사하기';b.classList.remove('copied')},1800);}toast('프롬프트가 복사되었습니다!');};
-  if(navigator.clipboard)navigator.clipboard.writeText(p.prompt).then(done).catch(()=>{fb(p.prompt);done();});
-  else{fb(p.prompt);done();}
-}
-function fb(t){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0;top:0;left:0;';document.body.appendChild(a);a.focus();a.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(a);}
-function svP(e,id){
-  e.stopPropagation();
-  if(SI.has(id)){SI.delete(id);toast('저장이 해제되었습니다');}else{SI.add(id);toast('🔖 저장되었습니다!');}
-  localStorage.setItem(SVK,JSON.stringify([...SI]));usb();
-  const b=document.getElementById('sb-'+id);if(b)b.textContent=SI.has(id)?'🔖 저장됨':'🔖 저장';
-}
-function toast(msg){
-  const w=document.getElementById('tw');const t=document.createElement('div');t.className='mts';t.textContent=msg;w.appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),300)},2000);
-}
-function emph(icon,title,desc){return `<div class="emp"><div class="ei">${icon}</div><div class="et">${title}</div><div class="ed">${desc}</div></div>`;}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-window.addEventListener('storage',e=>{
-  if(e.key===SK){lp();rh();rsf();toast('🔄 새 프롬프트가 반영되었습니다');}
-  if(e.key===CK){loadCompanyEmojis();rchips();}
+    <!-- ══ NEWS ══ -->
+    <div class="page" id="page-news">
+      <div class="page-hdr">
+        <div>
+          <div class="page-h1">📰 핀테크 뉴스</div>
+          <div class="page-sub" id="newsSubtitle">RSS 실시간 피드 · 5분마다 자동 갱신</div>
+        </div>
+        <div class="live-pill"><div class="ldot"></div>LIVE</div>
+      </div>
+      <div class="rss-status rss-loading" id="rssStatus"><div class="spinner" style="width:14px;height:14px;flex-shrink:0"></div> RSS 피드 연결 중...</div>
+      <div class="news-filter">
+        <div class="nf-chip active" onclick="filterNews('all',this)">전체</div>
+        <div class="nf-chip" onclick="filterNews('토스',this)">토스</div>
+        <div class="nf-chip" onclick="filterNews('카카오',this)">카카오</div>
+        <div class="nf-chip" onclick="filterNews('네이버',this)">네이버</div>
+        <div class="nf-chip" onclick="filterNews('배민',this)">배민</div>
+        <div class="nf-chip" onclick="filterNews('업비트',this)">코인</div>
+        <div class="nf-chip" onclick="filterNews('증권',this)">증권</div>
+        <div class="nf-chip" onclick="filterNews('페이',this)">페이</div>
+      </div>
+      <div class="news-list" id="newsList"><div class="news-spinner-wrap"><div class="spinner"></div>뉴스 불러오는 중...</div></div>
+      <div class="refresh-row" onclick="loadNews(true)">↻ 새로고침</div>
+    </div>
+
+    <!-- ══ QUIZ ══ -->
+    <div class="page" id="page-quiz">
+      <div class="quiz-hero">
+        <h1>🎯 PM 퀴즈</h1>
+        <p>핀테크 기획자 실력 테스트 · AI 생성 문제</p>
+      </div>
+      <div class="quiz-stats">
+        <div class="qstat"><div class="qstat-num" id="qTotal">0</div><div class="qstat-lbl">총 문제</div></div>
+        <div class="qstat"><div class="qstat-num" id="qCorrect" style="color:var(--green)">0</div><div class="qstat-lbl">정답</div></div>
+        <div class="qstat"><div class="qstat-num" id="qStreak" style="color:var(--gold)">0</div><div class="qstat-lbl">연속정답</div></div>
+      </div>
+      <div class="quiz-src-info"><span>📡</span><span id="quizSrcTxt">퀴즈 데이터 로딩 중...</span></div>
+      <button class="quiz-gen-btn" id="quizGenBtn" onclick="generateAIQuiz()">✨ AI로 새 퀴즈 생성</button>
+      <div class="quiz-body" id="quizBody"><div class="quiz-spin-wrap"><div class="quiz-spinner"></div>퀴즈 불러오는 중...</div></div>
+    </div>
+
+    <!-- ══ LEARN ══ -->
+    <div class="page" id="page-learn">
+      <div class="page-hdr">
+        <div>
+          <div class="page-h1">📚 학습 모드</div>
+          <div class="page-sub" id="learnSub">콘텐츠 로딩 중...</div>
+        </div>
+        <span style="font-size:10px;color:var(--accent3);font-weight:700">Ollama 연동</span>
+      </div>
+      <div class="learn-cats">
+        <div class="lcat active" onclick="filterLearn('all',this)">전체</div>
+        <div class="lcat" onclick="filterLearn('전략',this)">전략</div>
+        <div class="lcat" onclick="filterLearn('UX',this)">UX</div>
+        <div class="lcat" onclick="filterLearn('데이터',this)">데이터</div>
+        <div class="lcat" onclick="filterLearn('기술',this)">기술</div>
+        <div class="lcat" onclick="filterLearn('트렌드',this)">트렌드</div>
+      </div>
+      <div class="learn-cards" id="learnCards"><div class="learn-spin-wrap"><div class="learn-spinner"></div>학습 콘텐츠 로딩 중...</div></div>
+    </div>
+
+  </div><!-- scroll-area -->
+
+  <!-- ══ BOTTOM TAB BAR ══ -->
+  <nav class="bottomnav">
+    <div class="bnav-item active" id="bnav-home" onclick="switchTab('home')">
+      <div class="bnav-ico">🏠</div><div class="bnav-lbl">홈</div>
+    </div>
+    <div class="bnav-item" id="bnav-news" onclick="switchTab('news')">
+      <div class="bnav-ico">📰</div><div class="bnav-lbl">뉴스</div>
+      <div class="bnav-badge" id="newsBadge">0</div>
+    </div>
+    <div class="bnav-item" id="bnav-quiz" onclick="switchTab('quiz')">
+      <div class="bnav-ico">🎯</div><div class="bnav-lbl">퀴즈</div>
+    </div>
+    <div class="bnav-item" id="bnav-learn" onclick="switchTab('learn')">
+      <div class="bnav-ico">📚</div><div class="bnav-lbl">학습</div>
+    </div>
+  </nav>
+
+</div><!-- #app -->
+
+<!-- PUSH -->
+<div class="push-notif" id="pushNotif">
+  <div class="push-inner">
+    <div class="push-ico" id="pushIco">📢</div>
+    <div style="flex:1;min-width:0">
+      <div class="push-ttl" id="pushTtl">알림</div>
+      <div class="push-body-txt" id="pushBodyTxt">업데이트</div>
+    </div>
+    <button class="push-close" onclick="closePush()">×</button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="modal-overlay" id="loginModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">PromptOS</div>
+    <div class="modal-sub">핀테크 PM의 AI 스튜디오</div>
+    <button class="social-btn btn-kakao" onclick="socialLogin('kakao')">💬 카카오로 로그인</button>
+    <button class="social-btn btn-naver" onclick="socialLogin('naver')"><strong>N</strong> 네이버로 로그인</button>
+    <button class="social-btn btn-google" onclick="socialLogin('google')">🔵 Google로 로그인</button>
+    <button class="guest-btn" onclick="guestLogin()">👤 게스트로 시작하기</button>
+  </div>
+</div>
+
+<!-- PROFILE -->
+<div class="profile-sheet" id="profileSheet">
+  <div class="profile-panel">
+    <button class="close-sheet" onclick="closeProfile()">×</button>
+    <div class="modal-handle"></div>
+    <div class="prof-avatar" id="profAvatar">👤</div>
+    <div class="prof-name" id="profName">게스트</div>
+    <div class="prof-email" id="profEmail">로그인 후 이용</div>
+    <div class="prof-stats">
+      <div class="pstat"><div class="pstat-num" id="pRunCount">0</div><div class="pstat-lbl">실행</div></div>
+      <div class="pstat"><div class="pstat-num" id="pSaveCount">0</div><div class="pstat-lbl">저장</div></div>
+      <div class="pstat"><div class="pstat-num" id="pQuizScore">0%</div><div class="pstat-lbl">퀴즈</div></div>
+    </div>
+    <div class="prof-menu">
+      <div class="pmenu-item" onclick="openPushSettings()"><span>🔔 푸시 알림 설정</span><span>›</span></div>
+      <div class="pmenu-item" onclick="showToast('준비 중입니다')"><span>📋 저장된 응답</span><span>›</span></div>
+      <div class="pmenu-item" onclick="openAdmin()"><span>⚙️ 관리자 패널</span><span>›</span></div>
+    </div>
+    <button class="logout-btn" onclick="logout()">로그아웃</button>
+  </div>
+</div>
+
+<!-- LEARN DETAIL -->
+<div class="learn-detail" id="learnDetail">
+  <div class="ld-head">
+    <div class="ld-back" onclick="closeLearnDetail()">‹</div>
+    <div class="ld-ttl" id="ldTtl">학습</div>
+  </div>
+  <div class="ld-body" id="ldBody"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+// ─── STORE ───
+const SK='promptos_data';
+function getStore(){try{return JSON.parse(localStorage.getItem(SK))||defStore();}catch{return defStore();}}
+function saveStore(d){localStorage.setItem(SK,JSON.stringify(d));}
+function defStore(){return{user:null,prompts:null,savedResponses:[],runCount:0,pushEnabled:false,learnProgress:{},quizStats:{total:0,correct:0,streak:0,best:0}};}
+
+// ─── FALLBACK DATA ───
+const FALLBACK=[
+  {id:1,co:'toss',coName:'토스',title:'송금 전환율 개선 전략',prompt:'토스 앱의 간편송금 기능에서 이탈률이 23% 발생하는 구간을 분석하고, 전환율 개선을 위한 UX 가설 3가지와 A/B 테스트 설계를 제안해줘.',tags:['UX','전환율','A/B테스트'],badge:'badge-toss',updatedAt:Date.now()},
+  {id:2,co:'kakao',coName:'카카오',title:'카카오페이 결제 UX 리뷰',prompt:'카카오페이 간편결제 사용자 흐름을 분석하고, 결제 완료까지 최소 탭 수를 줄이기 위한 개선안을 제시해줘.',tags:['결제UX','간편결제','Flow'],badge:'badge-kakao',updatedAt:Date.now()},
+  {id:3,co:'naver',coName:'네이버',title:'네이버페이 GMV 전략',prompt:'네이버페이와 네이버쇼핑의 연계 강화를 통한 결제 GMV 증가 전략을 기획해줘.',tags:['GMV','쇼핑연계','포인트'],badge:'badge-naver',updatedAt:Date.now()},
+  {id:4,co:'baemin',coName:'배민',title:'배민클럽 리텐션 개선',prompt:'배민클럽 구독 서비스의 리텐션 개선을 위한 전략을 제안해줘. 해지 방어 로직, 혜택 체계 재설계 포함.',tags:['구독','리텐션','해지방어'],badge:'badge-baemin',updatedAt:Date.now()},
+  {id:5,co:'upbit',coName:'업비트',title:'업비트 트레이더 리텐션 로드맵',prompt:'업비트 월간 활성 트레이더 유지율 개선을 위한 기능 로드맵을 작성해줘.',tags:['리텐션','트레이더','로드맵'],badge:'badge-upbit',updatedAt:Date.now()},
+  {id:6,co:'kiwoom',coName:'키움증권',title:'영웅문 MZ 리디자인',prompt:'키움증권 영웅문의 레거시 UI를 MZ 세대 친화적으로 리디자인하는 PM 기획안을 작성해줘.',tags:['리디자인','MZ세대','레거시'],badge:'badge-kiwoom',updatedAt:Date.now()},
+];
+
+// ─── RSS ───
+const RSS_SRCS=[
+  {url:'https://www.bloter.net/feed',           label:'블로터'},
+  {url:'https://www.mk.co.kr/rss/30000001/',    label:'매경'},
+  {url:'https://feeds.feedburner.com/zdkorea',  label:'ZDNet KR'},
+  {url:'https://www.hani.co.kr/rss/economy/',   label:'한겨레경제'},
+];
+const AO='https://api.allorigins.win/get?url=';
+const R2J='https://api.rss2json.com/v1/api.json?rss_url=';
+
+const MOCK_NEWS=[
+  {title:'토스, 연내 IPO 재추진 본격화…기업가치 20조 목표',summary:'비바리퍼블리카(토스)가 2025년 하반기 코스피 상장을 목표로 주관사 선정에 착수한 것으로 알려졌다.',source:'블로터',tags:['토스','IPO'],time:Date.now()-1200000,isNew:true},
+  {title:'카카오페이, 결제 네트워크 동남아 5개국 확장',summary:'카카오페이가 태국·베트남·인도네시아 등 동남아 결제 네트워크와 파트너십을 체결해 해외 간편결제 서비스를 확대한다.',source:'ZDNet KR',tags:['카카오','페이','해외'],time:Date.now()-3600000,isNew:true},
+  {title:'네이버파이낸셜 BNPL 서비스 론칭 임박',summary:'네이버파이낸셜이 선구매 후결제(BNPL) 상품을 네이버쇼핑 내에 적용 예정. 쇼핑 GMV 15% 증가 기대.',source:'매경',tags:['네이버','BNPL','페이'],time:Date.now()-7200000,isNew:false},
+  {title:'업비트, 기관 전용 암호화폐 거래소 오픈',summary:'두나무 업비트가 기관 투자자 대상 별도 거래 플랫폼 론칭. 최소 거래금액 1억원, 커스터디 서비스 포함.',source:'매경',tags:['업비트','코인','기관'],time:Date.now()-10800000,isNew:false},
+  {title:'배민클럽 가입자 200만 돌파…월정액 인상에도 이탈 3% 미만',summary:'우아한형제들 배달의민족 구독 서비스 가입자 200만명 돌파.',source:'블로터',tags:['배민','구독','리텐션'],time:Date.now()-14400000,isNew:false},
+  {title:'키움증권, MZ세대 특화 영웅문 리뉴얼 출시',summary:'키움증권이 20-30대 타겟 신규 모바일 트레이딩 앱을 출시.',source:'한겨레경제',tags:['키움증권','증권','MZ세대'],time:Date.now()-18000000,isNew:false},
+];
+
+// ─── QUIZ BASE ───
+const BQUIZ=[
+  {id:1,q:'토스의 핵심 성장 전략으로 올바른 것은?',opts:['광고 기반 수익 극대화','슈퍼앱 전략으로 금융 서비스 통합','B2B 엔터프라이즈 솔루션 집중','해외 시장 우선 확장'],ans:1,co:'toss',explain:'토스는 간편송금으로 시작해 보험·증권·은행까지 통합하는 슈퍼앱 전략을 채택했습니다.'},
+  {id:2,q:'카카오페이의 주요 수익 모델이 아닌 것은?',opts:['결제 수수료','금융상품 중개 수수료','광고 플랫폼 수익','하드웨어 판매'],ans:3,co:'kakao',explain:'카카오페이는 결제 수수료와 금융상품 중개가 주요 수익원입니다.'},
+  {id:3,q:'네이버파이낸셜이 쇼핑 GMV를 높이는 핵심 레버는?',opts:['금리 인하','네이버포인트 적립률 증가','간편결제 UI 개선','광고 확대'],ans:1,co:'naver',explain:'포인트 적립은 쇼핑-결제-재사용의 Lock-in 사이클을 만들어 GMV를 구조적으로 높입니다.'},
+  {id:4,q:'업비트 트레이더 리텐션을 가장 효과적으로 높이는 방법은?',opts:['수수료 완전 무료화','개인화된 거래 분석 리포트','모든 코인 상장','거래 보상 포인트'],ans:1,co:'upbit',explain:'개인화 분석 리포트는 트레이더의 자기성장 욕구를 자극해 플랫폼 의존도를 높입니다.'},
+  {id:5,q:'배민클럽 해지 방어 전략의 핵심은?',opts:['가격 인하','해지 단계 복잡화','개인화 혜택 리마인더','타임딜 쿠폰'],ans:2,co:'baemin',explain:'해지 전 개인화 혜택 리마인더(절약 금액 등)가 이탈 방어에 가장 효과적입니다.'},
+  {id:6,q:'키움증권이 MZ 세대를 공략할 때 가장 중요한 것은?',opts:['수수료 무료화','복잡한 차트 강화','모바일 UX 단순화','오프라인 지점 확대'],ans:2,co:'kiwoom',explain:'레거시 UX 복잡성이 MZ세대 최대 진입 장벽. 모바일 직관성을 높이는 것이 핵심입니다.'},
+];
+
+// ─── LEARN BASE ───
+const BLEARN=[
+  {id:'l1',cat:'전략',title:'핀테크 PM 로드맵 설계법',desc:'제품 비전부터 분기별 OKR 연계까지 핀테크 PM 로드맵 수립 프레임워크',color:'linear-gradient(90deg,var(--toss),var(--accent))',src:'내장',
+   content:{intro:'핀테크 PM 로드맵은 규제 변수, 금융 사이클, 사용자 신뢰 구축을 동시에 고려해야 합니다.',
+   sections:[{h:'북극성 지표(NSM) 설정',p:'MAU, GMV, 거래량 중 하나를 NSM으로 단순화하고 모든 로드맵 항목이 이 지표에 연결되는지 검증합니다.'},{h:'OKR 연계',p:'분기 Objective는 비즈니스 임팩트, Key Results는 측정 가능한 제품 지표로 설정합니다.'},{h:'RICE 우선순위',p:'Reach×Impact×Confidence÷Effort 스코어링을 금융 규제 적합성 체크와 결합합니다.'},{h:'규제 타임라인',p:'금융위원회, 금감원 규제 변화 일정을 로드맵에 선반영하여 준법 리스크를 제품 기회로 전환합니다.'}],
+   promptExample:'토스 입장에서 2025년 하반기 PM 로드맵을 수립해줘. 핀테크 규제 대응, MZ 고객 확대, 수익성 개선을 동시에 달성하는 방향으로 OKR과 연계해서.'}},
+  {id:'l2',cat:'UX',title:'간편결제 UX 패턴 심화',desc:'카카오페이·토스·네이버페이 결제 플로우 비교 분석과 전환율 최적화 기법',color:'linear-gradient(90deg,var(--kakao),var(--orange))',src:'내장',
+   content:{intro:'간편결제 UX의 핵심은 "신뢰와 속도의 균형"입니다.',
+   sections:[{h:'결제 플로우 단계 분석',p:'산업 표준 7-9단계에서 카카오페이 4단계, 토스 3단계까지 축약 성공.'},{h:'생체인증 UX',p:'FaceID/지문 인증은 0.2초 이하 지연에서 만족도 최고. 인증 실패 시 대안 경로 3탭 이내 설계 필수.'},{h:'에러 핸들링',p:'결제 실패 시 이유 명확화 + 즉시 재시도 CTA + 고객센터 원탭 연결.'},{h:'신뢰 시그널',p:'1초 딜레이 노출과 잔액 재확인이 오히려 전환율을 높입니다.'}],
+   promptExample:'카카오페이 결제 플로우 각 단계의 이탈 원인을 분석하고, 전환율 15% 향상을 위한 UX 개선 가설 5가지를 데이터 기반으로 제안해줘.'}},
+  {id:'l3',cat:'데이터',title:'핀테크 핵심 지표 마스터',desc:'DAU/MAU, ARPU, LTV, Churn을 핀테크 컨텍스트에서 해석하는 법',color:'linear-gradient(90deg,var(--green),var(--accent2))',src:'내장',
+   content:{intro:'핀테크 지표는 일반 앱과 다릅니다. 거래 빈도, 잔액 유지, 신용 이벤트가 복합적으로 얽혀 있습니다.',
+   sections:[{h:'핵심 지표 체계',p:'WAU가 MAU보다 중요한 서비스도 있음. Sticky Ratio(DAU/MAU) 40% 이상이 우수.'},{h:'코호트 분석',p:'가입 월별 코호트로 리텐션 곡선 분석. D1>D7>D30 기울기가 완만할수록 제품력 우수.'},{h:'LTV 계산',p:'핀테크 LTV = ARPU × 고객 수명. 수수료+광고+금융상품 교차 판매 수익 모두 합산.'},{h:'이상 지표 탐지',p:'DAU 급증은 마케팅 효과 또는 보안 이슈 조회일 수 있음. 항상 세그먼트별 원인 분석 선행.'}],
+   promptExample:'업비트 MAU 500만 달성을 위한 데이터 기반 성장 전략을 수립해줘. 핵심 지표 트리(Metric Tree)를 먼저 설계하고 각 레버별 최적화 방안을 제안해줘.'}},
+  {id:'l4',cat:'기술',title:'오픈뱅킹 API & 마이데이터',desc:'금융 API 구조 이해와 PM 관점에서의 마이데이터 서비스 기획 실무 가이드',color:'linear-gradient(90deg,var(--accent3),var(--kiwoom))',src:'내장',
+   content:{intro:'2023년 전면 시행된 오픈뱅킹 2.0과 마이데이터는 핀테크 PM에게 전례 없는 기회를 제공합니다.',
+   sections:[{h:'오픈뱅킹 API 구조',p:'금융결제원 오픈뱅킹: 조회(잔액/거래내역) + 이체 API. OAuth 2.0 인증. SLA 99.9%.'},{h:'마이데이터 활용',p:'22개 금융 분야 데이터 표준 API로 수집. 은행+카드+보험+증권 통합 가능.'},{h:'PM 체크리스트',p:'Latency 허용 기준, 배치 vs 실시간 동기화, 오류 응답 UX 처리.'},{h:'규제 리스크',p:'마이데이터 사업자 허가, 개인정보 처리 방침, 정보 제공 동의 UI 7가지 필수 고지 항목.'}],
+   promptExample:'토스뱅크 마이데이터를 활용한 개인 재무 분석 서비스를 기획해줘. 데이터 수집 범위, 분석 알고리즘, 사용자 가치 제안, 수익 모델을 포함하는 PRD를 작성해줘.'}},
+  {id:'l5',cat:'트렌드',title:'2025 핀테크 트렌드 분석',desc:'BNPL, 임베디드 파이낸스, AI 금융, 토큰증권 등 2025년 핵심 트렌드',color:'linear-gradient(90deg,var(--gold),var(--orange))',src:'내장',
+   content:{intro:'2025년 핀테크는 AI 네이티브, 임베디드 파이낸스, 규제 대응의 세 축으로 재편됩니다.',
+   sections:[{h:'AI 네이티브 금융',p:'LLM 기반 개인 금융 어드바이저, 이상거래 탐지 고도화, 신용 평가 모델 혁신 가속화.'},{h:'임베디드 파이낸스',p:'비금융 플랫폼에 금융 서비스 내재화. 배민페이, 쿠페이가 대표 사례.'},{h:'BNPL(선구매 후결제)',p:'MZ세대 타겟 급성장. 네이버·카카오·토스 모두 론칭 경쟁. 신용 리스크 관리가 핵심 과제.'},{h:'토큰증권(STO)',p:'부동산·예술품의 토큰화. 조각 투자 플랫폼 확산. 2025년 제도권 진입 기대.'}],
+   promptExample:'2025년 한국 핀테크 시장에서 토스가 BNPL 서비스를 론칭한다고 가정하고, 시장 진입 전략과 리스크 관리 방안을 포함한 Go-To-Market 전략을 작성해줘.'}},
+];
+
+// ─── STATE ───
+let store=getStore(),ollamaConn=false,ollamaUrl='http://localhost:11434',selModel='demo';
+let curFilter='all',newsFilter='all',learnFilter='all';
+let runningIds=new Set(),curRespText='',quizList=[],learnData=[];
+let allNews=[],newsLoaded=false,quizLoaded=false,learnLoaded=false;
+let pushQ=[],pushShowing=false,refreshCD=30;
+
+// ─── INIT ───
+window.addEventListener('DOMContentLoaded',()=>{
+  checkAuth(); initPrompts(); startAutoRefresh(); schedulePush();
+  window.addEventListener('storage',e=>{
+    if(e.key===SK){
+      store=getStore(); initPrompts(true);
+      if(store.quizzes?.length){quizList=store.quizzes;if(quizLoaded)renderQuiz();}
+      if(store.learnItems?.length){learnData=store.learnItems;if(learnLoaded)renderLearn();}
+      showToast('🔄 관리자 업데이트 반영됨');
+    }
+  });
 });
-init();
+
+// ─── AUTH ───
+function checkAuth(){if(!store.user)setTimeout(()=>document.getElementById('loginModal').classList.add('show'),800);else updateAvatarUI();}
+function socialLogin(p){
+  const icons={kakao:'💬',naver:'N',google:'🔵'};
+  const names={kakao:'카카오 사용자',naver:'네이버 사용자',google:'Google 사용자'};
+  store.user={provider:p,name:names[p],email:`user@${p}.com`,avatar:icons[p],loggedAt:Date.now()};
+  document.getElementById('loginModal').classList.remove('show');
+  saveStore(store); updateAvatarUI(); showToast(`✅ ${names[p]}로 로그인됨`);
+  triggerPush('🎉 로그인 성공',`${names[p]} 님 환영합니다!`,icons[p]);
+}
+function guestLogin(){
+  store.user={provider:'guest',name:'게스트',email:'',avatar:'👤',loggedAt:Date.now()};
+  document.getElementById('loginModal').classList.remove('show');
+  saveStore(store); updateAvatarUI(); showToast('👤 게스트 모드');
+}
+function logout(){store.user=null;saveStore(store);closeProfile();setTimeout(()=>document.getElementById('loginModal').classList.add('show'),300);}
+function updateAvatarUI(){
+  if(!store.user)return;
+  document.getElementById('avatarEmoji').textContent=store.user.avatar;
+  document.getElementById('profName').textContent=store.user.name;
+  document.getElementById('profEmail').textContent=store.user.email||'게스트 모드';
+  document.getElementById('profAvatar').textContent=store.user.avatar;
+  updateStats();
+}
+function updateStats(){
+  document.getElementById('pRunCount').textContent=store.runCount||0;
+  document.getElementById('pSaveCount').textContent=(store.savedResponses||[]).length;
+  const qs=store.quizStats||{};
+  document.getElementById('pQuizScore').textContent=qs.total>0?Math.round(qs.correct/qs.total*100)+'%':'0%';
+  document.getElementById('qTotal').textContent=qs.total||0;
+  document.getElementById('qCorrect').textContent=qs.correct||0;
+  document.getElementById('qStreak').textContent=qs.streak||0;
+}
+function openProfile(){if(!store.user){document.getElementById('loginModal').classList.add('show');return;}updateStats();document.getElementById('profileSheet').classList.add('show');}
+function closeProfile(){document.getElementById('profileSheet').classList.remove('show');}
+function openAdmin(){closeProfile();window.open('admin.html','_blank');}
+function openPushSettings(){
+  closeProfile();
+  if('Notification' in window){Notification.requestPermission().then(p=>{store.pushEnabled=p==='granted';saveStore(store);showToast(p==='granted'?'🔔 푸시 알림 활성화됨':'🔕 권한 거부됨');});}
+  else showToast('⚠️ 이 브라우저는 푸시를 지원하지 않습니다');
+}
+
+// ─── TABS ───
+function switchTab(tab){
+  ['home','news','quiz','learn'].forEach(t=>{
+    document.getElementById('page-'+t).classList.toggle('active',t===tab);
+    document.getElementById('bnav-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='news'&&!newsLoaded){newsLoaded=true;loadNews();}
+  if(tab==='quiz'&&!quizLoaded){quizLoaded=true;loadQuizData();}
+  if(tab==='learn'&&!learnLoaded){learnLoaded=true;loadLearnData();}
+  if(tab==='news'){document.getElementById('newsBadge').style.display='none';}
+}
+function showDemoGuide(){document.getElementById('demoGuide').classList.add('show');}
+
+// ─── OLLAMA ───
+async function connectOllama(){
+  ollamaUrl=document.getElementById('ollamaUrl').value.trim().replace(/\/$/,'');
+  setSdot('demo','연결 중...');
+  try{
+    const r=await ftimeout(`${ollamaUrl}/api/tags`,{},4000);
+    if(!r.ok)throw 0;
+    ollamaConn=true; setSdot('on','연결됨');
+    document.getElementById('connName').textContent='연결됨 — '+ollamaUrl.replace('http://','');
+    document.getElementById('demoGuide').classList.remove('show');
+    await loadModels(); showToast('✅ Ollama 연결 성공');
+    if(quizLoaded){quizLoaded=false;loadQuizData();}
+  }catch{
+    ollamaConn=false; setSdot('demo','데모');
+    document.getElementById('connName').textContent='미연결 — 데모 모드 실행 중';
+    document.getElementById('demoGuide').classList.add('show');
+    showToast('⚠️ Ollama 미연결 — 데모 모드');
+  }
+}
+async function loadModels(){
+  try{
+    const r=await ftimeout(`${ollamaUrl}/api/tags`,{},4000);
+    const d=await r.json();
+    const sel=document.getElementById('modelSel');
+    const models=d.models||[];
+    if(!models.length){sel.innerHTML='<option value="demo">설치된 모델 없음</option>';return;}
+    sel.innerHTML=models.map(m=>`<option value="${m.name}">${m.name}${m.size?` (${fsize(m.size)})`:''}</option>`).join('');
+    selModel=models[0].name;
+    sel.onchange=e=>{selModel=e.target.value;};
+  }catch{}
+}
+function setSdot(s,t){
+  document.getElementById('sdot').className='sdot '+(s==='on'?'on':s==='off'?'off':'demo');
+  document.getElementById('stext').textContent=t;
+}
+function fsize(b){const g=b/1e9;return g>=1?g.toFixed(1)+'GB':(b/1e6).toFixed(0)+'MB';}
+async function ftimeout(url,opts={},ms=5000){
+  const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);
+  return fetch(url,{...opts,signal:c.signal}).finally(()=>clearTimeout(t));
+}
+
+// ─── PROMPTS ───
+function initPrompts(flash=false){
+  if(!store.prompts||!store.prompts.length){store.prompts=FALLBACK;saveStore(store);}
+  renderCards(flash);
+}
+function renderCards(flash=false){
+  const p=store.prompts||FALLBACK;
+  const f=curFilter==='all'?p:p.filter(x=>x.co===curFilter);
+  document.getElementById('cardsList').innerHTML=f.map(p=>`
+    <div class="pcard${runningIds.has(p.id)?' running':''}${flash?' flash':''}" id="card-${p.id}">
+      <div class="pcard-head">
+        <span class="co-badge ${p.badge||'badge-toss'}">${p.coName||p.co}</span>
+        <div class="pcard-title">${p.title}</div>
+        <div class="run-btn${runningIds.has(p.id)?' spinning':''}" onclick="runPrompt(${p.id})">${runningIds.has(p.id)?'↻':'▶'}</div>
+      </div>
+      <div class="pcard-body">${p.prompt}</div>
+      <div class="pcard-foot">
+        <div class="tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <div style="font-size:9px;color:var(--muted)">${timeAgo(p.updatedAt)}</div>
+      </div>
+    </div>`).join('');
+}
+function filterCo(co,el){
+  curFilter=co;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderCards();
+}
+
+// ─── RUN PROMPT ───
+async function runPrompt(id){
+  if(runningIds.has(id))return;
+  const p=(store.prompts||[]).find(x=>x.id===id);if(!p)return;
+  runningIds.add(id);renderCards();
+  store.runCount=(store.runCount||0)+1;saveStore(store);
+  showRespPanel(p.title,'');
+  await execPrompt(p.prompt);
+  runningIds.delete(id);renderCards();
+}
+async function sendCustom(){
+  const txt=document.getElementById('customTA').value.trim();
+  if(!txt){showToast('프롬프트를 입력해주세요');return;}
+  const btn=document.querySelector('.send-btn');btn.innerHTML='<span>실행 중</span> ↻';
+  showRespPanel('커스텀 프롬프트','');
+  await execPrompt(txt);
+  btn.innerHTML='<span>실행</span> ▶';
+}
+async function execPrompt(prompt){
+  if(ollamaConn&&selModel!=='demo')await streamOllama(selModel,prompt);
+  else await simStream(prompt);
+}
+function showRespPanel(title,txt){
+  const p=document.getElementById('respPanel');p.classList.add('show');
+  document.getElementById('respTitle').textContent=title;
+  document.getElementById('respBody').innerHTML=txt+'<span class="cursor"></span>';
+  p.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function closeResp(){document.getElementById('respPanel').classList.remove('show');}
+function copyResp(){navigator.clipboard?.writeText(curRespText).then(()=>showToast('📋 복사됨'));}
+function saveResp(){
+  if(!curRespText)return;
+  store.savedResponses=store.savedResponses||[];
+  store.savedResponses.unshift({text:curRespText,time:Date.now()});
+  if(store.savedResponses.length>50)store.savedResponses.pop();
+  saveStore(store);updateStats();showToast('🔖 저장됨');
+}
+function shareResp(){if(navigator.share)navigator.share({title:'PromptOS',text:curRespText.slice(0,500)});else copyResp();}
+
+async function streamOllama(model,prompt){
+  const body=document.getElementById('respBody');
+  let full='';body.innerHTML='<span class="cursor"></span>';curRespText='';
+  try{
+    const res=await fetch(`${ollamaUrl}/api/generate`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model,stream:true,prompt:`당신은 한국 핀테크 기업 전문 PM 어시스턴트입니다. 한국어로 구체적이고 실무적으로 답변하세요.\n\n${prompt}`})});
+    const reader=res.body.getReader();const dec=new TextDecoder();
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      dec.decode(value).split('\n').filter(Boolean).forEach(line=>{
+        try{const o=JSON.parse(line);
+          if(o.response){full+=o.response;curRespText=full;body.innerHTML=fmtMd(full)+'<span class="cursor"></span>';}
+          if(o.done){body.innerHTML=fmtMd(full);curRespText=full;}
+        }catch{}
+      });
+    }
+  }catch(e){body.innerHTML=`<span style="color:var(--red)">⚠️ 오류: ${e.message}</span>`;}
+}
+
+const DEMO_TXT=`## 핀테크 PM 분석 결과 (데모 모드)
+
+**📊 현황 진단**
+요청한 기능의 핵심 이슈를 3개의 개선 레버로 도출했습니다.
+
+**🎯 전략적 제안**
+1. **단기(1-2주)** — A/B 테스트 설계 및 실험 론칭
+2. **중기(1-3개월)** — 핵심 기능 개선 및 사용자 검증
+3. **장기(3-6개월)** — 제품 로드맵 반영 및 스케일업
+
+**📈 기대 효과**
+- 전환율 +15-20% 예상
+- 리텐션 D30 +8%p 개선
+- NPS 점수 +12점 상승
+
+**⚡ 즉시 실행 가능한 액션**
+- [ ] 이탈 구간 Funnel 분석 완료
+- [ ] 유저 인터뷰 5명 진행
+- [ ] 엔지니어링 스코프 추정
+
+💡 *상태 표시를 탭하면 Ollama 연결 가이드를 볼 수 있습니다.*`;
+
+async function simStream(prompt){
+  const body=document.getElementById('respBody');
+  let i=0;curRespText='';body.innerHTML='<span class="cursor"></span>';
+  await new Promise(res=>{
+    const iv=setInterval(()=>{
+      if(i>=DEMO_TXT.length){clearInterval(iv);body.innerHTML=fmtMd(DEMO_TXT);curRespText=DEMO_TXT;res();return;}
+      i=Math.min(i+5,DEMO_TXT.length);
+      body.innerHTML=fmtMd(DEMO_TXT.slice(0,i))+'<span class="cursor"></span>';
+      curRespText=DEMO_TXT.slice(0,i);
+    },16);
+  });
+}
+function fmtMd(t){
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^## (.+)$/gm,'<div style="font-size:13px;font-weight:700;color:var(--accent);margin:10px 0 5px">$1</div>')
+    .replace(/^- \[ \] (.+)$/gm,'<div style="padding:3px 0;color:var(--text2)">☐ $1</div>')
+    .replace(/^- (.+)$/gm,'<div style="padding:2px 0 2px 10px;border-left:2px solid var(--border2)">$1</div>')
+    .replace(/\n/g,'<br>');
+}
+
+// ─── NEWS (실시간 RSS 멀티피드 조회) ───
+async function loadNews(force=false){
+  const list=document.getElementById('newsList');
+  const stEl=document.getElementById('rssStatus');
+  list.innerHTML=`<div class="news-spinner-wrap"><div class="spinner"></div>${RSS_SRCS.length}개 RSS 소스 연결 중...</div>`;
+  stEl.className='rss-status rss-loading';
+  stEl.innerHTML='<div class="spinner" style="width:14px;height:14px;flex-shrink:0;border-top-color:var(--accent)"></div> RSS 피드 연결 중...';
+
+  const fetched=[];let ok=0;
+  await Promise.allSettled(RSS_SRCS.map(async src=>{
+    // 1차: rss2json
+    let items=await tryRss2Json(src.url,src.label);
+    // 2차: allorigins
+    if(!items.length)items=await tryAllOrigins(src.url,src.label);
+    if(items.length){ok++;fetched.push(...items);}
+  }));
+
+  if(fetched.length>0){
+    const seen=new Set();
+    const deduped=fetched
+      .filter(n=>{if(seen.has(n.title))return false;seen.add(n.title);return true;})
+      .sort((a,b)=>b.time-a.time);
+    // 핀테크 관련 기사 필터 (느슨하게)
+    const kws=['토스','카카오','네이버','배민','업비트','키움','핀테크','페이','결제','금융','증권','코인','암호화폐','은행','대출','투자','보험'];
+    const fin=deduped.filter(n=>kws.some(k=>n.title.includes(k)||n.summary.includes(k)));
+    allNews=fin.length>=3?fin:[...deduped.slice(0,5),...MOCK_NEWS];
+    stEl.className='rss-status rss-ok';
+    stEl.innerHTML=`✅ RSS 실시간 연결 성공 (${ok}/${RSS_SRCS.length}개 소스 · ${allNews.length}개 기사)`;
+    document.getElementById('newsSubtitle').textContent=`RSS 실시간 · ${ok}개 소스 · 5분마다 갱신`;
+  }else{
+    allNews=[...MOCK_NEWS];
+    stEl.className='rss-status rss-fail';
+    stEl.innerHTML='⚠️ RSS 직접 연결 실패 (CORS 제한) — 캐시 데이터 표시';
+  }
+  renderNews();
+}
+
+async function tryRss2Json(url,label){
+  try{
+    const r=await ftimeout(`${R2J}${encodeURIComponent(url)}&count=10`,{},5000);
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    if(d.status!=='ok'||!d.items?.length)throw 0;
+    return d.items.slice(0,8).map((it,i)=>({
+      title:stripHtml(it.title||''),
+      summary:stripHtml(it.description||it.content||'').slice(0,150),
+      source:label,link:it.link||'#',
+      tags:extractTags(it.title+' '+(it.description||'')),
+      time:new Date(it.pubDate||Date.now()).getTime(),isNew:i===0
+    }));
+  }catch{return[];}
+}
+async function tryAllOrigins(url,label){
+  try{
+    const r=await ftimeout(`${AO}${encodeURIComponent(url)}`,{},6000);
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    const doc=new DOMParser().parseFromString(d.contents,'application/xml');
+    const items=Array.from(doc.querySelectorAll('item')).slice(0,8);
+    if(!items.length)throw 0;
+    return items.map((it,i)=>({
+      title:stripHtml(it.querySelector('title')?.textContent||''),
+      summary:stripHtml(it.querySelector('description')?.textContent||'').slice(0,150),
+      source:label,link:it.querySelector('link')?.textContent||'#',
+      tags:extractTags(it.querySelector('title')?.textContent||''),
+      time:new Date(it.querySelector('pubDate')?.textContent||Date.now()).getTime(),isNew:i===0
+    }));
+  }catch{return[];}
+}
+function stripHtml(s){return s.replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();}
+function extractTags(txt){
+  const map={토스:'토스',카카오:'카카오',네이버:'네이버',배민:'배민',업비트:'업비트',키움:'증권',
+    핀테크:'핀테크',페이:'페이',결제:'결제',코인:'코인',암호:'코인',증권:'증권',은행:'뱅크',대출:'금융',투자:'투자'};
+  const f=[];
+  Object.entries(map).forEach(([k,v])=>{if(txt.includes(k)&&!f.includes(v))f.push(v);});
+  return f.length?f.slice(0,3):['핀테크'];
+}
+function filterNews(f,el){
+  newsFilter=f;
+  document.querySelectorAll('.nf-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderNews();
+}
+function renderNews(){
+  const list=document.getElementById('newsList');
+  const kw=newsFilter==='all'?null:newsFilter;
+  const items=!kw?allNews:allNews.filter(n=>n.title?.includes(kw)||n.summary?.includes(kw)||n.tags?.some(t=>t.includes(kw)));
+  if(!items.length){list.innerHTML='<div class="news-placeholder">해당 뉴스가 없습니다</div>';return;}
+  list.innerHTML=items.map(n=>`
+    <div class="news-card${n.isNew?' is-new':''}">
+      <div class="news-meta">
+        <span class="news-src">${n.source||'뉴스'}</span>
+        <span class="news-time">${timeAgo(n.time)}</span>
+        ${n.isNew?'<span class="news-new-badge">NEW</span>':''}
+      </div>
+      <div class="news-title">${n.title}</div>
+      <div class="news-summary">${n.summary}</div>
+      <div class="news-footer">
+        <div class="tags">${(n.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+        <button class="news-ask" onclick="askNews(${JSON.stringify(n.title).replace(/"/g,'&quot;')})">AI 분석 ▶</button>
+      </div>
+    </div>`).join('');
+}
+function askNews(title){
+  switchTab('home');
+  document.getElementById('customTA').value=`다음 뉴스에 대해 PM 관점으로 분석해줘: "${title}"\n\n비즈니스 임팩트, 경쟁사 영향, 기회/위협 요인, PM 액션 아이템을 포함해서.`;
+  showToast('💬 뉴스 분석 프롬프트 입력됨');
+}
+
+// ─── QUIZ (실시간: admin localStorage → Ollama → 내장) ───
+async function loadQuizData(){
+  const srcEl=document.getElementById('quizSrcTxt');
+  // 1순위: 관리자 패널 퀴즈
+  if(store.quizzes&&store.quizzes.length>=3){
+    quizList=store.quizzes;
+    srcEl.textContent=`관리자 등록 퀴즈 ${quizList.length}문제 · localStorage 실시간 동기화`;
+    renderQuiz();return;
+  }
+  // 2순위: Ollama AI 생성
+  if(ollamaConn&&selModel!=='demo'){
+    srcEl.textContent='Ollama AI로 퀴즈 생성 중...';
+    document.getElementById('quizBody').innerHTML='<div class="quiz-spin-wrap"><div class="quiz-spinner"></div>AI 퀴즈 생성 중...</div>';
+    try{
+      const res=await fetch(`${ollamaUrl}/api/generate`,{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({model:selModel,stream:false,prompt:`한국 핀테크(토스,카카오페이,네이버페이,업비트,배민,키움증권) PM 지식 퀴즈 5문제를 JSON 배열로만 반환해. 코드블록 없이 순수 JSON만.\n형식:[{"q":"질문","opts":["보기1","보기2","보기3","보기4"],"ans":정답인덱스(0-3),"explain":"해설","co":"toss"}]`})});
+      const d=await res.json();
+      const m=(d.response||'').match(/\[[\s\S]*\]/);
+      if(m){
+        const parsed=JSON.parse(m[0]);
+        quizList=[...parsed,...BQUIZ].slice(0,8);
+        srcEl.textContent=`Ollama AI 생성 + 내장 퀴즈 ${quizList.length}문제`;
+        renderQuiz();return;
+      }
+    }catch{}
+  }
+  // 3순위: 내장 데이터
+  quizList=[...BQUIZ];
+  srcEl.textContent=`내장 퀴즈 ${quizList.length}문제 · Ollama 연결 시 AI 생성`;
+  renderQuiz();
+}
+function renderQuiz(){
+  updateStats();
+  const body=document.getElementById('quizBody');
+  if(!quizList.length){body.innerHTML='<div class="quiz-spin-wrap">퀴즈를 생성해주세요</div>';return;}
+  body.innerHTML=quizList.map((q,i)=>`
+    <div class="qcard" id="qcard-${i}">
+      <div class="qcard-num">Q${i+1} · ${(q.co||'').toUpperCase()}</div>
+      <div class="qcard-q">${q.q}</div>
+      <div class="options">
+        ${(q.opts||[]).map((opt,j)=>`<button class="option" id="opt-${i}-${j}" onclick="selectOpt(${i},${j})">${opt}</button>`).join('')}
+      </div>
+      <div class="qcard-explain" id="explain-${i}">${q.explain||''}</div>
+      <button class="qcard-next" id="next-${i}" onclick="nextQuiz(${i})">${i<quizList.length-1?'다음 문제 →':'🏆 결과 보기'}</button>
+    </div>`).join('');
+}
+function selectOpt(qi,oi){
+  const q=quizList[qi];
+  const opts=document.querySelectorAll(`#qcard-${qi} .option`);
+  opts.forEach(o=>o.classList.add('disabled'));
+  opts[oi].classList.add(oi===q.ans?'correct':'wrong');
+  if(oi!==q.ans)opts[q.ans].classList.add('correct');
+  store.quizStats=store.quizStats||{total:0,correct:0,streak:0,best:0};
+  store.quizStats.total++;
+  if(oi===q.ans){store.quizStats.correct++;store.quizStats.streak++;showToast('🎉 정답! +1점');}
+  else{store.quizStats.streak=0;showToast('❌ 오답');}
+  if(store.quizStats.streak>(store.quizStats.best||0))store.quizStats.best=store.quizStats.streak;
+  saveStore(store);updateStats();
+  document.getElementById(`explain-${qi}`).classList.add('show');
+  document.getElementById(`next-${qi}`).classList.add('show');
+}
+function nextQuiz(qi){
+  const n=document.getElementById(`qcard-${qi+1}`);
+  if(n)n.scrollIntoView({behavior:'smooth',block:'start'});
+  else showToast('🏆 모든 문제 완료! AI 생성 버튼으로 새 문제를 만들어보세요.');
+}
+async function generateAIQuiz(){
+  const btn=document.getElementById('quizGenBtn');
+  btn.textContent='⏳ 생성 중...';btn.disabled=true;
+  quizLoaded=false;
+  await loadQuizData();
+  btn.textContent='✨ AI로 새 퀴즈 생성';btn.disabled=false;
+}
+
+// ─── LEARN (실시간: admin localStorage → 내장) ───
+async function loadLearnData(){
+  const sub=document.getElementById('learnSub');
+  // 1순위: 관리자 패널 학습 콘텐츠
+  if(store.learnItems&&store.learnItems.length){
+    learnData=store.learnItems;
+    sub.textContent=`관리자 등록 콘텐츠 ${learnData.length}개 · 실시간 동기화`;
+    renderLearn();return;
+  }
+  // 2순위: 내장 (진행률 복원)
+  learnData=BLEARN.map(it=>({...it,progress:(store.learnProgress||{})[it.id]||0}));
+  sub.textContent=`내장 콘텐츠 ${learnData.length}개 · Ollama 실습 연동`;
+  renderLearn();
+}
+function filterLearn(cat,el){
+  learnFilter=cat;
+  document.querySelectorAll('.lcat').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  renderLearn();
+}
+function renderLearn(){
+  const f=learnFilter==='all'?learnData:learnData.filter(l=>l.cat===learnFilter);
+  const el=document.getElementById('learnCards');
+  if(!f.length){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px">해당 카테고리 콘텐츠가 없습니다</div>';return;}
+  el.innerHTML=f.map(l=>`
+    <div class="lcard" onclick="openLearnDetail('${l.id}')">
+      <div class="lcard-stripe" style="background:${l.color}"></div>
+      <div class="lcard-body">
+        <div class="lcard-catrow">
+          <div class="lcard-cat">${l.cat}</div>
+          <div class="lcard-src">${l.src||'내장'}</div>
+        </div>
+        <div class="lcard-title">${l.title}</div>
+        <div class="lcard-desc">${l.desc}</div>
+      </div>
+      <div class="lcard-foot">
+        <span style="font-size:10px;color:var(--muted)">학습률</span>
+        <div class="progress-bar"><div class="progress-fill" style="width:${l.progress||0}%"></div></div>
+        <span class="lcard-pct">${l.progress||0}%</span>
+      </div>
+    </div>`).join('');
+}
+function openLearnDetail(id){
+  const item=learnData.find(l=>l.id===id);if(!item)return;
+  document.getElementById('ldTtl').textContent=item.title;
+  const c=item.content||{};
+  document.getElementById('ldBody').innerHTML=`
+    <div class="ld-sec"><p style="color:var(--text);line-height:1.8;font-size:13px">${c.intro||''}</p></div>
+    ${(c.sections||[]).map(s=>`<div class="ld-sec"><h3>${s.h}</h3><p>${s.p}</p></div>`).join('')}
+    <div class="ld-sec">
+      <h3>🤖 실습 프롬프트</h3>
+      <div class="ld-prompt-box">"${c.promptExample||''}"</div>
+      <button class="ld-run-btn" onclick="runLearnPrompt(\`${(c.promptExample||'').replace(/`/g,"'")}\`)">Ollama로 실습 시작 ▶</button>
+    </div>`;
+  document.getElementById('learnDetail').classList.add('show');
+  store.learnProgress=store.learnProgress||{};
+  store.learnProgress[id]=Math.min(100,(store.learnProgress[id]||0)+30);
+  saveStore(store);
+  const idx=learnData.findIndex(l=>l.id===id);
+  if(idx>=0)learnData[idx].progress=store.learnProgress[id];
+  renderLearn();
+}
+function closeLearnDetail(){document.getElementById('learnDetail').classList.remove('show');}
+async function runLearnPrompt(prompt){
+  closeLearnDetail();switchTab('home');
+  document.getElementById('customTA').value=prompt;
+  setTimeout(()=>sendCustom(),300);
+}
+
+// ─── AUTO REFRESH ───
+function startAutoRefresh(){
+  setInterval(()=>{
+    refreshCD--;
+    document.getElementById('refreshTxt').textContent=refreshCD<=0?'방금 갱신됨':`${refreshCD}초 후 갱신`;
+    if(refreshCD<=0){
+      refreshCD=30;store=getStore();initPrompts(true);
+      if(store.quizzes?.length){quizList=store.quizzes;if(quizLoaded)renderQuiz();}
+      if(store.learnItems?.length){learnData=store.learnItems;if(learnLoaded)renderLearn();}
+    }
+  },1000);
+  setInterval(()=>{
+    if(ollamaConn)ftimeout(`${ollamaUrl}/api/tags`,{},3000).then(r=>{if(!r.ok)throw 0;}).catch(()=>{ollamaConn=false;setSdot('off','연결 끊김');});
+  },10000);
+  setInterval(()=>{
+    if(newsLoaded)loadNews().then(()=>triggerPush('📰 뉴스 갱신','최신 핀테크 뉴스 업데이트됨','📡'));
+  },300000);
+}
+
+// ─── PUSH ───
+function triggerPush(title,body,icon='📢'){
+  pushQ.push({title,body,icon});
+  if(!pushShowing)showNextPush();
+  if('Notification' in window&&Notification.permission==='default')Notification.requestPermission();
+}
+function showNextPush(){
+  if(!pushQ.length){pushShowing=false;return;}
+  pushShowing=true;
+  const{title,body,icon}=pushQ.shift();
+  document.getElementById('pushTtl').textContent=title;
+  document.getElementById('pushBodyTxt').textContent=body;
+  document.getElementById('pushIco').textContent=icon;
+  document.getElementById('pushNotif').classList.add('show');
+  if('Notification' in window&&Notification.permission==='granted')new Notification(title,{body});
+  setTimeout(()=>{document.getElementById('pushNotif').classList.remove('show');setTimeout(()=>{pushShowing=false;showNextPush();},400);},4000);
+}
+function closePush(){document.getElementById('pushNotif').classList.remove('show');setTimeout(()=>{pushShowing=false;showNextPush();},400);}
+function schedulePush(){
+  setTimeout(()=>triggerPush('🦙 Ollama 연결 가이드','상단 상태 표시를 탭해서 연결 방법을 확인하세요','🦙'),6000);
+  setInterval(()=>{
+    const msgs=[{t:'🔥 핀테크 트렌드',b:'오늘의 PM 인사이트를 확인하세요',i:'🔥'},{t:'🎯 퀴즈 챌린지',b:'PM 실력을 테스트해볼 시간!',i:'🎯'},{t:'📰 뉴스 업데이트',b:'최신 핀테크 뉴스 확인하기',i:'📰'}];
+    const m=msgs[Math.floor(Math.random()*msgs.length)];
+    triggerPush(m.t,m.b,m.i);
+  },180000);
+}
+
+// ─── UTILS ───
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function timeAgo(ts){
+  if(!ts)return'';const d=Date.now()-ts;
+  if(d<60000)return'방금 전';
+  if(d<3600000)return Math.floor(d/60000)+'분 전';
+  if(d<86400000)return Math.floor(d/3600000)+'시간 전';
+  return Math.floor(d/86400000)+'일 전';
+}
 </script>
 </body>
 </html>
